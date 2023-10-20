@@ -1,7 +1,9 @@
 import * as actionConstants from '../actions/actionConstants';
 
+// Check if we have a state stored in sessionStorage
 const getInitialState = () => {
 	if(sessionStorage.getItem("loginstate")) {
+		// Parse a JSON string into a JS object
 		let state = JSON.parse(sessionStorage.getItem("loginstate"));
 		return state
 	} else {
@@ -15,17 +17,25 @@ const getInitialState = () => {
 	}
 }
 
+// Save to sessionStorage
 const saveToStorage = (state) => {
+	// JSON.stringify turn a JS object into JSON string
 	sessionStorage.setItem("loginstate",JSON.stringify(state));
 }
 
+// Initialize state
 const initialState = getInitialState();
 
+// Reducer to handle login actions
+// Reducer arguments are state and action
+// Action always has a "type", optionally other properties
 const loginReducer = (state = initialState,action) => {
 	console.log("loginReducer, action",action);
 	let tempState = {
 		...state
 	}
+	// Switch-case to handle all possible login actions based on 
+	// action.type
 	switch(action.type) {
 		case actionConstants.LOADING:
 			return {

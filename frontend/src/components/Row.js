@@ -1,3 +1,4 @@
+// Component that shows a normal list entry, with "remove" and "edit" buttons
 const Row = (props) => {
 	
 	return(

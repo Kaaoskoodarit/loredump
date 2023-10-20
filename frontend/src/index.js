@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
 import {createStore,applyMiddleware,combineReducers} from 'redux';
 import {Provider} from 'react-redux';
@@ -10,14 +8,22 @@ import thunk from 'redux-thunk';
 import loginReducer from './reducers/loginReducer';
 import shoppingReducer from './reducers/shoppingReducer';
 
+// Combine different reducers into one
 const rootReducer = combineReducers({
 	login:loginReducer,
 	shopping:shoppingReducer
 })
 
+// Create a store that contains the state of the app, and handles
+// the reducers and actions.
+// applyMiddleware lets us inject a function into the store's dispatches! 
+// applyMiddleware(thunk) lets us use async actions as if they were normal
 const store = createStore(rootReducer,applyMiddleware(thunk));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+// BrowserRouter allows us to use the URLs of the SPA as if it was a traditional
+// website, including "back" and "forward" navigation
+// Provider component lets us pass down "store"'s state to all child components
 root.render(
   <React.StrictMode>
   <BrowserRouter>
@@ -27,8 +33,3 @@ root.render(
   </BrowserRouter>
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

@@ -1,5 +1,6 @@
 import * as actionConstants from '../actions/actionConstants';
 
+// Check if we have a state stored in sessionStorage
 const getInitialState = () => {
 	if(sessionStorage.getItem("shoppingstate")) {
 		let state = JSON.parse(sessionStorage.getItem("shoppingstate"));
@@ -12,12 +13,15 @@ const getInitialState = () => {
 	}
 }
 
+// Save to sessionStorage
 const saveToStorage = (state) => {
 	sessionStorage.setItem("shoppingstate",JSON.stringify(state));
 }
 
+// Initialize state
 const initialState = getInitialState();
 
+// Reducer to handle shopping actions
 const shoppingReducer = (state = initialState,action) => {
 	console.log("shoppingReducer,action",action);
 	let tempState = {

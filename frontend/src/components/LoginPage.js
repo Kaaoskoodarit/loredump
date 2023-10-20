@@ -2,15 +2,19 @@ import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {register,registerFailed,login} from '../actions/loginActions';
 
+// LoginPage component, that handles logging in
 const LoginPage = (props) => {
 	
+	// Set state of the component
 	const [state,setState] = useState({
 		username:"",
 		password:""
 	})
 	
+	// Lets us use dispatch function from Redux store
 	const dispatch = useDispatch();
 	
+	// Function to handle "onChange" events in components
 	const onChange = (event) => {
 		setState((state) => {
 			return {
@@ -20,8 +24,11 @@ const LoginPage = (props) => {
 		})
 	}
 	
+	// Function to handle "onSubmit" events in components
 	const onSubmit = (event) => {
+		// prevent default operation of the "Submit" button
 		event.preventDefault();
+		// Check if username and password are proper lengths
 		if(state.username.length < 4 || state.password.length < 8) {
 			dispatch(registerFailed("Username must be atleast 4 and password 8 characters long"));
 			return;
@@ -29,8 +36,10 @@ const LoginPage = (props) => {
 		let user = {
 			...state
 		}
+		// If person is trying to register, dispatch a register action
 		if(event.target.name === "register") {
 			dispatch(register(user));
+		// Else dispatch a login action
 		} else {
 			dispatch(login(user));
 		}

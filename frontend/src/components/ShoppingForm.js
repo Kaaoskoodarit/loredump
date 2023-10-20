@@ -2,17 +2,22 @@ import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add} from '../actions/shoppingActions';
 
+// Component that shows the form to add new items
 const ShoppingForm = (props) => {
 	
+	// Set state of the component: basically properties of an item
+	// to be added
 	const [state,setState] = useState({
 		type:"",
 		count:0,
 		price:0
 	})
-	
+	// Get a token from the "store"
 	const token = useSelector(state => state.login.token);
+	// Use dispatcher from react-redux
 	const dispatch = useDispatch();
 	
+	// Function for "onChange" events
 	const onChange = (event) => {
 		setState((state) => {
 			return {
@@ -21,13 +26,15 @@ const ShoppingForm = (props) => {
 			}
 		})
 	}
-	
+	// Function for "onSubmit" events
 	const onSubmit = (event) => {
 		event.preventDefault();
 		let item = {
 			...state
 		}
+		// Add an itme to the list of items
 		dispatch(add(token,item));
+		// Set state of the component back to default
 		setState({
 			type:"",
 			count:0,
