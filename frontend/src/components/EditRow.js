@@ -1,13 +1,15 @@
 import {useState} from 'react';
 
+// Component that shows an "edit mode" row, with "cancel" and "confirm" buttons
 const EditRow = (props) => {
-	
+	// Set state of the component (properties of item to be edited)
 	const [state,setState] = useState({
 		type:props.item.type,
 		count:props.item.count,
 		price:props.item.price
 	})
 	
+	// Function for "onChange" events
 	const onChange = (event) => {
 		setState((state) => {
 			return {
@@ -16,12 +18,13 @@ const EditRow = (props) => {
 			}
 		})
 	}
-	
+	// Function for "onChange" events
 	const saveItem = () => {
 		let item = {
 			...state,
 			id:props.item.id
 		}
+		// Call "editItem" function given as a prop!
 		props.editItem(item)
 	}
 	

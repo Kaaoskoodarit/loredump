@@ -1,3 +1,4 @@
+// Component that shows a "remove mode" row, with "cancel" and "confirm" buttons
 const RemoveRow = (props) => {
 	
 	return(

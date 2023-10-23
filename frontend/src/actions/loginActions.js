@@ -3,8 +3,10 @@ import {getList} from './shoppingActions';
 
 //ASYNC THUNK
 
+// (async) function that dispatches a register action to the reducer
 export const register = (user) => {
 	return async (dispatch) => {
+		// Create request to be sent
 		let request = {
 			"method":"POST",
 			"headers":{
@@ -12,15 +14,21 @@ export const register = (user) => {
 			},
 			"body":JSON.stringify(user)
 		}
+		// Dispatch a "loading" action to change store state
 		dispatch(loading());
+		// Try to perform a register requet on the server, wait for answer
 		const response = await fetch("/register",request);
+		// Once get an answer, stop loading
 		dispatch(stopLoading());
+		// If we get no response, error message
 		if(!response) {
 			dispatch(registerFailed("Register failed. Server never responded. Try again later"));
 			return
 		}
+		// If response is ok (status 2XX), dispatch registerSuccess
 		if(response.ok) {
 			dispatch(registerSuccess());
+		// Else, dispatch an error message
 		} else {
 			if(response.status === 409) {
 				dispatch(registerFailed("Username already in use"))
@@ -31,6 +39,7 @@ export const register = (user) => {
 	}
 }
 
+// (async) function that dispatches a login action to the reducer
 export const login = (user) => {
 	return async (dispatch) => {
 		let request = {
@@ -48,11 +57,15 @@ export const login = (user) => {
 			return;
 		}
 		if(response.ok) {
+			// takes response, and turns it from JSON string to JS object
+			// waits for parsing to be done!
 			const data = await response.json();
 			if(!data) {
 				dispatch(loginFailed("Failed to parse login information. Try again later"))
 				return;
 			}
+			// If data parsed, set current user, assign them a token, and 
+			// display the user's shopping list
 			dispatch(loginSuccess(data.token));
 			dispatch(setUsername(user.username));
 			dispatch(getList(data.token));
@@ -62,6 +75,7 @@ export const login = (user) => {
 	}
 }
 
+// (async) function that dispatches a logout action to the reducer
 export const logout = (token) => {
 	return async (dispatch) => {
 		let request = {
@@ -87,6 +101,8 @@ export const logout = (token) => {
 
 //ACTION CREATORS
 
+// Simple functions that return an "action" object, with
+// a "type" parameter, and optionally others as well, as needed
 export const loading = () => {
 	return {
 		type:actionConstants.LOADING
