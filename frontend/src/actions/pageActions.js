@@ -17,12 +17,12 @@ export const getList = (token) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/shopping",request);
+		const response = await fetch("/api/lorepage",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
 		if(!response) {
-			dispatch(fetchListFailed("Failed to fetch shopping information. Server never responded. Try again later"));
+			dispatch(fetchListFailed("Failed to fetch page information. Server never responded. Try again later"));
 			return;
 		}
 		if(response.ok) {
@@ -30,7 +30,7 @@ export const getList = (token) => {
 			const list = await response.json();
 			// If no list, error
 			if(!list) {
-				dispatch(fetchListFailed("Failed to parse shopping information. Try again later."))
+				dispatch(fetchListFailed("Failed to parse page information. Try again later."))
 				return;
 			}
 			// If list found, show it!
@@ -41,7 +41,50 @@ export const getList = (token) => {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchListFailed("Failed to fetch shopping information. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchListFailed("Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
+}
+
+// (async) function that dispatches a getPage action to the reducer
+// This displays the shopping list
+export const getPage = (token,id) => {
+	return async (dispatch) => {
+		// Set request
+		let request = {
+			"method":"GET",
+			"headers":{
+				"token":token
+			}
+		}
+		// Start loading
+		dispatch(loading());
+		// Try to fetch the shopping list from the server, wait for response
+		const response = await fetch("/api/lorepage/"+id,request);
+		// Stop loading
+		dispatch(stopLoading());
+		// If no response, error
+		if(!response) {
+			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to fetch page information. Server never responded. Try again later"));
+			return;
+		}
+		if(response.ok) {
+			// Try to parse response from JSON, wait for result
+			const page = await response.json();
+			// If no list, error
+			if(!page) {
+				dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to parse page information. Try again later."))
+				return;
+			}
+			// If list found, show it!
+			dispatch(fetchPageSuccess(actionConstants.FETCH_PAGE_SUCCESS,page));
+		// If response not ok, error
+		} else {
+			if(response.status === 403) {
+				dispatch(logoutFailed("Your session has expired. Logging you out."));
+				return;
+			}
+			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
 		}
 	}
 }
@@ -58,22 +101,22 @@ export const add = (token,item) => {
 			"body":JSON.stringify(item)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/shopping",request);
+		const response = await fetch("/api/lorepage",request);
 		dispatch(stopLoading());
 		if(!response) {
-			dispatch(fetchItemFailed(actionConstants.ADD_ITEM_FAILED,"Failed to add new item. Server never responded. Try again later"))
+			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
 			return;
 		}
 		if(response.ok) {
 			// If fetch successful, show new list!
-			dispatch(fetchItemSuccess(actionConstants.ADD_ITEM_SUCCESS));
+			dispatch(fetchPageSuccess(actionConstants.ADD_PAGE_SUCCESS));
 			dispatch(getList(token));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchItemFailed(actionConstants.ADD_ITEM_FAILED,"Failed to add new item. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server responded with a status "+response.status+" "+response.statusText))
 		}
 	}
 }
@@ -88,22 +131,22 @@ export const remove = (token,id) => {
 			}
 		}
 		dispatch(loading());
-		const response = await fetch("/api/shopping/"+id,request);
+		const response = await fetch("/api/lorepage/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
-			dispatch(fetchItemFailed(actionConstants.REMOVE_ITEM_FAILED,"Failed to remove item. Server never responded. Try again later"))
+			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
 			return;
 		}
 		if(response.ok) {
 			// If fetch succesful, show new list!
-			dispatch(fetchItemSuccess(actionConstants.REMOVE_ITEM_SUCCESS));
+			dispatch(fetchPageSuccess(actionConstants.REMOVE_PAGE_SUCCESS));
 			dispatch(getList(token));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchItemFailed(actionConstants.REMOVE_ITEM_FAILED,"Failed to remove item. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server responded with a status "+response.status+" "+response.statusText))
 		}
 	}
 }
@@ -120,22 +163,22 @@ export const edit = (token,item) => {
 			"body":JSON.stringify(item)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/shopping/"+item.id,request);
+		const response = await fetch("/api/lorepage/"+item.id,request);
 		dispatch(stopLoading());
 		if(!response) {
-			dispatch(fetchItemFailed(actionConstants.EDIT_ITEM_FAILED,"Failed to edit item. Server never responded. Try again later"))
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
 			return;
 		}
 		if(response.ok) {
 			// If fetch succesful, show new list
-			dispatch(fetchItemSuccess(actionConstants.EDIT_ITEM_SUCCESS));
+			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(token));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchItemFailed(actionConstants.EDIT_ITEM_FAILED,"Failed to edit item. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
 		}
 	}
 }
@@ -158,13 +201,14 @@ const fetchListFailed = (error) => {
 	}
 }
 
-const fetchItemSuccess = (type) => {
+const fetchPageSuccess = (type,page) => {
 	return {
-		type:type
+		type:type,
+		page:page
 	}
 }
 
-const fetchItemFailed = (type,error) => {
+const fetchPageFailed = (type,error) => {
 	return {
 		type:type,
 		error:error
