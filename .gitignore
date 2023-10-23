@@ -43,7 +43,7 @@ node_modules/
 jspm_packages/
 
 # Ignor backend, until it's fixed
-backend/
+#backend/
 #backend_node/
 old_code
 
@@ -138,3 +138,5 @@ dist
 bin/
 lib/
 pyvenv.cfg
+
+.vscode/
