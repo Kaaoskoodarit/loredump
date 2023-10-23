@@ -46,6 +46,7 @@ jspm_packages/
 #backend/
 #backend_node/
 old_code
+__pycache__
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
