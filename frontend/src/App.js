@@ -1,24 +1,27 @@
 import logo from './logo.svg';
 import './App.css';
 import {useState,useEffect} from 'react';
-import ShoppingForm from './components/ShoppingForm';
-import ShoppingList from './components/ShoppingList';
-import Navbar from './components/Navbar';
-import LoginPage from './components/LoginPage';
+import ShoppingForm from './components-old/ShoppingForm';
+import Navbar2 from './components/Navbar2';
+import LoginPage from './components-old/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
+import AddLorePage from './components/AddLorePage';
+import Category from './components/Category';
 
 function App() {
 	
 	const appState = useSelector((state) => {
-		let error = state.shopping.error;
+		let error = state.page.error;
+		// If there is an error in the login, set that as app error
 		if(state.login.error) {
 			error = state.login.error;
 		}
 		return {
 			isLogged:state.login.isLogged,
 			error:error,
-			loading:state.login.loading
+			loading:state.login.loading,
+			user :state.login.user
 		}
 	})
 	
@@ -35,13 +38,15 @@ function App() {
 	if(appState.isLogged) {
 		return (
 			<div className="App">
-				<Navbar />
+				<Navbar2 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
 				</div>
 				<Routes>
-					<Route path="/" element={<ShoppingList />}/>
+					<Route path="/" element={<Category />}/>
+					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/form" element={<ShoppingForm />}/>
+					<Route path="/api/lorepage" element={<Category />}/>
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</div>
@@ -49,7 +54,7 @@ function App() {
 	} else {
 		return (
 			<div className="App">
-				<Navbar />
+				<Navbar2 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
 				</div>

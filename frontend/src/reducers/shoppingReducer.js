@@ -1,5 +1,6 @@
 import * as actionConstants from '../actions/actionConstants';
 
+// Check if we have a state stored in sessionStorage
 const getInitialState = () => {
 	if(sessionStorage.getItem("shoppingstate")) {
 		let state = JSON.parse(sessionStorage.getItem("shoppingstate"));
@@ -7,6 +8,7 @@ const getInitialState = () => {
 	} else {
 		return {
 			list:[],
+			page:{},
 			error:""
 		}
 	}
@@ -18,8 +20,9 @@ const saveToStorage = (state) => {
 
 const initialState = getInitialState();
 
-const shoppingReducer = (state = initialState,action) => {
-	console.log("shoppingReducer,action",action);
+// Reducer to handle shopping actions
+const pageReducer = (state = initialState,action) => {
+	console.log("pageReducer,action",action);
 	let tempState = {
 		...state
 	}
