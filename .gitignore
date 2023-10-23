@@ -44,6 +44,8 @@ jspm_packages/
 
 # Ignor backend, until it's fixed
 backend/
+#backend_node/
+old_code
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
