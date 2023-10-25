@@ -1,7 +1,8 @@
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add} from '../actions/pageActions';
+import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
+import {useNavigate} from 'react-router-dom';
 
 const AddLorePage = (props) => {
 	
@@ -21,7 +22,11 @@ const AddLorePage = (props) => {
     })
 
     const token = useSelector(state => state.login.token);
+    const pagestate = useSelector(state => state.page.page);
+    const liststate = useSelector(state => state.page.list);
+    
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const defaultCategories = ["Uncategorised","Characters","NPCs","Locations","Dates"]
 
@@ -66,8 +71,10 @@ const AddLorePage = (props) => {
             ...state,
             creator: props.user
         }
+        dispatch(getPage(token,pagestate.id));
+        // Redirect to the new page
+        navigate("/api/lorepage/"+pagestate.id);
         dispatch(add(token,page));
-        //täs kohtaa haluan et vaastedes redirect sille LorePagelle ku painat submit
         setState({
             title:"",
             categories:[],
@@ -82,9 +89,15 @@ const AddLorePage = (props) => {
             target:""
         })
     }
-    
-
-    
+    /*
+    // Redirect to the new page
+    useEffect(() => {
+        if(pagestate){
+            dispatch(getPage(token,pagestate.id));
+            navigate("/api/lorepage/"+pagestate.id);
+        }     
+    },[liststate])
+    */
     return (
         <>
         <div style={{
