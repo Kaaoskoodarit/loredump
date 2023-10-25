@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add} from '../actions/pageActions';
 import Relationships from './Relationships';
+import { useNavigate } from 'react-router-dom';
 
 const AddLorePage = (props) => {
 	
@@ -14,6 +15,21 @@ const AddLorePage = (props) => {
         relationships:[],
         notes:""
 	})
+
+    const [relState,setRelState] = useState({
+        reltype:"",
+        target:""
+    })
+    const [catState,setCatState] = useState(["Uncategorised"])
+
+    const[rowIncrement,setRowIncrement] = useState(0)
+
+    // const appState = useSelector((state) => {
+    //     return {
+	// 		stopLoading:state.login.stopLoading
+	// 	}
+    //     })
+
 
     const token = useSelector(state => state.login.token);
     const dispatch = useDispatch();
@@ -43,20 +59,55 @@ const AddLorePage = (props) => {
         })
     }
 
+    const onCatChange = (event) => {
+        setState((catState) => {
+            return [
+                ...catState,
+                event.target.value
+            ]        
+        })
+    }
 
-    //THIS DOES NOT WORK YET; NEED TO FIGURE OUT HOW TO correctly iterate elements in relationships
     const onRelChange = (event) => {
         setState((state) => {
             return {
-                ...state,
-                relationships :[{
-                    [event.target.name]:event.target.value
-                }]
+                ...relState,
+                [event.target.name]:event.target.value
             }
-            
         })
     }
     
+
+    const CategoryRow = (props) => {
+        return(
+        <>
+        <label htmlFor="categories" className="form-label">Categories</label>
+                <select name="categories"
+                        id="categories"
+                        className="form-select"
+                        // multiple
+                        aria-label="Select Categories"
+                        onChange={onCatChange}>
+                    {categories}
+                </select>
+                <button htmlFor="categories" type='button' onClick={() => handleThisClick()}
+				className="btn btn-primary"
+				>Add categories</button>
+        </>
+    )}
+    
+    let categoryrows= [ <CategoryRow key="Default"/>]
+
+
+    const handleThisClick = (event) =>{
+        categoryrows.push(
+        <CategoryRow key={rowIncrement}/>            
+        )
+        setState(rowIncrement+1)
+    }
+    //navigate(state.page.page.id) 
+    //onsubmit ajaa vaan 1 kerran?
+
     const onSubmit = (event) => {
         event.preventDefault();
         let page = {
@@ -65,6 +116,11 @@ const AddLorePage = (props) => {
         }
         dispatch(add(token,page));
         //täs kohtaa haluan et vaastedes redirect sille LorePagelle ku painat submit
+
+        // const navigate = useNavigate();
+        // if(appState.stopLoading) {
+        //     navigate("/api/lorepage/"+appState.page.page.id)
+        // }
         setState({
             title:"",
             categories:[],
@@ -96,15 +152,7 @@ const AddLorePage = (props) => {
                     <div id="title-help" className="form-text">
                     This will be the title of your Lore Page!
                     </div>
-                <label htmlFor="categories" className="form-label">Categories</label>
-                <select name="categories"
-                        id="categories"
-                        className="form-select"
-                        // multiple
-                        aria-label="Select Categories"
-                        onChange={onChange}>
-                    {categories}
-                </select>
+                {categoryrows}
 
 						{/* value={state.categories}/> */}
                 <label htmlFor="image" className="form-label">Image link</label>
