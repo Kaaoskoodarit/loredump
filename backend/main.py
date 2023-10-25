@@ -27,7 +27,7 @@ except Exception as e:
     print(e)
 
 # routes for api/users.py
-@app.route('/api/users', methods=['GET', 'POST', 'DELETE', 'PUT'])
+@app.route('/api/users', methods=['GET', 'POST'])
 def users():
     if request.method == 'GET':
         users_collection = db['users']
@@ -40,25 +40,42 @@ def users():
         
     elif request.method == 'POST':
         try:
-            User.register(request.json)
+            username = request.json['username']
+            password = request.json['password']
+            user = User(username, password)
+            user.register()
             return jsonify({'success': 'User successfully created'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 400
+        
+@app.route('/api/users/<id>', methods=['GET', 'PUT', 'DELETE'])
+def get_user(id):
+    if request.method == 'GET':
+        user = User.get_by_id(id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        else:
+            return jsonify({'id': str(user.id), 'username': user.username})
+
+# TODO: Edit PUT and DELETE methods so that user can only edit their own account.
+    # elif request.method == 'PUT':
+    #     try:
+    #         user = User.get_by_id(id)
+    #         user.username = request.json['username']
+    #         user.password = request.json['password']
+    #         user.save()
+    #         return jsonify({'success': 'User successfully updated'}), 200
+    #     except Exception as e:
+    #         return jsonify({'error': str(e)}), 400
+        
+    # elif request.method == 'DELETE':
+    #     try:
+    #         user = User.get_by_id(id)
+    #         user.delete()
+    #         return jsonify({'success': 'User successfully deleted'}), 200
+    #     except Exception as e:
+    #         return jsonify({'error': str(e)}), 400
     
-    elif request.method == 'DELETE':
-        users_collection = db['users']
-        user_data = users_collection.delete_one({'username': request.json['username']})
-        if user_data:
-            return jsonify({'id': str(user_data['_id']), 'username': user_data['username']})
-        else:
-            return jsonify({'error': 'User not found'})
-    elif request.method == 'PUT':
-        users_collection = db['users']
-        user_data = users_collection.update_one({'username': request.json['username']})
-        if user_data:
-            return jsonify({'id': str(user_data['_id']), 'username': user_data['username']})
-        else:
-            return jsonify({'error': 'User not found'})
 
 if __name__ == "__main__":
     app.run("127.0.0.1", port=5000, debug=True)
