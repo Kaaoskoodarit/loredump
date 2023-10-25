@@ -140,4 +140,6 @@ bin/
 lib/
 pyvenv.cfg
 
+db/
+
 .vscode/
