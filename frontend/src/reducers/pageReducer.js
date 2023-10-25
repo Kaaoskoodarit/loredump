@@ -23,7 +23,7 @@ const saveToStorage = (state) => {
 const initialState = getInitialState();
 
 // Reducer to handle shopping actions
-const loreReducer = (state = initialState,action) => {
+const pageReducer = (state = initialState,action) => {
 	console.log("pageReducer,action",action);
 	let tempState = {
 		...state
