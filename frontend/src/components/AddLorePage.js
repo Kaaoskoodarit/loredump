@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add} from '../actions/pageActions';
-// import Relationships from './Relationships';
+import Relationships from './Relationships';
 
 const AddLorePage = (props) => {
 	
@@ -50,8 +50,6 @@ const AddLorePage = (props) => {
         })
     }
 
-
-    //THIS DOES NOT WORK YET; NEED TO FIGURE OUT HOW TO correctly iterate elements in relationships
     const onRelChange = (event) => {
         setRelState((relState) => {
             return {
@@ -137,32 +135,7 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <label htmlFor="relationships" className="form-label">Relationships</label>
-
-                        <table>
-                        <tbody>
-                        <tr>
-                            <td><input type="text"
-                                        id="reltype"
-                                        name="reltype"
-                                        className="form-control"
-                                        onChange={onRelChange}
-                                        value={relState.reltype}/></td>
-                            <td>
-                                <select name="target"
-                                        id="target"
-                                        className="form-select"
-                                        aria-label="relationship target"
-                                        onChange={onRelChange}>
-                                        <option value="">Select relationship link</option>
-                                    {rel_dropdown}
-                                </select>
-                            </td>
-                        </tr>
-                        </tbody>
-                        </table>
-
-				    {/* <Relationships relationships={state.relationships}/> */}
+                <Relationships onChange={onRelChange} relationships={relState}/> 
                 <label htmlFor="notes" className="form-label">Private Notes</label>
 				<input type="text"
 						name="notes"
