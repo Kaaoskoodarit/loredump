@@ -1,9 +1,15 @@
 // Component that shows a normal list entry, with "remove" and "edit" buttons
 const Row = (props) => {
 	
+
+	//className="nav-link"
 	return(
+			
 		<tr>
-			<td>{props.page.title}</td>
+			<td><button onClick={() => props.handleNavigate(props.page.id)}
+				className="btn btn-primary"
+				>{props.page.title}</button>
+			</td>
 			<td>{props.page.image}</td>
 			<td>{props.page.summary}</td>
 			<td><button onClick={() => props.changeMode("edit",props.index)}
@@ -14,6 +20,7 @@ const Row = (props) => {
 				>Remove</button></td>
 			
 		</tr>
+		
 	)
 }
 

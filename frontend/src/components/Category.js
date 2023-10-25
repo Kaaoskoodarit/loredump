@@ -3,7 +3,9 @@ import Row from '../components/Row';
 import RemoveRow from '../components-old//RemoveRow';
 import EditRow from '../components-old//EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {remove,edit} from '../actions/pageActions';
+import {getPage,remove,edit} from '../actions/pageActions';
+import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
+import LorePage from './LorePage';
 
 
 
@@ -25,6 +27,7 @@ const Category = (props) => {
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode
@@ -47,6 +50,10 @@ const Category = (props) => {
 				editIndex:-1
 			})
 		}
+	}
+	const handleNavigate = (id) => {
+		navigate("/api/lorepage/"+id)
+		dispatch(getPage(appState.token,id));
 	}
 	
 	const removePage = (id) => {
@@ -71,7 +78,7 @@ const Category = (props) => {
 			)
 		}
 		return(
-			<Row key={page.id} page={page} index={index} changeMode={changeMode}/>
+			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
 		)
 	})
 	return(
