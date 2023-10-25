@@ -29,6 +29,7 @@ except Exception as e:
 # routes for api/users.py
 @app.route('/api/users', methods=['GET', 'POST'])
 def users():
+    #Get User by username: (delete this route later)
     if request.method == 'GET':
         users_collection = db['users']
         user_data = users_collection.find_one({'username': request.json['username']})
@@ -37,7 +38,7 @@ def users():
         else:
             return jsonify({'error': 'User not found'}), 404
             
-        
+    # Register new user:
     elif request.method == 'POST':
         try:
             username = request.json['username']
