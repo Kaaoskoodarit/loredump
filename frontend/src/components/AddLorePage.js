@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add} from '../actions/pageActions';
-import Relationships from './Relationships';
+// import Relationships from './Relationships';
 
 const AddLorePage = (props) => {
 	
@@ -15,6 +15,11 @@ const AddLorePage = (props) => {
         notes:""
 	})
 
+    const [relState,setRelState] = useState({
+        reltype:"",
+        target:""
+    })
+
     const token = useSelector(state => state.login.token);
     const dispatch = useDispatch();
 
@@ -23,6 +28,7 @@ const AddLorePage = (props) => {
     let categories = []
     defaultCategories.map(category => {
         categories.push(<option  key={category} value={category.toLocaleLowerCase()}>{category}</option>)
+        return;
     });
 
 
@@ -32,6 +38,7 @@ const AddLorePage = (props) => {
 
     lorepages.map((lore) => {
        rel_dropdown.push(<option key={lore.name} value={lore.id}>{lore.name}</option>)
+       return;
     });
         
     const onChange = (event) => {
@@ -46,19 +53,17 @@ const AddLorePage = (props) => {
 
     //THIS DOES NOT WORK YET; NEED TO FIGURE OUT HOW TO correctly iterate elements in relationships
     const onRelChange = (event) => {
-        setState((state) => {
+        setRelState((relState) => {
             return {
-                ...state,
-                relationships :[{
-                    [event.target.name]:event.target.value
-                }]
+                ...relState,
+                [event.target.name]:event.target.value
             }
-            
         })
     }
     
     const onSubmit = (event) => {
         event.preventDefault();
+        state.relationships.push(relState)
         let page = {
             ...state,
             creator: props.user
@@ -73,6 +78,10 @@ const AddLorePage = (props) => {
             description:"",
             relationships:[],
             notes:""
+        })
+        setRelState({
+            reltype:"",
+            target:""
         })
     }
     
@@ -138,9 +147,9 @@ const AddLorePage = (props) => {
                                         name="reltype"
                                         className="form-control"
                                         onChange={onRelChange}
-                                        value={state.reltype}/></td>
+                                        value={relState.reltype}/></td>
                             <td>
-                            <select name="target"
+                                <select name="target"
                                         id="target"
                                         className="form-select"
                                         aria-label="relationship target"
