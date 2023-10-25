@@ -6,6 +6,7 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import AddLorePage from './components/AddLorePage';
 import Category from './components/Category';
+import LorePage from './components/LorePage';
 
 // Main App component
 function App() {
@@ -51,6 +52,7 @@ function App() {
 					<Route path="/new-page" element={<AddLorePage user={appState.user} />} />
 					<Route path="/form" element={<ShoppingForm />} />
 					<Route path="/api/lorepage" element={<Category />} />
+					<Route path="/api/lorepage/*" element={<LorePage />} />
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>
 			</div>
