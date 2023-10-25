@@ -94,6 +94,10 @@ class World:
         # TODO: Implement delete method to delete the world from the database
         pass
 
+    def update(self):
+        # TODO: Implement update method to update the lore page in the database
+        pass
+
 # Define Category model
 class Category:
     def __init__(self, id, creator, name, image, description, pages, private_notes):
