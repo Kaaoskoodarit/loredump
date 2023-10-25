@@ -110,7 +110,10 @@ export const add = (token,page) => {
 		if(response.ok) {
 			// If fetch successful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.ADD_PAGE_SUCCESS));
+			// Get updated list
 			dispatch(getList(token));
+			// Get new page
+			dispatch(getPage(token,response.id))
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -140,6 +143,7 @@ export const remove = (token,id) => {
 		if(response.ok) {
 			// If fetch succesful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.REMOVE_PAGE_SUCCESS));
+			// Get updated list
 			dispatch(getList(token));
 		} else {
 			if(response.status === 403) {
