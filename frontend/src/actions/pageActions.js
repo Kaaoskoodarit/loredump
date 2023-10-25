@@ -90,7 +90,7 @@ export const getPage = (token,id) => {
 }
 
 // (async) function that dispatches a "add item" action to the reducer
-export const add = (token,item) => {
+export const add = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
@@ -98,7 +98,7 @@ export const add = (token,item) => {
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":JSON.stringify(item)
+			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
 		const response = await fetch("/api/lorepage",request);
@@ -152,7 +152,7 @@ export const remove = (token,id) => {
 }
 
 // (async) function that dispatches a "edit item" action to the reducer
-export const edit = (token,item) => {
+export const edit = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
@@ -160,10 +160,10 @@ export const edit = (token,item) => {
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":JSON.stringify(item)
+			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage/"+item.id,request);
+		const response = await fetch("/api/lorepage/"+page.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
