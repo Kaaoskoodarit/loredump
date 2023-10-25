@@ -85,7 +85,7 @@ router.put("/lorepage/:id",function(req,res) {
         return res.status(400).json({"Message":"Bad Request"})
     }
     let page = {                  
-        "creator":req.body.creator,
+        "creator":req.session.user,
         "title":req.body.title,
         "category":req.body.category,
         "image":req.body.image,            // image url
