@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
-import {CategoryRows, CatRow} from './CategoryRows'
+import {CategoryRows} from './CategoryRows'
 
 const AddLorePage = (props) => {
 	
@@ -22,16 +22,6 @@ const AddLorePage = (props) => {
         reltype:"",
         target:""
     })
-
-    const[categoryState,setCategoryState] = useState({default:"Uncategorised"})
-
-    // const[categoryRows,setCategoryRows] = useState([])
-
-    // const appState = useSelector((state) => {
-    //     return {
-	// 		stopLoading:state.login.stopLoading
-	// 	}
-    //     })
     
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
@@ -50,6 +40,7 @@ const AddLorePage = (props) => {
         })
     }
 
+    //OnChange function specifically for Categories
     const onCatChange = (event) => {
 
         let tempArr =state.categories
@@ -64,6 +55,7 @@ const AddLorePage = (props) => {
 
     }
 
+    //OnChange function specifically for Relationships
     const onRelChange = (event) => {
         setRelState((relState) => {
             return {
@@ -118,10 +110,7 @@ const AddLorePage = (props) => {
                     <div id="title-help" className="form-text">
                     This will be the title of your Lore Page!
                     </div>
-                <CategoryRows state={state} setState={setState} categoryState={categoryState} onChange={onCatChange}/>
-                {/* {categoryrows} */}
-
-						{/* value={state.categories}/> */}
+                <CategoryRows state={state} setState={setState} onChange={onCatChange}/>
                 <br/>
                 <br/>
                 <label htmlFor="image" className="form-label">Image link</label>
