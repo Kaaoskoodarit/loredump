@@ -34,16 +34,6 @@ const AddLorePage = (props) => {
         categories.push(<option  key={category} value={category.toLocaleLowerCase()}>{category}</option>)
         return;
     });
-
-
-    const lorepages = [{name: "Jane", id:2},{name: "Mark", id:3},{name: "Paul", id:4}]
-
-    const rel_dropdown =[]
-
-    lorepages.map((lore) => {
-       rel_dropdown.push(<option key={lore.name} value={lore.id}>{lore.name}</option>)
-       return;
-    });
         
     const onChange = (event) => {
         setState((state) => {

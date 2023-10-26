@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import Row from '../components/Row';
-import RemoveRow from '../components-old//RemoveRow';
+import RemoveRow from '../components/RemoveRow';
 import EditRow from '../components-old//EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,remove,edit} from '../actions/pageActions';
@@ -69,7 +69,7 @@ const Category = (props) => {
 	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {
 			return(
-				<RemoveRow key={page.id} page={page} changeMode={changeMode} removePage={removePage}/>
+				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
 			)
 		}
 		if(index === state.editIndex) {
