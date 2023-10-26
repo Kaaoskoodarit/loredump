@@ -1,4 +1,4 @@
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
@@ -23,7 +23,6 @@ const AddLorePage = (props) => {
 
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
-    const liststate = useSelector(state => state.page.list);
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -64,6 +63,7 @@ const AddLorePage = (props) => {
         })
     }
     
+
     const onSubmit = (event) => {
         event.preventDefault();
         state.relationships.push(relState)
@@ -71,10 +71,10 @@ const AddLorePage = (props) => {
             ...state,
             creator: props.user
         }
-        dispatch(getPage(token,pagestate.id));
-        // Redirect to the new page
-        navigate("/api/lorepage/"+pagestate.id);
         dispatch(add(token,page));
+        // Redirect to the new page
+        dispatch(getPage(token,pagestate.id));
+        navigate("/api/lorepage/"+pagestate.id);
         setState({
             title:"",
             categories:[],
@@ -89,15 +89,7 @@ const AddLorePage = (props) => {
             target:""
         })
     }
-    /*
-    // Redirect to the new page
-    useEffect(() => {
-        if(pagestate){
-            dispatch(getPage(token,pagestate.id));
-            navigate("/api/lorepage/"+pagestate.id);
-        }     
-    },[liststate])
-    */
+
     return (
         <>
         <div style={{

@@ -113,7 +113,8 @@ export const add = (token,page) => {
 			// Get updated list
 			dispatch(getList(token));
 			// Get new page
-			dispatch(getPage(token,response.id))
+			const newpage = await response.json();
+			dispatch(getPage(token,newpage.id))
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
