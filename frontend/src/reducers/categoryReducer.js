@@ -2,8 +2,8 @@ import * as actionConstants from '../actions/actionConstants';
 
 // Check if we have a state stored in sessionStorage
 const getInitialState = () => {
-	if(sessionStorage.getItem("pagestate")) {
-		let state = JSON.parse(sessionStorage.getItem("pagestate"));
+	if(sessionStorage.getItem("categorystate")) {
+		let state = JSON.parse(sessionStorage.getItem("categorystate"));
 		return state;
 	} else {
 		return {
@@ -16,15 +16,15 @@ const getInitialState = () => {
 
 // Save to sessionStorage
 const saveToStorage = (state) => {
-	sessionStorage.setItem("pagestate",JSON.stringify(state));
+	sessionStorage.setItem("categorystate",JSON.stringify(state));
 }
 
 // Initialize state
 const initialState = getInitialState();
 
 // Reducer to handle shopping actions
-const pageReducer = (state = initialState,action) => {
-	console.log("pageReducer,action",action);
+const categoryReducer = (state = initialState,action) => {
+	console.log("categoryReducer,action",action);
 	let tempState = {
 		...state
 	}
@@ -34,29 +34,29 @@ const pageReducer = (state = initialState,action) => {
 				...state,
 				error:""
 			}
-		case actionConstants.FETCH_LIST_SUCCESS:
+		case actionConstants.FETCH_CATEGORYLIST_SUCCESS:
 			tempState = {
 				...state,
 				list:action.list
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.FETCH_PAGE_SUCCESS:
+		case actionConstants.FETCH_CATEGORY_SUCCESS:
 			tempState = {
 				...state,
 				page:action.page
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.ADD_PAGE_SUCCESS:
-		case actionConstants.REMOVE_PAGE_SUCCESS:
-		case actionConstants.EDIT_PAGE_SUCCESS:
+		case actionConstants.ADD_CATEGORY_SUCCESS:
+		case actionConstants.REMOVE_CATEGORY_SUCCESS:
+		case actionConstants.EDIT_CATEGORY_SUCCESS:
 			return state;
-		case actionConstants.FETCH_LIST_FAILED:
-		case actionConstants.FETCH_PAGE_FAILED:
-		case actionConstants.ADD_PAGE_FAILED:
-		case actionConstants.REMOVE_PAGE_FAILED:
-		case actionConstants.EDIT_PAGE_FAILED:
+		case actionConstants.FETCH_CATEGORYLIST_FAILED:
+		case actionConstants.FETCH_CATEGORY_FAILED:
+		case actionConstants.ADD_CATEGORY_FAILED:
+		case actionConstants.REMOVE_CATEGORY_FAILED:
+		case actionConstants.EDIT_CATEGORY_FAILED:
 			tempState = {
 				...state,
 				error:action.error
@@ -67,7 +67,7 @@ const pageReducer = (state = initialState,action) => {
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {
 				list:[],
-				page:{},
+                page:{},
 				error:""
 			}
 			saveToStorage(tempState);
@@ -77,4 +77,4 @@ const pageReducer = (state = initialState,action) => {
 	}
 }
 
-export default pageReducer;
+export default categoryReducer;

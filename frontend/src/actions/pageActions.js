@@ -4,7 +4,7 @@ import * as actionConstants from './actionConstants';
 //ASYNC THUNKS
 
 // (async) function that dispatches a getList action to the reducer
-// This displays the shopping list
+// This displays the list of pages
 export const getList = (token) => {
 	return async (dispatch) => {
 		// Set request
@@ -16,7 +16,7 @@ export const getList = (token) => {
 		}
 		// Start loading
 		dispatch(loading());
-		// Try to fetch the shopping list from the server, wait for response
+		// Try to fetch the page list from the server, wait for response
 		const response = await fetch("/lorepage",request);
 		// Stop loading
 		dispatch(stopLoading());
@@ -47,7 +47,6 @@ export const getList = (token) => {
 }
 
 // (async) function that dispatches a getPage action to the reducer
-// This displays the shopping list
 export const getPage = (token,id) => {
 	return async (dispatch) => {
 		// Set request
@@ -59,7 +58,7 @@ export const getPage = (token,id) => {
 		}
 		// Start loading
 		dispatch(loading());
-		// Try to fetch the shopping list from the server, wait for response
+		// Try to fetch the page from the server, wait for response
 		const response = await fetch("/lorepage/"+id,request);
 		// Stop loading
 		dispatch(stopLoading());
@@ -71,12 +70,12 @@ export const getPage = (token,id) => {
 		if(response.ok) {
 			// Try to parse response from JSON, wait for result
 			const page = await response.json();
-			// If no list, error
+			// If no page, error
 			if(!page) {
 				dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to parse page information. Try again later."))
 				return;
 			}
-			// If list found, show it!
+			// If page found, show it!
 			dispatch(fetchPageSuccess(actionConstants.FETCH_PAGE_SUCCESS,page));
 		// If response not ok, error
 		} else {
@@ -89,7 +88,7 @@ export const getPage = (token,id) => {
 	}
 }
 
-// (async) function that dispatches a "add item" action to the reducer
+// (async) function that dispatches a "add page" action to the reducer
 export const add = (token,page) => {
 	return async (dispatch) => {
 		let request = {
@@ -125,7 +124,7 @@ export const add = (token,page) => {
 	}
 }
 
-// (async) function that dispatches a "remove item" action to the reducer
+// (async) function that dispatches a "remove page" action to the reducer
 export const remove = (token,id) => {
 	return async (dispatch) => {
 		let request = {
@@ -156,7 +155,7 @@ export const remove = (token,id) => {
 	}
 }
 
-// (async) function that dispatches a "edit item" action to the reducer
+// (async) function that dispatches a "edit page" action to the reducer
 export const edit = (token,page) => {
 	return async (dispatch) => {
 		let request = {
@@ -192,28 +191,28 @@ export const edit = (token,page) => {
 
 // Simple functions that return an "action" object, with
 // a "type" parameter, and optionally others as well, as needed
-const fetchListSuccess = (list) => {
+export const fetchListSuccess = (list) => {
 	return {
 		type:actionConstants.FETCH_LIST_SUCCESS,
 		list:list
 	}
 }
 
-const fetchListFailed = (error) => {
+export const fetchListFailed = (error) => {
 	return {
 		type:actionConstants.FETCH_LIST_FAILED,
 		error:error
 	}
 }
 
-const fetchPageSuccess = (type,page) => {
+export const fetchPageSuccess = (type,page) => {
 	return {
 		type:type,
 		page:page
 	}
 }
 
-const fetchPageFailed = (type,error) => {
+export const fetchPageFailed = (type,error) => {
 	return {
 		type:type,
 		error:error

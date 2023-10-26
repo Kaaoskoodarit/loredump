@@ -5,7 +5,7 @@ import Relationships from './Relationships';
 import {useNavigate} from 'react-router-dom';
 
 const AddLorePage = (props) => {
-	
+	// Set state for page
 	const [state,setState] = useState({
 		title:"",
 		categories:["Uncategorised"],
@@ -16,25 +16,30 @@ const AddLorePage = (props) => {
         notes:""
 	})
 
+    // Set state for relationships
     const [relState,setRelState] = useState({
         reltype:"",
         target:""
     })
 
+    // Get token and pagestate from the store
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
-    
+
+    // Use dispatch and navigate
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    // Make a list of categories: TEMP! Will be imported once such list exists
     const defaultCategories = ["Uncategorised","Characters","NPCs","Locations","Dates"]
-
+    
     let categories = []
     defaultCategories.map(category => {
         categories.push(<option  key={category} value={category.toLocaleLowerCase()}>{category}</option>)
         return;
     });
-        
+
+    // Handle normal onChange events    
     const onChange = (event) => {
         setState((state) => {
             return {
@@ -44,6 +49,7 @@ const AddLorePage = (props) => {
         })
     }
 
+    // Handle onChange events for relationships
     const onRelChange = (event) => {
         setRelState((relState) => {
             return {
@@ -53,18 +59,21 @@ const AddLorePage = (props) => {
         })
     }
     
-
+    // Handle onSubmit event
     const onSubmit = (event) => {
         event.preventDefault();
+        // Add relationships to state
         state.relationships.push(relState)
         let page = {
             ...state,
             creator: props.user
         }
+        // Add the new page to the database
         dispatch(add(token,page));
         // Redirect to the new page
         dispatch(getPage(token,pagestate.id));
         navigate("/lorepage/"+pagestate.id);
+        // Reset the state of the page and relationships
         setState({
             title:"",
             categories:[],

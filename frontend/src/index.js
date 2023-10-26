@@ -7,11 +7,13 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import loginReducer from './reducers/loginReducer';
 import pageReducer from './reducers/pageReducer';
+import categoryReducer from './reducers/categoryReducer';
 
 // Combine different reducers into one
 const rootReducer = combineReducers({
 	login:loginReducer,
-	page:pageReducer
+	page:pageReducer,
+  category:categoryReducer
 })
 
 // Create a store that contains the state of the app, and handles
