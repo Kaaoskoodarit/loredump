@@ -1,11 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add} from '../actions/pageActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
+import {CategoryRows, CatRow} from './CategoryRows'
 
 const AddLorePage = (props) => {
 	
+    //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
 		title:"",
 		categories:["Uncategorised"],
@@ -20,32 +22,27 @@ const AddLorePage = (props) => {
         reltype:"",
         target:""
     })
-    const [catState,setCatState] = useState(["Uncategorised"])
 
-    const[rowIncrement,setRowIncrement] = useState(0)
+    const[categoryState,setCategoryState] = useState({default:"Uncategorised"})
+
+    // const[categoryRows,setCategoryRows] = useState([])
 
     // const appState = useSelector((state) => {
     //     return {
 	// 		stopLoading:state.login.stopLoading
 	// 	}
     //     })
-
-
+    
     const token = useSelector(state => state.login.token);
     const dispatch = useDispatch();
 
-    const defaultCategories = ["Uncategorised","Characters","NPCs","Locations","Dates"]
-
-    let categories = []
-    defaultCategories.map(category => {
-        categories.push(<option  key={category} value={category.toLocaleLowerCase()}>{category}</option>)
-    });
-
-
+            //TO BE REPLACED WITH HOOKS TO ACTUAL LISTS
+    
     const lorepages = [{name: "Jane", id:2},{name: "Mark", id:3},{name: "Paul", id:4}]
 
     const rel_dropdown =[]
 
+    //Map each Page of Lore to an accessible list in Rel-dropdown
     lorepages.map((lore) => {
        rel_dropdown.push(<option key={lore.name} value={lore.id}>{lore.name}</option>)
     });
@@ -60,16 +57,21 @@ const AddLorePage = (props) => {
     }
 
     const onCatChange = (event) => {
-        setState((catState) => {
-            return [
-                ...catState,
-                event.target.value
-            ]        
-        })
+
+        let tempArr =state.categories
+        //event target = Select html element, ID HAS to be the index of the row
+        tempArr[event.target.id] = event.target.value
+        setState(() => {
+            return{ 
+                ...state,
+                [event.target.name]:tempArr
+               }
+            })
+
     }
 
     const onRelChange = (event) => {
-        setState((state) => {
+        setState(() => {
             return {
                 ...relState,
                 [event.target.name]:event.target.value
@@ -78,33 +80,8 @@ const AddLorePage = (props) => {
     }
     
 
-    const CategoryRow = (props) => {
-        return(
-        <>
-        <label htmlFor="categories" className="form-label">Categories</label>
-                <select name="categories"
-                        id="categories"
-                        className="form-select"
-                        // multiple
-                        aria-label="Select Categories"
-                        onChange={onCatChange}>
-                    {categories}
-                </select>
-                <button htmlFor="categories" type='button' onClick={() => handleThisClick()}
-				className="btn btn-primary"
-				>Add categories</button>
-        </>
-    )}
     
-    let categoryrows= [ <CategoryRow key="Default"/>]
 
-
-    const handleThisClick = (event) =>{
-        categoryrows.push(
-        <CategoryRow key={rowIncrement}/>            
-        )
-        setState(rowIncrement+1)
-    }
     //navigate(state.page.page.id) 
     //onsubmit ajaa vaan 1 kerran?
 
@@ -152,9 +129,12 @@ const AddLorePage = (props) => {
                     <div id="title-help" className="form-text">
                     This will be the title of your Lore Page!
                     </div>
-                {categoryrows}
+                <CategoryRows state={state} setState={setState} categoryState={categoryState} onChange={onCatChange}/>
+                {/* {categoryrows} */}
 
 						{/* value={state.categories}/> */}
+                <br/>
+                <br/>
                 <label htmlFor="image" className="form-label">Image link</label>
 				<input type="text"
 						name="image"
@@ -213,7 +193,7 @@ const AddLorePage = (props) => {
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>
         </div>
-        </>
+         </>
     )
 	
 }

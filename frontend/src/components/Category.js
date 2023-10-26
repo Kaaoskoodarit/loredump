@@ -27,6 +27,7 @@ const Category = (props) => {
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	// use navigate from react-router-dom
 	const navigate = useNavigate();
 	
 	// Function to change the state of the system, 
@@ -51,6 +52,8 @@ const Category = (props) => {
 			})
 		}
 	}
+
+	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
 		navigate("/api/lorepage/"+id)
 		dispatch(getPage(appState.token,id));
