@@ -1,9 +1,11 @@
+import os
 from flask import current_app, jsonify
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import jwt
+from jwt import encode
 
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
@@ -169,36 +171,42 @@ class LorePage:
 
 class Session:
     # TODO: Implement session class to handle user sessions
-    def __init__(self, user_id):
+    def __init__(self, id, user_id, token):
+        self.id = id
         self.user_id = user_id
-        self.token = None
-        self.expiration = None
-    
-    def create_token(self, secret_key, expiration_minutes=30):
-        # Set the expiration time for the token
-        self.expiration = datetime.utcnow() + timedelta(minutes=expiration_minutes)
-        
-        # Create the token payload
-        payload = {
-            'user_id': str(self.user_id),
-            'exp': self.expiration
-        }
-        
-        # Encode the token using the secret key
-        self.token = jwt.encode(payload, secret_key, algorithm='HS256')
+        self.token = token
     
     @staticmethod
-    def decode_token(token, secret_key):
+    def create_token(self, secret_key=os.environ.get('SECRET_KEY')):
+        # Create token
         try:
-            # Decode the token using the secret key
-            payload = jwt.decode(token, secret_key, algorithms=['HS256'])
-            
-            # Check if the token has expired
-            if datetime.utcnow() > datetime.fromisoformat(payload['exp']):
-                return None
-            
-            # Return the user ID from the token payload
-            return ObjectId(payload['user_id'])
-        except:
-            return None
+            token = encode({
+                'exp': datetime.utcnow() + timedelta(minutes=30),
+                'iat': datetime.utcnow(),
+                'user_id': self.id
+            }, secret_key)
+            return token
+        except Exception as e:
+            print(e)
+            return e
+    
+    @staticmethod
+    def decode_token(token, secret_key=os.environ.get('SECRET_KEY')):
+        # Decode token
+        try:
+            payload = jwt.decode(token, secret_key)
+            return payload['user_id']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
+        
+    # def save_token(self):
+    #     tokens = db['tokens']
+    #     token_data = {
+    #         'session_id': self.id,
+    #         'user_id': self.user_id,
+    #         'token': self.token
+    #     }
+    #     tokens.insert_one(token_data)
 

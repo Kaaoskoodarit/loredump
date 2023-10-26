@@ -67,9 +67,6 @@ def login():
             # Check if password is correct
             if not user.check_password(password):
                 return jsonify({'error': 'Invalid password'}), 401
-            # Create access token
-            token = Session.create_token(app.config['SECRET_KEY'])
-            print(token)
             return jsonify({'token': token.decode('UTF-8')})
         except Exception as e:
             return jsonify({'error': str(e)})
