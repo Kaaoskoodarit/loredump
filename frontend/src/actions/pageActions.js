@@ -17,7 +17,7 @@ export const getList = (token) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/lorepage",request);
+		const response = await fetch("/lorepage",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -60,7 +60,7 @@ export const getPage = (token,id) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/lorepage/"+id,request);
+		const response = await fetch("/lorepage/"+id,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -101,7 +101,7 @@ export const add = (token,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage",request);
+		const response = await fetch("/lorepage",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
@@ -135,7 +135,7 @@ export const remove = (token,id) => {
 			}
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage/"+id,request);
+		const response = await fetch("/lorepage/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
@@ -168,7 +168,7 @@ export const edit = (token,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage/"+page.id,request);
+		const response = await fetch("/lorepage/"+page.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))

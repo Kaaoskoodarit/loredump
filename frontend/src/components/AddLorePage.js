@@ -64,7 +64,7 @@ const AddLorePage = (props) => {
         dispatch(add(token,page));
         // Redirect to the new page
         dispatch(getPage(token,pagestate.id));
-        navigate("/api/lorepage/"+pagestate.id);
+        navigate("/lorepage/"+pagestate.id);
         setState({
             title:"",
             categories:[],

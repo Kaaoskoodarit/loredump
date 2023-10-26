@@ -53,7 +53,7 @@ const Category = (props) => {
 	}
 	const handleNavigate = (id) => {
 		dispatch(getPage(appState.token,id));
-		navigate("/api/lorepage/"+id)
+		navigate("/lorepage/"+id)
 	}
 	
 	const removePage = (id) => {

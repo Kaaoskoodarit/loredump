@@ -207,7 +207,7 @@ app.post("/logout",function(req,res) {
 // if that return "next(), go to shoppingrote"
 // This works on route "/api", the register, login and logout have their
 // own routes!
-app.use("/api",isUserLogged,loreroute);                  
+app.use("/",isUserLogged,loreroute);                  
 
 console.log("Running in port ",port);           // Just to see that we are running the server
 
