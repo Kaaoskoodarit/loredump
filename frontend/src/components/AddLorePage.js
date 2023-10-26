@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add} from '../actions/pageActions';
+import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import {CategoryRows, CatRow} from './CategoryRows'
@@ -34,18 +34,12 @@ const AddLorePage = (props) => {
     //     })
     
     const token = useSelector(state => state.login.token);
-    const dispatch = useDispatch();
-
-            //TO BE REPLACED WITH HOOKS TO ACTUAL LISTS
+    const pagestate = useSelector(state => state.page.page);
     
-    const lorepages = [{name: "Jane", id:2},{name: "Mark", id:3},{name: "Paul", id:4}]
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const rel_dropdown =[]
-
-    //Map each Page of Lore to an accessible list in Rel-dropdown
-    lorepages.map((lore) => {
-       rel_dropdown.push(<option key={lore.name} value={lore.id}>{lore.name}</option>)
-    });
+   
         
     const onChange = (event) => {
         setState((state) => {
@@ -71,7 +65,7 @@ const AddLorePage = (props) => {
     }
 
     const onRelChange = (event) => {
-        setState(() => {
+        setRelState((relState) => {
             return {
                 ...relState,
                 [event.target.name]:event.target.value
@@ -80,24 +74,17 @@ const AddLorePage = (props) => {
     }
     
 
-    
-
-    //navigate(state.page.page.id) 
-    //onsubmit ajaa vaan 1 kerran?
-
     const onSubmit = (event) => {
         event.preventDefault();
+        state.relationships.push(relState)
         let page = {
             ...state,
             creator: props.user
         }
         dispatch(add(token,page));
-        //täs kohtaa haluan et vaastedes redirect sille LorePagelle ku painat submit
-
-        // const navigate = useNavigate();
-        // if(appState.stopLoading) {
-        //     navigate("/api/lorepage/"+appState.page.page.id)
-        // }
+        // Redirect to the new page
+        dispatch(getPage(token,pagestate.id));
+        navigate("/lorepage/"+pagestate.id);
         setState({
             title:"",
             categories:[],
@@ -107,10 +94,12 @@ const AddLorePage = (props) => {
             relationships:[],
             notes:""
         })
+        setRelState({
+            reltype:"",
+            target:""
+        })
     }
-    
 
-    
     return (
         <>
         <div style={{
@@ -156,32 +145,7 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <label htmlFor="relationships" className="form-label">Relationships</label>
-
-                        <table>
-                        <tbody>
-                        <tr>
-                            <td><input type="text"
-                                        id="reltype"
-                                        name="reltype"
-                                        className="form-control"
-                                        onChange={onRelChange}
-                                        value={state.reltype}/></td>
-                            <td>
-                            <select name="target"
-                                        id="target"
-                                        className="form-select"
-                                        aria-label="relationship target"
-                                        onChange={onRelChange}>
-                                        <option value="">Select relationship link</option>
-                                    {rel_dropdown}
-                                </select>
-                            </td>
-                        </tr>
-                        </tbody>
-                        </table>
-
-				    {/* <Relationships relationships={state.relationships}/> */}
+                <Relationships onChange={onRelChange} relationships={relState}/> 
                 <label htmlFor="notes" className="form-label">Private Notes</label>
 				<input type="text"
 						name="notes"

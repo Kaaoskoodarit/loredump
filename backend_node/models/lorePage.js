@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 let Schema = mongoose.Schema({
     creator:{type:String,index:true},
     title:{type:String,index:true},
-    category:{type:[String],index:true},
+    categories:{type:[String],index:true},
     image:String,            // image url
     summary: String,
     description: String,

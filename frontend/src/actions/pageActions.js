@@ -17,7 +17,7 @@ export const getList = (token) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/lorepage",request);
+		const response = await fetch("/lorepage",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -60,7 +60,7 @@ export const getPage = (token,id) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/lorepage/"+id,request);
+		const response = await fetch("/lorepage/"+id,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -90,7 +90,7 @@ export const getPage = (token,id) => {
 }
 
 // (async) function that dispatches a "add item" action to the reducer
-export const add = (token,item) => {
+export const add = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
@@ -98,10 +98,10 @@ export const add = (token,item) => {
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":JSON.stringify(item)
+			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage",request);
+		const response = await fetch("/lorepage",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
@@ -110,7 +110,11 @@ export const add = (token,item) => {
 		if(response.ok) {
 			// If fetch successful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.ADD_PAGE_SUCCESS));
+			// Get updated list
 			dispatch(getList(token));
+			// Get new page
+			const newpage = await response.json();
+			dispatch(getPage(token,newpage.id))
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -131,7 +135,7 @@ export const remove = (token,id) => {
 			}
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage/"+id,request);
+		const response = await fetch("/lorepage/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
@@ -140,6 +144,7 @@ export const remove = (token,id) => {
 		if(response.ok) {
 			// If fetch succesful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.REMOVE_PAGE_SUCCESS));
+			// Get updated list
 			dispatch(getList(token));
 		} else {
 			if(response.status === 403) {
@@ -152,7 +157,7 @@ export const remove = (token,id) => {
 }
 
 // (async) function that dispatches a "edit item" action to the reducer
-export const edit = (token,item) => {
+export const edit = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
@@ -160,10 +165,10 @@ export const edit = (token,item) => {
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":JSON.stringify(item)
+			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/lorepage/"+item.id,request);
+		const response = await fetch("/lorepage/"+page.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))

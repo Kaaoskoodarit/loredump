@@ -51,8 +51,8 @@ function App() {
 					<Route path="/" element={<Category />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/form" element={<ShoppingForm />}/>
-					<Route path="/api/lorepage" element={<Category />}/>
-					<Route path="/api/lorepage/*" element={<LorePage />}/>
+					<Route path="/lorepage" element={<Category />}/>
+					<Route path="/lorepage/*" element={<LorePage />}/>
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</div>
