@@ -1,9 +1,8 @@
-import os
+import datetime, os, jwt
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, Response, jsonify, request
-from api.models import User
-from passlib.hash import sha256_crypt
+from api.models import User, Session
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -11,6 +10,7 @@ load_dotenv()
 uri = os.getenv("DOMAIN")
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # # Create a new client and connect to the server
 # client = MongoClient(uri, server_api=ServerApi('1'))
@@ -37,18 +37,44 @@ def users():
             return jsonify({'id': str(user_data['_id']), 'username': user_data['username']})
         else:
             return jsonify({'error': 'User not found'}), 404
-            
+
+@app.route('/register', methods=['POST'])
+def register():
     # Register new user:
-    elif request.method == 'POST':
+    if request.method == 'POST':
         try:
+            # Get username and password from request body
             username = request.json['username']
             password = request.json['password']
             user = User(username, password)
             user.register()
             return jsonify({'success': 'User successfully created'}), 200
         except Exception as e:
-            return jsonify({'error': str(e)}), 400
+            return jsonify({'error': str(e)}), 409
         
+@app.route('/login', methods=['POST'])
+def login():
+    # Login user:
+    if request.method == 'POST':
+        try:
+            # Get username and password from request body
+            username = request.json['username']
+            password = request.json['password']
+            user = User.get_by_username(username)
+            # Check if user exists
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+            # Check if password is correct
+            if not user.check_password(password):
+                return jsonify({'error': 'Invalid password'}), 401
+            # Create access token
+            token = Session.create_token(app.config['SECRET_KEY'])
+            print(token)
+            return jsonify({'token': token.decode('UTF-8')})
+        except Exception as e:
+            return jsonify({'error': str(e)})
+
+# TODO: Make it so that you can't search for other users by id
 @app.route('/api/users/<id>', methods=['GET', 'PUT', 'DELETE'])
 def get_user(id):
     if request.method == 'GET':
@@ -79,4 +105,4 @@ def get_user(id):
     
 
 if __name__ == "__main__":
-    app.run("127.0.0.1", port=5000, debug=True)
+    app.run("127.0.0.1", port=3001, debug=True)

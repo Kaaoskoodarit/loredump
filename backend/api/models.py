@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import current_app, jsonify
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,8 +11,15 @@ db = client['LoreDump']
 
 # Define User model
 class User:
-    def __init__(self, id, username, password):
-        self.id = id  # is needed?
+
+    # User Schema:
+    id: ObjectId
+    username: str
+    password: str
+    required_fields = ['username', 'password']
+    unique_fields = ['username']
+
+    def __init__(self, username, password):
         self.username = username
         self.password = password
     
@@ -22,6 +29,7 @@ class User:
         # Does user already exist?
         existing_user = users_collection.find_one({'username': self.username})
         if existing_user:
+            print("User already exists")
             raise Exception('User already exists')
         
         # Validate username and password
@@ -69,9 +77,23 @@ class User:
             'password': self.password
         }
         users_collection.update_one({'_id': ObjectId(self.id)}, {'$set': user_data})
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
     
     # TODO: Implement delete method. Must have session and JWT data to delete user. User can only delete their own account.
     def delete(self):
+        users_collection = db['users']
+        result = users_collection.delete_one({'_id': ObjectId(self.id), 'username': self.username})
+        return result.deleted_count == 1
+
+
+    # TODO: Implement login method. Must return JWT token.
+    def login(self):
+        pass
+
+    #TODO: Implement logout method. Must delete JWT token.
+    def logout(self):
         pass
     
 
