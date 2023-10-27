@@ -1,5 +1,3 @@
-import {useSelector} from 'react-redux';
-
 export const CategoryRows = (props) => {
 
     //PROPS passed information
@@ -7,22 +5,15 @@ export const CategoryRows = (props) => {
     const state = props.state
     const setState = props.setState
 
-    const categorylist = useSelector(state => state.category.list);
-
     //CODE TO BE REPLACED LATER - - This is for testing
-    /*
     const defaultCategories = ["Characters","NPCs","Locations","Dates"]
-    
+
     let categoriesDropdown = []
     defaultCategories.map(category => {
         categoriesDropdown.push(<option key={category} value={category}>{category}</option>)
     });
-    */
-    // Create category dropdown menu!
-    let categoriesDropdown = categorylist.map(category => {
-        return <option key={category.id} value={category.id}>{category.title}</option>
-    })
     
+
     const addCatRow = () => {
         setState((state)=>{
             //add one "" entry to the end of state Categories 
@@ -32,14 +23,6 @@ export const CategoryRows = (props) => {
                 categories:tempCats
             }
         })
-        //this is not used apparently???
-        //since state automagically gets mapped to correct rows you don't actually
-        //have to increase or decrease amnt of rows :)))
-
-        // rows.push(
-        //     <CatRow setState={setState} index={rowIncrement}/>
-        //         )
-
     }
 
     const removeCatRow = (index) => {
@@ -54,6 +37,7 @@ export const CategoryRows = (props) => {
     }
 
 
+    //Handle Clicking for buttons in Category Select
     const handleClick = (event,index) =>{
         if (event==="ADD"){
             //console.log("ADDING");
@@ -70,21 +54,9 @@ export const CategoryRows = (props) => {
 
         let index = props.index
 
-        // Gets the Title of a category based on its ID
-        const getCategoryTitle = (selected) => {
-            for(let i = 0;i<categorylist.length;i++) {
-                if(categorylist[i].id === selected) {
-                    return categorylist[i].title;
-                }
-            }
-            return selected;
-        }
-        let categoryTitle = getCategoryTitle(state.categories[index])
-
         //ADDING DEFAULT TEXT TO CATEGORY ROWS IF NEWLY ADDED ("")
-        let selectedText = state.categories[index] !== "" ? categoryTitle : "Select a Category"
-
-        
+        let selectedText = state.categories[index] !== "" ? state.categories[index] : "Select a Category"
+    
         //ONLY ADD REMOVE BUTTONS TO ROWS AFTER THE INITAL ONE
         let removeButton;
         if (index > 0){
@@ -95,6 +67,7 @@ export const CategoryRows = (props) => {
                 </td>
             )
         } 
+        
 
         return(
             <tr key={index}>

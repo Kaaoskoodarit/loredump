@@ -8,16 +8,17 @@ import * as actionConstants from './actionConstants';
 // if "mode" = names, only get list of names+ids
 export const getCategoryList = (token,mode) => {
 	return async (dispatch) => {
+		let request = {}
 		// Set request
         if(!mode) {
-            let request = {
+            request = {
                 "method":"GET",
                 "headers":{
                     "token":token
                 }
             }
         } else {
-            let request = {
+            request = {
                 "method":"GET",
                 "headers":{
                     "token":token,
@@ -179,7 +180,7 @@ export const edit = (token,category) => {
 			"body":JSON.stringify(category)
 		}
 		dispatch(loading());
-		const response = await fetch("/category/"+page.id,request);
+		const response = await fetch("/category/"+category.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))

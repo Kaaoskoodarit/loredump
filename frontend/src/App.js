@@ -15,7 +15,9 @@ function App() {
 	const appState = useSelector((state) => {
 		let error = state.page.error;
 		// If there is an error in the login, set that as app error
-		if(state.login.error) {
+		if(state.category.error) {
+			error = state.category.error;
+		} else if(state.login.error) {
 			error = state.login.error;
 		}
 		// Returns only "isLogged", "error" and "loading" parts of state

@@ -4,6 +4,7 @@ import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import {CategoryRows} from './CategoryRows'
+import {getCategoryList} from '../actions/categoryActions';
 
 const AddLorePage = (props) => {
 	// Set state for page
@@ -45,7 +46,8 @@ const AddLorePage = (props) => {
 
     //OnChange function specifically for Categories
     const onCatChange = (event) => {
-
+        // update list of categories
+        dispatch(getCategoryList(token));
         let tempArr =state.categories
         //event target = Select html element, ID HAS to be the index of the row
         tempArr[event.target.id] = event.target.value
