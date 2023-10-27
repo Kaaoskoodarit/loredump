@@ -1,5 +1,6 @@
 import * as actionConstants from './actionConstants';
 import {getList} from './pageActions';
+import {getCategoryList} from '../actions/categoryActions';
 
 //ASYNC THUNK
 
@@ -68,7 +69,8 @@ export const login = (user) => {
 			// display the user's shopping list
 			dispatch(loginSuccess(data.token));
 			dispatch(setUsername(user.username));
-			dispatch(getList(data.token));
+			dispatch(getList(data.token));			
+			dispatch(getCategoryList(data.token));			
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
