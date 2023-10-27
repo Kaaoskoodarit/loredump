@@ -18,14 +18,6 @@ export const CategoryRows = (props) => {
                 categories:tempCats
             }
         })
-        //this is not used apparently???
-        //since state automagically gets mapped to correct rows you don't actually
-        //have to increase or decrease amnt of rows :)))
-
-        // rows.push(
-        //     <CatRow setState={setState} index={rowIncrement}/>
-        //         )
-
     }
 
     const removeCatRow = (index) => {
@@ -40,6 +32,7 @@ export const CategoryRows = (props) => {
     }
 
 
+    //Handle Clicking for buttons in Category Select
     const handleClick = (event,index) =>{
 
         if (event==="ADD"){
@@ -61,6 +54,7 @@ export const CategoryRows = (props) => {
         let rows = [<>LOADING ERR</>]
 
 
+    //THE COMPONENT THAT GENERATES EACH ROW OF CATEGORIES
     const CatRow = (props) => {
 
         let index = props.index
@@ -97,8 +91,9 @@ export const CategoryRows = (props) => {
  
     }
 
+    //for each entry in state.categories, generate one row of CatRow
     rows = state.categories.map((category,index)=>{
-        return <CatRow value={category} index={index}/>
+        return <CatRow key={index+":"+category} value={category} index={index}/>
         })
 
 
@@ -108,7 +103,9 @@ export const CategoryRows = (props) => {
             <>
             <label htmlFor="categories" className="form-label">Add to Categories:</label>
                     <table name="categories">
+                        <tbody>
                         {rows}
+                        </tbody>
                     </table>
                     <button htmlFor="categories" type='button' onClick={() => handleClick("ADD",rows)}
                     className="btn btn-primary"
