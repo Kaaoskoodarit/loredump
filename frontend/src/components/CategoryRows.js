@@ -12,6 +12,7 @@ export const CategoryRows = (props) => {
     //CODE TO BE REPLACED LATER - - This is for testing
     /*
     const defaultCategories = ["Characters","NPCs","Locations","Dates"]
+    //list of categories that can be used on default, is missing ids tho
     
     let categoriesDropdown = []
     defaultCategories.map(category => {
