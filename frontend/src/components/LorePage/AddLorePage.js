@@ -1,9 +1,9 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add,getPage} from '../actions/pageActions';
+import {add,getPage} from '../../actions/pageActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
-import {CategoryRows} from './CategoryRows'
+import AssignCategories from './AssignCategories'
 
 const AddLorePage = (props) => {
 	// Set state for page
@@ -116,11 +116,11 @@ const AddLorePage = (props) => {
                     <div id="title-help" className="form-text">
                     This will be the title of your Lore Page!
                     </div>
-                <CategoryRows state={state} setState={setState} onChange={onCatChange}/>
+                <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
                 <br/>
                 <br/>
                 <label htmlFor="image" className="form-label">Image link</label>
-				<input type="text"
+				<input type="url"
 						name="image"
 						id="image"
 						className="form-control"

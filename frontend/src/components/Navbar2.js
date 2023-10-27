@@ -21,7 +21,7 @@ const Navbar2 = (props) => {
 				<p className="navbar-brand" style={{marginLeft:10}}>Treasure trove for all your Worldbuilding Lore</p>
 				<ul className="navbar-nav">
 					<li className="nav-item" style={{marginLeft:10}}>
-						<Link className="nav-link" to="/">All pages</Link>
+						<Link className="nav-link" to="/">Category</Link>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
 						<Link className="nav-link" to="/new-page">Create a new Lore Page</Link>

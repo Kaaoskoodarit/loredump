@@ -1,4 +1,4 @@
-export const CategoryRows = (props) => {
+export const AssignCategories = (props) => {
 
         //CODE TO BE REPLACED LATER - - This is for testing
         const defaultCategories = ["Characters","NPCs","Locations","Dates"]
@@ -113,4 +113,5 @@ export const CategoryRows = (props) => {
             </>
         )
         }
+export default AssignCategories;
         
