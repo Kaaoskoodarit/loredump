@@ -18,10 +18,13 @@ class User:
     id: ObjectId
     username: str
     password: str
+    # isLoggedin: bool
+    # last_seen: datetime
     required_fields = ['username', 'password']
     unique_fields = ['username']
 
     def __init__(self, username, password):
+        # self.id = id
         self.username = username
         self.password = password
     
@@ -56,13 +59,18 @@ class User:
             return User(user_data['username'], user_data['password'])
         else:
             return None
+
     
     @staticmethod
     def get_by_id(id):
         users_collection = db['users']
         user_data = users_collection.find_one({'_id': ObjectId(id)})
         if user_data:
-            return User(user_data['_id'], user_data['username'], user_data['password'])
+            return User(
+                id=str(user_data['_id']),
+                username=user_data['username'],
+                password=user_data['password'],
+            )
         else:
             return None
 
@@ -90,11 +98,19 @@ class User:
         return result.deleted_count == 1
 
 
-    # TODO: Implement login method. Must return JWT token.
+    # TODO: Implement login method.
     def login(self):
         pass
+    
+    def is_loggedin(self):
+        session_timer = 30 # minutes
+        if self.isLoggedin:
+            if datetime.utcnow() - self.last_seen > timedelta(minutes=session_timer):
+                self.isLoggedin = False
+        return self.isLoggedin
 
-    #TODO: Implement logout method. Must delete JWT token.
+
+    #TODO: Implement logout method.
     def logout(self):
         pass
     
@@ -169,44 +185,70 @@ class LorePage:
         # TODO: Implement update method to update the lore page in the database
         pass
 
-class Session:
-    # TODO: Implement session class to handle user sessions
-    def __init__(self, id, user_id, token):
-        self.id = id
-        self.user_id = user_id
-        self.token = token
+class Session: # turha?
+    # TODO: handle session expiration, like it's done in session.js file
+    # Create random token of 64 bytes
+    user: str
+    ttl: datetime
+    token: str
+
+    def __init__(self, user):
+        self.user = user
+        self.ttl = datetime.utcnow() + timedelta(minutes=30)
+        self.token = Session.createToken()
+
+    def createToken():
+        token = os.urandom(64).hex()
+        return token
     
-    @staticmethod
-    def create_token(self, secret_key=os.environ.get('SECRET_KEY')):
-        # Create token
-        try:
-            token = encode({
-                'exp': datetime.utcnow() + timedelta(minutes=30),
-                'iat': datetime.utcnow(),
-                'user_id': self.id
-            }, secret_key)
-            return token
-        except Exception as e:
-            print(e)
-            return e
+    def save(self):
+        sessions_collection = db['sessions']
+        session_data = {
+            'user': self.user,
+            'ttl': self.ttl,
+            'token': self.token
+        }
+        sessions_collection.insert_one(session_data)
+
+    # def __init__(self, id, user_id, token):
+    #     self.id = id
+    #     self.user_id = user_id
+    #     self.token = token
     
-    @staticmethod
-    def decode_token(token, secret_key=os.environ.get('SECRET_KEY')):
-        # Decode token
-        try:
-            payload = jwt.decode(token, secret_key)
-            return payload['user_id']
-        except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
-        except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
+    # @staticmethod
+    # def create_token(self, user, secret_key=os.environ.get('SECRET_KEY'), algorithm='HS256'):
+    #     # Create token
+    #     try:
+    #         token = encode({
+    #             'exp': datetime.utcnow() + timedelta(minutes=30),
+    #             'iat': datetime.utcnow(),
+    #             'user_id': user.id,
+    #             'username': self.username,
+    #             'password': self.password,
+    #             'algorithm': algorithm
+    #         }, secret_key)
+    #         return token
+    #     except Exception as e:
+    #         print(e)
+    #         return e
+    
+    # @staticmethod
+    # def decode_token(token, secret_key=os.environ.get('SECRET_KEY')):
+    #     # Decode token
+    #     try:
+    #         payload = jwt.decode(token, secret_key)
+    #         return payload['user_id']
+    #     except jwt.ExpiredSignatureError:
+    #         return 'Signature expired. Please log in again.'
+    #     except jwt.InvalidTokenError:
+    #         return 'Invalid token. Please log in again.'
         
-    # def save_token(self):
-    #     tokens = db['tokens']
-    #     token_data = {
-    #         'session_id': self.id,
-    #         'user_id': self.user_id,
-    #         'token': self.token
-    #     }
-    #     tokens.insert_one(token_data)
+    # # def save_token(self):
+    # #     tokens = db['tokens']
+    # #     token_data = {
+    # #         'session_id': self.id,
+    # #         'user_id': self.user_id,
+    # #         'token': self.token
+    # #     }
+    # #     tokens.insert_one(token_data)
 

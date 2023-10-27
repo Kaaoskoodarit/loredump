@@ -3,6 +3,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, Response, jsonify, request
 from api.models import User, Session
+from pprint import pprint
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -50,7 +51,7 @@ def register():
             user.register()
             return jsonify({'success': 'User successfully created'}), 200
         except Exception as e:
-            return jsonify({'error': str(e)}), 409
+            return jsonify({'error': str(e)})
         
 @app.route('/login', methods=['POST'])
 def login():
@@ -67,7 +68,9 @@ def login():
             # Check if password is correct
             if not user.check_password(password):
                 return jsonify({'error': 'Invalid password'}), 401
-            return jsonify({'token': token.decode('UTF-8')})
+            session = Session(username)
+            session.save()
+            return jsonify({'success': 'User successfully logged in'}), 200
         except Exception as e:
             return jsonify({'error': str(e)})
 
