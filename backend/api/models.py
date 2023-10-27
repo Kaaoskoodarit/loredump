@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import jwt
 from jwt import encode
+import secrets
 
 # Connect to MongoDB
 client = MongoClient('mongodb://localhost:27017/')
@@ -197,12 +198,23 @@ class Session: # turha?
         self.ttl = datetime.utcnow() + timedelta(minutes=30)
         self.token = Session.createToken()
 
+    @staticmethod
     def createToken():
-        token = os.urandom(64).hex()
+        # This method creates a random token of 64 bytes and converts it to hex
+        token = secrets.token_hex(32)
         return token
     
     def save(self):
+        # Save session to database
         sessions_collection = db['sessions']
+        # Check if session already exists
+        existing_session = sessions_collection.find_one({'user': self.user})
+        if existing_session:
+            # Update session
+            existing_session['ttl'] = self.ttl
+            existing_session['token'] = self.token
+            sessions_collection.update_one({'user': self.user}, {'$set': existing_session})
+            return
         session_data = {
             'user': self.user,
             'ttl': self.ttl,
@@ -210,7 +222,21 @@ class Session: # turha?
         }
         sessions_collection.insert_one(session_data)
 
-    # def __init__(self, id, user_id, token):
+    def get_token_of_user(self):
+        sessions_collection = db['sessions']
+        session_data = sessions_collection.find_one({'user': self.user})
+        # Check if session exists and if it's still valid
+        if session_data and session_data['ttl'] > datetime.utcnow():
+            # Add more time to token
+            session_data['ttl'] = datetime.utcnow() + timedelta(minutes=30)
+            sessions_collection.update_one({'user': self.user}, {'$set': session_data})
+            return session_data['token']
+        else:
+            # Delete session
+            sessions_collection.delete_one({'user': self.user})
+            return None
+
+    ''' def __init__(self, id, user_id, token):
     #     self.id = id
     #     self.user_id = user_id
     #     self.token = token
@@ -250,5 +276,5 @@ class Session: # turha?
     # #         'user_id': self.user_id,
     # #         'token': self.token
     # #     }
-    # #     tokens.insert_one(token_data)
+    # #     tokens.insert_one(token_data) '''
 
