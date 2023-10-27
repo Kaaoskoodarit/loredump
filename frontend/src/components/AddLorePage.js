@@ -2,10 +2,12 @@ import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add,getPage} from '../actions/pageActions';
 import Relationships from './Relationships';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {CategoryRows} from './CategoryRows'
 
 const AddLorePage = (props) => {
 	// Set state for page
+    //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
 		title:"",
 		categories:["Uncategorised"],
@@ -30,15 +32,7 @@ const AddLorePage = (props) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Make a list of categories: TEMP! Will be imported once such list exists
-    const defaultCategories = ["Uncategorised","Characters","NPCs","Locations","Dates"]
-    
-    let categories = []
-    defaultCategories.map(category => {
-        categories.push(<option  key={category} value={category.toLocaleLowerCase()}>{category}</option>)
-        return;
-    });
-
+   
     // Handle normal onChange events    
     const onChange = (event) => {
         setState((state) => {
@@ -49,7 +43,22 @@ const AddLorePage = (props) => {
         })
     }
 
-    // Handle onChange events for relationships
+    //OnChange function specifically for Categories
+    const onCatChange = (event) => {
+
+        let tempArr =state.categories
+        //event target = Select html element, ID HAS to be the index of the row
+        tempArr[event.target.id] = event.target.value
+        setState(() => {
+            return{ 
+                ...state,
+                [event.target.name]:tempArr
+               }
+            })
+
+    }
+
+    //OnChange function specifically for Relationships
     const onRelChange = (event) => {
         setRelState((relState) => {
             return {
@@ -107,17 +116,9 @@ const AddLorePage = (props) => {
                     <div id="title-help" className="form-text">
                     This will be the title of your Lore Page!
                     </div>
-                <label htmlFor="categories" className="form-label">Categories</label>
-                <select name="categories"
-                        id="categories"
-                        className="form-select"
-                        // multiple
-                        aria-label="Select Categories"
-                        onChange={onChange}>
-                    {categories}
-                </select>
-
-						{/* value={state.categories}/> */}
+                <CategoryRows state={state} setState={setState} onChange={onCatChange}/>
+                <br/>
+                <br/>
                 <label htmlFor="image" className="form-label">Image link</label>
 				<input type="text"
 						name="image"
@@ -151,7 +152,7 @@ const AddLorePage = (props) => {
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>
         </div>
-        </>
+         </>
     )
 	
 }
