@@ -73,6 +73,21 @@ def login():
             return jsonify({'success': 'User successfully logged in'}), 200
         except Exception as e:
             return jsonify({'error': str(e)})
+        
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Logout user:
+    if request.method == 'POST':
+        try:
+            # Get username from request body
+            username = request.json['username']
+            session = Session.get_by_username(username)
+            if not session:
+                return jsonify({'error': 'Session not found'}), 404
+            session.delete()
+            return jsonify({'success': 'User successfully logged out'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)})
 
 # TODO: Make it so that you can't search for other users by id
 @app.route('/api/users/<id>', methods=['GET', 'PUT', 'DELETE'])

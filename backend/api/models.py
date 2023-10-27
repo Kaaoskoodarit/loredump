@@ -30,6 +30,12 @@ class User:
         self.password = password
     
     def register(self):
+        """
+            Registers a new user in the database.
+
+            Raises:
+                Exception: If the user already exists or if the username and password are invalid.
+        """
         users_collection = db['users']
 
         # Does user already exist?
@@ -54,32 +60,62 @@ class User:
     
     @staticmethod
     def get_by_username(username):
-        users_collection = db['users']
-        user_data = users_collection.find_one({'username': username})
-        if user_data:
-            return User(user_data['username'], user_data['password'])
-        else:
-            return None
+            """
+            Retrieve a user from the database by their username.
+
+            Args:
+                username (str): The username of the user to retrieve.
+
+            Returns:
+                User or None: If a user with the given username is found in the database, a User object
+                representing that user is returned. Otherwise, None is returned.
+            """
+            users_collection = db['users']
+            user_data = users_collection.find_one({'username': username})
+            if user_data:
+                return User(user_data['username'], user_data['password'])
+            else:
+                return None
 
     
     @staticmethod
     def get_by_id(id):
-        users_collection = db['users']
-        user_data = users_collection.find_one({'_id': ObjectId(id)})
-        if user_data:
-            return User(
-                id=str(user_data['_id']),
-                username=user_data['username'],
-                password=user_data['password'],
-            )
-        else:
-            return None
+            """
+            Retrieve a user from the database by their ID.
+
+            Args:
+                id (str): The ID of the user to retrieve.
+
+            Returns:
+                User or None: The User object if the user is found, otherwise None.
+            """
+            users_collection = db['users']
+            user_data = users_collection.find_one({'_id': ObjectId(id)})
+            if user_data:
+                return User(
+                    id=str(user_data['_id']),
+                    username=user_data['username'],
+                    password=user_data['password'],
+                )
+            else:
+                return None
 
     def is_valid(self):
         return len(self.username) >= 4 and len(self.password) >= 8
     
     # TODO: Implement save method so that user can only edit their own account.
     def save(self):
+        """
+        Saves the user's data to the database.
+
+        Hashes the user's password before saving it to the database.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
         users_collection = db['users']
         # Hash the password before saving
         self.password = generate_password_hash(self.password)
@@ -90,9 +126,10 @@ class User:
         users_collection.update_one({'_id': ObjectId(self.id)}, {'$set': user_data})
 
     def check_password(self, password):
+        # check_password_hash returns True if the password matches the hash
         return check_password_hash(self.password, password)
     
-    # TODO: Implement delete method. Must have session and JWT data to delete user. User can only delete their own account.
+    # TODO: Implement delete method so that user can only delete their own account.
     def delete(self):
         users_collection = db['users']
         result = users_collection.delete_one({'_id': ObjectId(self.id), 'username': self.username})
@@ -100,18 +137,16 @@ class User:
 
 
     # TODO: Implement login method.
+    # Pakollinen?
     def login(self):
         pass
     
+    # TODO: Implement is_loggedin method. Should check if token is valid.
     def is_loggedin(self):
-        session_timer = 30 # minutes
-        if self.isLoggedin:
-            if datetime.utcnow() - self.last_seen > timedelta(minutes=session_timer):
-                self.isLoggedin = False
-        return self.isLoggedin
+        pass
 
 
-    #TODO: Implement logout method.
+    #TODO: Implement logout method. Delete token from database.
     def logout(self):
         pass
     
@@ -186,8 +221,7 @@ class LorePage:
         # TODO: Implement update method to update the lore page in the database
         pass
 
-class Session: # turha?
-    # TODO: handle session expiration, like it's done in session.js file
+class Session:
     # Create random token of 64 bytes
     user: str
     ttl: datetime
@@ -206,34 +240,40 @@ class Session: # turha?
     
     def save(self):
         # Save session to database
-        sessions_collection = db['sessions']
-        # Check if session already exists
-        existing_session = sessions_collection.find_one({'user': self.user})
-        if existing_session:
-            # Update session
-            existing_session['ttl'] = self.ttl
-            existing_session['token'] = self.token
-            sessions_collection.update_one({'user': self.user}, {'$set': existing_session})
-            return
-        session_data = {
-            'user': self.user,
-            'ttl': self.ttl,
-            'token': self.token
-        }
-        sessions_collection.insert_one(session_data)
+        try:
+            sessions_collection = db['sessions']
+            # Check if session already exists
+            existing_session = sessions_collection.find_one({'user': self.user})
+            if existing_session:
+                # Update session
+                existing_session['ttl'] = self.ttl
+                existing_session['token'] = self.token
+                sessions_collection.update_one({'user': self.user}, {'$set': existing_session})
+                return
+            session_data = {
+                'user': self.user,
+                'ttl': self.ttl,
+                'token': self.token
+            }
+            sessions_collection.insert_one(session_data)
+        except Exception as e:
+            print(e)
+            return jsonify({'error': f"Creation of token failed with error {str(e)}"})
 
     def get_token_of_user(self):
         sessions_collection = db['sessions']
         session_data = sessions_collection.find_one({'user': self.user})
         # Check if session exists and if it's still valid
         if session_data and session_data['ttl'] > datetime.utcnow():
-            # Add more time to token
+            # Add more time to token if it's still valid
             session_data['ttl'] = datetime.utcnow() + timedelta(minutes=30)
             sessions_collection.update_one({'user': self.user}, {'$set': session_data})
             return session_data['token']
         else:
             # Delete session
             sessions_collection.delete_one({'user': self.user})
+            # Log user out
+            User.logout(self.user)
             return None
 
     ''' def __init__(self, id, user_id, token):
