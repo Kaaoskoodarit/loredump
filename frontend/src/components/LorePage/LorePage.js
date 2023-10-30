@@ -9,13 +9,9 @@ import { useNavigate, Link } from 'react-router-dom';
 const LorePage = (props) => {
 	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
-		console.log(state.page.page)
-		console.log(state.page.page.categories.length)
-		console.log("category 0: ",state.page.page.categories[0])
 		return {
 			token:state.login.token,
             page:state.page.page,
-			parent_category:state.page.page.categories.length> 0? state.page.page.categories[0] : null,
 			categorylist: state.category.list
 		}
 	})
@@ -96,16 +92,19 @@ const LorePage = (props) => {
 	}
 	let categories_listed = page.categories.map((id,index)=>{
 		let categoryTitle = getCategoryTitle(id)
-		return <td key={id}>{index}: {categoryTitle}</td>}
+		return <td key={id}>
+			{index}:
+			<button onClick={() => handleNavigate(id)}
+			className="btn btn-primary"
+			>{categoryTitle}</button>
+			</td>}
 		)
 
 	return(
         <div>
             {/* {categoryList} */}
             {/* <Link to category */}
-		<button onClick={() => handleNavigate(appState.parent_category)}
-			className="btn btn-primary"
-			>Category</button>
+		
 		<table className="table table-striped">
 			<thead>
 				<tr>

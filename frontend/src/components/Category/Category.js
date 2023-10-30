@@ -24,6 +24,8 @@ const Category = (props) => {
 			links:state.category.page.links
 		}
 	})
+	const token = appState.token
+	const links = appState.links
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
@@ -55,38 +57,41 @@ const Category = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
-		dispatch(getPage(appState.token,id));
+		dispatch(getPage(token,id));
 		navigate("/lorepage/"+id)
 	}
 	
 	const removePage = (id) => {
-		dispatch(remove(appState.token,id));
+		dispatch(remove(token,id));
 		changeMode("cancel");
 	}
 	
 	const editPage = (page) => {
 		console.log("EDITING")
-		dispatch(edit(appState.token,page));
+		dispatch(edit(token,page));
 		changeMode("cancel");
 	}
-	
-	const pages = appState.links.map((page,index) => {
-		if(index === state.removeIndex) {
-			return(
-				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
-			)
-		}
-		if(index === state.editIndex) {
-		console.log("make editrow")
 
+	let pages = <tr><td>No Lore pages linked yet.</td></tr>
+	if (links.length>0){
+		pages = links.map((page,index) => {
+			if(index === state.removeIndex) {
+				return(
+					<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
+				)
+			}
+			if(index === state.editIndex) {
+			console.log("make editrow")
+
+				return(
+					<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
+				)
+			}
 			return(
-				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
+				<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
 			)
-		}
-		return(
-			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
-		)
-	})
+		})
+	}
 	return(
 		<table className="table table-striped">
 			<thead>

@@ -51,7 +51,7 @@ function App() {
 					{message}
 				</div>
 				<Routes>
-					<Route path="/" element={<Category />}/>
+					<Route path="/" element={<ListPages />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/category" element={<Category />}/>
 					<Route path="/category/*" element={<Category />}/>
