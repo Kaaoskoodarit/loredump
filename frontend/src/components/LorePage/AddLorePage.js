@@ -19,7 +19,7 @@ const AddLorePage = (props) => {
             target:""
         }],
         notes:""
-	})
+	})    
 
     // Get token and pagestate from the store
     const token = useSelector(state => state.login.token);
@@ -40,37 +40,24 @@ const AddLorePage = (props) => {
         })
     }
 
-    // OnChange function specifically for Categories
+    //OnChange function specifically for Categories
     const onCatChange = (event) => {
 
         let tempArr =state.categories
         //event target = Select html element, ID HAS to be the index of the row
         tempArr[event.target.id] = event.target.value
-        setState((state) => {
+        setState(() => {
             return{ 
                 ...state,
                 [event.target.name]:tempArr
-            }
-        })
-    }
+               }
+            })
 
-    // OnChange function specifically for Relationships
-    const onRelChange = (event) => {
-        let tempRel = state.relationships
-        //event target = Select html element, ID HAS to be the index of the row
-        tempRel[event.target.id] = event.target.value 
-        setState((state) => {
-            return {
-                ...state,
-                [event.target.name]:tempRel
-            }
-        })
     }
     
     // Handle onSubmit event
     const onSubmit = (event) => {
         event.preventDefault();
-        // Add relationships to state
         let page = {
             ...state,
             creator: props.user
@@ -83,7 +70,7 @@ const AddLorePage = (props) => {
         // Reset the state of the page and relationships
         setState({
             title:"",
-            categories:["Uncategorised"],
+            categories:[],
             image:"",
             summary:"",
             description:"",
@@ -137,7 +124,9 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <Relationships state={state} setState={setState} onChange={onRelChange} /> 
+                <Relationships state={state} setState={setState}/>
+                <br/>
+                <br/>
                 <label htmlFor="notes" className="form-label">Private Notes</label>
 				<input type="text"
 						name="notes"
