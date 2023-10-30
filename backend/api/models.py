@@ -1,5 +1,5 @@
 import os
-from flask import current_app, jsonify
+from flask import current_app, jsonify, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -145,6 +145,9 @@ class User:
     def is_loggedin(self):
         pass
 
+    # TODO: Implement get_current_user method. Should return the current user.
+    def get_current_user(self):
+        pass
 
     #TODO: Implement logout method. Delete token from database.
     def logout(self):
@@ -153,6 +156,18 @@ class User:
 
 # Define World model
 class World:
+
+    # World Schema:
+    id: ObjectId
+    creator: str
+    name: str
+    image: str #???
+    description: str
+    private_notes: str
+    categories: list
+    required_fields = ['creator', 'name']
+    unique_fields = ['id']
+
     def __init__(self, id, creator, name, image, description, private_notes, categories):
         self.id = id
         self.creator = creator
@@ -161,18 +176,80 @@ class World:
         self.description = description
         self.private_notes = private_notes
         self.categories = categories
-    
+
     def save(self):
-        # TODO: Implement save method to save the world to the database
-        pass
+        worlds_collection = db['worlds']
+        # TODO: GET CURRENTLY LOGGED IN USER AND USE THAT AS CREATOR
+        self.creator = request.headers['X-Username'] # requires testing
+        result = worlds_collection.insert_one({
+            'creator': self.creator,
+            'name': self.name,
+            'image': self.image,
+            'description': self.description,
+            'private_notes': self.private_notes,
+            'categories': self.categories
+        })
+        return result.inserted_id
     
+    @staticmethod
+    def get_by_id(id):
+        worlds_collection = db['worlds']
+        result = worlds_collection.find_one({'_id': ObjectId(id)})
+        if result:
+            return World(
+                id=result['_id'],
+                creator=result['creator'],
+                name=result['name'],
+                image=result['image'],
+                description=result['description'],
+                private_notes=result['private_notes'],
+                categories=result['categories']
+            )
+        else:
+            return jsonify({'error': 'World not found'}), 404
+        
+    @staticmethod
+    def get_all_by_creator(creator):
+        worlds_collection = db['worlds']
+        results = worlds_collection.find({'creator': creator})
+        worlds = []
+        for result in results:
+            world = World(
+                id=result['_id'],
+                creator=result['creator'],
+                name=result['name'],
+                image=result['image'],
+                description=result['description'],
+                private_notes=result['private_notes'],
+                categories=result['categories']
+            )
+            worlds.append(world)
+        return worlds
+
     def delete(self):
-        # TODO: Implement delete method to delete the world from the database
-        pass
+        worlds_collection = db['worlds']
+        result = worlds_collection.delete_one({'_id': ObjectId(id)})
+        if result.deleted_count == 1:
+            return True
+        else:
+            return False
 
     def update(self):
-        # TODO: Implement update method to update the lore page in the database
-        pass
+        worlds_collection = db['worlds']
+        result = worlds_collection.update_one(
+            {'_id': self.id},
+            {'$set': {
+                'name': self.name,
+                'image': self.image,
+                'description': self.description,
+                'private_notes': self.private_notes,
+                'categories': self.categories
+            }}
+        )
+        if result.modified_count == 1:
+            return True
+        else:
+            return False
 
 # Define Category model
 class Category:
@@ -186,16 +263,79 @@ class Category:
         self.private_notes = private_notes
     
     def save(self):
-        # TODO: Implement save method to save the category to the database
-        pass
+        categories_collection = db['categories']
+        # TODO: GET CURRENTLY LOGGED IN USER AND USE THAT AS CREATOR
+        result = categories_collection.insert_one({
+            'creator': self.creator,
+            'name': self.name,
+            'image': self.image,
+            'description': self.description,
+            'pages': self.pages,
+            'private_notes': self.private_notes
+        })
+        if result.inserted_id:
+            return True
+        else:
+            return False
     
     def delete(self):
-        # TODO: Implement delete method to delete the category from the database
-        pass
+        categories_collection = db['categories']
+        result = categories_collection.delete_one({'_id': ObjectId(self.id)})
+        if result.deleted_count == 1:
+            return True
+        else:
+            return False
 
     def update(self):
-        # TODO: Implement update method to update the lore page in the database
-        pass
+        categories_collection = db['categories']
+        result = categories_collection.update_one(
+            {'_id': ObjectId(self.id)},
+            {'$set': {
+                'creator': self.creator,
+                'name': self.name,
+                'image': self.image,
+                'description': self.description,
+                'pages': self.pages,
+                'private_notes': self.private_notes
+            }}
+        )
+        if result.modified_count == 1:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def get_by_id(id):
+        categories_collection = db['categories']
+        category = categories_collection.find_one({'_id': ObjectId(id)})
+        if category:
+            return Category(
+                str(category['_id']),
+                category['creator'],
+                category['name'],
+                category['image'],
+                category['description'],
+                category['pages'],
+                category['private_notes']
+            )
+        else:
+            return None
+
+    @staticmethod
+    def get_all_by_creator(creator):
+        categories_collection = db['categories']
+        categories = categories_collection.find({'creator': creator})
+        return [
+            Category(
+                str(category['_id']),
+                category['creator'],
+                category['name'],
+                category['image'],
+                category['description'],
+                category['pages'],
+                category['private_notes']
+            ) for category in categories
+        ]
 
 class LorePage:
     def __init__(self, id, creator, name, categories, image, description, short_description, relationships, private_notes):
@@ -208,19 +348,76 @@ class LorePage:
         self.short_description = short_description
         self.relationships = relationships
         self.private_notes = private_notes
-    
+
     def save(self):
-        # TODO: Implement save method to save the lore page to the database
-        pass
-    
+        lorepages_collection = db['lorepages']
+        lorepage_data = {
+            'creator': self.creator,
+            'name': self.name,
+            'categories': self.categories,
+            'image': self.image,
+            'description': self.description,
+            'short_description': self.short_description,
+            'relationships': self.relationships,
+            'private_notes': self.private_notes
+        }
+        result = lorepages_collection.insert_one(lorepage_data)
+        self.id = str(result.inserted_id)
+
     def delete(self):
-        # TODO: Implement delete method to delete the lore page from the database
-        pass
+        lorepages_collection = db['lorepages']
+        lorepages_collection.delete_one({'_id': ObjectId(self.id)})
 
     def update(self):
-        # TODO: Implement update method to update the lore page in the database
-        pass
+        lorepages_collection = db['lorepages']
+        lorepage_data = {
+            'creator': self.creator,
+            'name': self.name,
+            'categories': self.categories,
+            'image': self.image,
+            'description': self.description,
+            'short_description': self.short_description,
+            'relationships': self.relationships,
+            'private_notes': self.private_notes
+        }
+        lorepages_collection.update_one({'_id': ObjectId(self.id)}, {'$set': lorepage_data})
 
+    @staticmethod
+    def get_by_id(id):
+        lorepages_collection = db['lorepages']
+        lorepage = lorepages_collection.find_one({'_id': ObjectId(id)})
+        if lorepage:
+            return LorePage(
+                str(lorepage['_id']),
+                lorepage['creator'],
+                lorepage['name'],
+                lorepage['categories'],
+                lorepage['image'],
+                lorepage['description'],
+                lorepage['short_description'],
+                lorepage['relationships'],
+                lorepage['private_notes']
+            )
+        else:
+            return None
+
+    @staticmethod
+    def get_all_by_creator(creator):
+        lorepages_collection = db['lorepages']
+        lorepages = lorepages_collection.find({'creator': creator})
+        return [
+            LorePage(
+                str(lorepage['_id']),
+                lorepage['creator'],
+                lorepage['name'],
+                lorepage['categories'],
+                lorepage['image'],
+                lorepage['description'],
+                lorepage['short_description'],
+                lorepage['relationships'],
+                lorepage['private_notes']
+            ) for lorepage in lorepages
+        ]
 class Session:
     # Create random token of 64 bytes
     user: str
@@ -247,7 +444,7 @@ class Session:
             if existing_session:
                 # Update session
                 existing_session['ttl'] = self.ttl
-                existing_session['token'] = self.token
+                #existing_session['token'] = existing_session['token']
                 sessions_collection.update_one({'user': self.user}, {'$set': existing_session})
                 return
             session_data = {
@@ -259,6 +456,16 @@ class Session:
         except Exception as e:
             print(e)
             return jsonify({'error': f"Creation of token failed with error {str(e)}"})
+    
+    @staticmethod
+    def get_by_token(token):
+        # Get session by token
+        sessions_collection = db['sessions']
+        session_data = sessions_collection.find_one({'token': token})
+        if session_data:
+            return Session(session_data['user'])
+        else:
+            return None
 
     def get_token_of_user(self):
         sessions_collection = db['sessions']
@@ -276,7 +483,8 @@ class Session:
             User.logout(self.user)
             return None
 
-    ''' def __init__(self, id, user_id, token):
+    ''' OLD SESSION CLASS:
+    def __init__(self, id, user_id, token):
     #     self.id = id
     #     self.user_id = user_id
     #     self.token = token
@@ -317,4 +525,3 @@ class Session:
     # #         'token': self.token
     # #     }
     # #     tokens.insert_one(token_data) '''
-

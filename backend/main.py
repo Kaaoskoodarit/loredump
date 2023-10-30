@@ -2,7 +2,7 @@ import datetime, os, jwt
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, Response, jsonify, request
-from api.models import User, Session
+from api.models import User, Session, World, Category, LorePage
 from pprint import pprint
 
 from dotenv import load_dotenv
@@ -28,16 +28,24 @@ except Exception as e:
     print(e)
 
 # routes for api/users.py
-@app.route('/api/users', methods=['GET', 'POST'])
-def users():
-    #Get User by username: (delete this route later)
+
+# Get currently logged in user:
+@app.route('/api/user', methods=['GET'])
+def user():
+    """
+    Returns the username of the logged in user, if any.
+    """
     if request.method == 'GET':
-        users_collection = db['users']
-        user_data = users_collection.find_one({'username': request.json['username']})
-        if user_data:
-            return jsonify({'id': str(user_data['_id']), 'username': user_data['username']})
-        else:
-            return jsonify({'error': 'User not found'}), 404
+        try:
+            token = request.headers['Authorization'].split()[1]
+            session = Session.get_by_token(token)
+            if not session:
+                return jsonify({'error': 'User not logged in'}), 403
+            user = User.get_by_username(session.user)
+            print("User found")
+            return jsonify({'username': user.username})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 403
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -70,9 +78,27 @@ def login():
                 return jsonify({'error': 'Invalid password'}), 401
             session = Session(username)
             session.save()
-            return jsonify({'success': 'User successfully logged in'}), 200
+            token = session.token
+            response = jsonify({'success': 'User successfully logged in'})
+            response.headers['Authorization'] = f'Bearer {token}'
+            return response, {'Authorization': f'Bearer {token}'}
         except Exception as e:
             return jsonify({'error': str(e)})
+        
+@app.before_request
+def add_token_to_headers():
+    if 'Authorization' not in request.headers:
+        return
+    token = request.headers['Authorization'].split()[1]
+    session = Session.get_by_token(token)
+    if not session:
+        return
+    user = User.get_by_username(session.user)
+    new_headers = dict(request.headers)
+    new_headers['Authorization'] = f'Bearer {token}'
+    # new_headers['X-User-ID'] = str(user.id)
+    new_headers['X-Username'] = user.username
+    request.headers = new_headers
         
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -81,13 +107,14 @@ def logout():
         try:
             # Get username from request body
             username = request.json['username']
-            session = Session.get_by_username(username)
+            session = Session.get_token_of_user(username)
             if not session:
-                return jsonify({'error': 'Session not found'}), 404
+                return jsonify({'error': 'User not logged in'}), 404
             session.delete()
             return jsonify({'success': 'User successfully logged out'}), 200
         except Exception as e:
             return jsonify({'error': str(e)})
+    return jsonify({'success': 'User successfully logged out'}), 200
 
 # TODO: Make it so that you can't search for other users by id
 @app.route('/api/users/<id>', methods=['GET', 'PUT', 'DELETE'])
