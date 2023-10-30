@@ -18,7 +18,7 @@ const RelRow = (props) => {
         return selected;
     }
     let relTitle = getRelTitle(state.relationships[index].target)
-    console.log(relTitle);
+    //console.log(relTitle);
 
     //ADDING DEFAULT TEXT TO RELATIONSHIP ROWS IF NEWLY ADDED ("")
     let selectedText = state.relationships[index].target !== "" ? relTitle : "Select a Category"
@@ -138,7 +138,7 @@ const Relationships = (props) => {
     let rows = [<>LOADING ERR</>]
     //for each entry in state.relationships, generate one row of RelRow
     rows = state.relationships.map((relationship,index)=>{
-        console.log(relationship.reltype,relationship.target,index);
+        //console.log(relationship.reltype,relationship.target,index);
         return <RelRow key={index+":"+relationship.target} state={state} index={index} 
             relDropdown={relDropdown} onChange={onChange} handleClick={handleClick}/>
     })

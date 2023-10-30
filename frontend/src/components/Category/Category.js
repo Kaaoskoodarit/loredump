@@ -4,8 +4,7 @@ import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,remove,edit} from '../../actions/pageActions';
-import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
-import LorePage from '../LorePage/LorePage';
+import { useNavigate} from 'react-router-dom';
 
 
 
@@ -18,14 +17,13 @@ const Category = (props) => {
 	})
 	
 	// Get token and links from "store" state with useSelector
-	const appState = useSelector((state) => {
-		return {
-			token:state.login.token,
-			links:state.category.page.links
-		}
-	})
-	const token = appState.token
-	const links = appState.links
+    const token = useSelector(state => state.login.token);
+    const links = useSelector(state => state.category.page.links);
+    const catpage = useSelector(state => state.category.page);
+    const lorelist = useSelector(state => state.page.list);
+
+
+	//mode:verbose
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
@@ -72,16 +70,27 @@ const Category = (props) => {
 		changeMode("cancel");
 	}
 
+	//Get one Lore Page from the list of all pages in the database based on ID
+	const getLore = (id) => {
+		for (const lore of lorelist){
+			if (lore.id === id) return lore
+		}
+		return id;
+	}
+
 	let pages = <tr><td>No Lore pages linked yet.</td></tr>
+
+	//if category has at least one link to a lore saved:
 	if (links.length>0){
-		pages = links.map((page,index) => {
+		pages = links.map((id,index) => {
+			//define an instance of lore page
+			let page = getLore(id)
 			if(index === state.removeIndex) {
 				return(
 					<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
 				)
 			}
 			if(index === state.editIndex) {
-			console.log("make editrow")
 
 				return(
 					<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
@@ -93,6 +102,13 @@ const Category = (props) => {
 		})
 	}
 	return(
+		<div>
+		<h2>{catpage.title}</h2>
+		<p>Image: {catpage.image}</p>
+		<p>Description: {catpage.description}</p>
+		<p>Notes: {catpage.notes}</p>
+		<br/>
+		<h3>Links to Lore in this Category:</h3>
 		<table className="table table-striped">
 			<thead>
 				<tr>
@@ -107,6 +123,7 @@ const Category = (props) => {
 			{pages}
 			</tbody>
 		</table>
+		</div>
 	)
 }
 

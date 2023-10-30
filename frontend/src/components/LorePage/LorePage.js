@@ -63,37 +63,17 @@ const LorePage = (props) => {
 		} else console.log("Over 10 Get category attempts!")
 		}
 	}
-	
-    // const pages = appState.page.map((page,index) => {
-	// 	// if(index === state.removeIndex) {
-	// 	// 	return(
-	// 	// 		<RemoveRow key={page.id} page={page} changeMode={changeMode} removePage={removePage}/>
-	// 	// 	)
-	// 	// }
-	// 	// if(index === state.editIndex) {
-	// 	// 	return(
-	// 	// 		<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
-	// 	// 	)
-	// 	// }
-	// 	return(
-	// 		<Row key={page.id} page={page} index={index}/>
-	// 	)
-	// })
-    // const categoryList = page.categories.map((category) => <h3>{category}</h3>)
-
-	
 
 	const getCategoryTitle = (id) => {
-		for(let i = 0;i<categorylist.length;i++) {
-			if(categorylist[i].id === id) {
-				return categorylist[i].title;
-			}
+		for (const category of categorylist){
+			if (category.id === id) return category.title
 		}
 		return id;
 	}
+
 	let categories_listed = page.categories.map((id,index)=>{
 		let categoryTitle = getCategoryTitle(id)
-		return <td key={id}>
+		return <td key={index+id}>
 			{index}:
 			<button onClick={() => handleNavigate(id)}
 			className="btn btn-primary"

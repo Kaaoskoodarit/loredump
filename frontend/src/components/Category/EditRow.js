@@ -4,6 +4,7 @@ import {useState} from 'react';
 const EditRow = (props) => {
 	// Set state of the component (properties of page to be edited)
 	const [state,setState] = useState({
+		...props.page,
 		title:props.page.title,
 		image:props.page.image,
 		summary:props.page.summary

@@ -26,7 +26,6 @@ const AddLorePage = (props) => {
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
     const categorylist = useSelector(state => state.category.list);
-    const categorystate = useSelector(state => state.category.page);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -79,9 +78,6 @@ const AddLorePage = (props) => {
         for (let thiscategory of categorylist)
             if (state.categories.includes(thiscategory.id)) {
                 editACategory(thiscategory,page_id)
-            } else {
-                //CREATE A NEW CATEGORY HERE
-                console.log("AddLorePage says: Error. Create a new category for ",thiscategory," or category not found.")
             }
         }
 
