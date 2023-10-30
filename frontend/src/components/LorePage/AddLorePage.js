@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add,getPage} from '../../actions/pageActions';
+import {edit,getCategory,getCategoryList} from '../../actions/categoryActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
@@ -27,6 +28,8 @@ const AddLorePage = (props) => {
     // Get token and pagestate from the store
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
+    const categorylist = useSelector(state => state.category.list);
+    const categorystate = useSelector(state => state.category.page);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -67,6 +70,34 @@ const AddLorePage = (props) => {
             }
         })
     }
+
+    //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
+    const editACategory = (category,page_id) => {
+        const tempData = category.links.concat(page_id)
+        const tempCat = {
+            ...category,
+            links:tempData
+        }
+        console.log("Dispatching edit on category",tempCat)
+        dispatch(edit(token,tempCat));
+    }
+
+    //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
+    const linkCategories = (page_id) =>{
+
+        //get full list of categories
+        dispatch(getCategoryList(token,"verbose"))
+        
+        // iterate through categories in the list
+        for (let thiscategory of categorylist)
+            if (state.categories.includes(thiscategory.id)) {
+                editACategory(thiscategory,page_id)
+            } else {
+                //CREATE A NEW CATEGORY HERE
+                console.log("AddLorePage says: Error. Create a new category for ",thiscategory," or category not found.")
+            }
+        }
+
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -82,7 +113,9 @@ const AddLorePage = (props) => {
         // Redirect to the new page
         dispatch(getPage(token,pagestate.id));
         navigate("/lorepage/"+pagestate.id);
+        linkCategories(pagestate.id)
         // Reset the state of the page and relationships
+        console.log("AddLorePAge says: Is this even running? resetting State after navigate.")
         setState({
             title:"",
             categories:[],
