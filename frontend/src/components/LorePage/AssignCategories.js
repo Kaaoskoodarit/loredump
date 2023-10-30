@@ -32,14 +32,6 @@ const AssignCategories = (props) => {
                 categories:tempCats
             }
         })
-        //this is not used apparently???
-        //since state automagically gets mapped to correct rows you don't actually
-        //have to increase or decrease amnt of rows :)))
-
-        // rows.push(
-        //     <CatRow setState={setState} index={rowIncrement}/>
-        //         )
-
     }
 
     const removeCatRow = (index) => {
