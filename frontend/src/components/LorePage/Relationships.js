@@ -140,7 +140,7 @@ const Relationships = (props) => {
     rows = state.relationships.map((relationship,index)=>{
         console.log(relationship.reltype,relationship.target,index);
         return <RelRow key={index+":"+relationship.target} state={state} index={index} 
-            relDropdown={relDropdown} onChange={onChange}/>
+            relDropdown={relDropdown} onChange={onChange} handleClick={handleClick}/>
     })
 
 
