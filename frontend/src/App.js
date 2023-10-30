@@ -1,12 +1,13 @@
 import {useState,useEffect} from 'react';
 import ShoppingForm from './components-old/ShoppingForm';
 import Navbar2 from './components/Navbar2';
-import LoginPage from './components-old/LoginPage';
+import LoginPage from './components/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import AddLorePage from './components/LorePage/AddLorePage';
 import Category from './components/Category/Category';
 import LorePage from './components/LorePage/LorePage';
+import ListPages from './components/Category/ListPages';
 
 // Main App component
 function App() {
@@ -52,8 +53,9 @@ function App() {
 				<Routes>
 					<Route path="/" element={<Category />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
-					<Route path="/form" element={<ShoppingForm />}/>
-					<Route path="/lorepage" element={<Category />}/>
+					<Route path="/category" element={<Category />}/>
+					<Route path="/category/*" element={<Category />}/>
+					<Route path="/lorepage" element={<ListPages />}/>
 					<Route path="/lorepage/*" element={<LorePage />}/>
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>

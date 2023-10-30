@@ -1,10 +1,7 @@
 import {useState} from 'react';
-import Row from '../Category/Row';
-import RemoveRow from '../../components-old/RemoveRow';
-import EditRow from '../../components-old/EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {remove,edit} from '../../actions/pageActions';
-import { Link } from 'react-router-dom';
+import {getCategory} from '../../actions/categoryActions';
+import { useNavigate, Link } from 'react-router-dom';
 
 //page: list, page, error
 
@@ -12,27 +9,63 @@ import { Link } from 'react-router-dom';
 const LorePage = (props) => {
 	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
+		console.log(state.page.page)
+		console.log(state.page.page.categories.length)
+		console.log("category 0: ",state.page.page.categories[0])
 		return {
 			token:state.login.token,
-            page:state.page.page
+            page:state.page.page,
+			parent_category:state.page.page.categories.length> 0? state.page.page.categories[0] : null,
+			categorylist: state.category.list
 		}
 	})
     const page = appState.page
+	const categorylist = appState.categorylist
+
+	const [errorState,setErrorState] = useState(0)
 
 
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	// use navigate from react-router-dom
+	const navigate = useNavigate();
+	
+	
+	// //This kinda infiniloops oops
+    // const loadCategory = (id) => {
+	// 	console.log("got catpaged")
+    //     dispatch(getCategory(appState.token,id));
+    // }
 
-    const getPage = (id) => {
-        dispatch(getPage(appState.token,id));
-    }
 
-    const removePage = (id) => {
-		dispatch(remove(appState.token,id));
-	}
+    // const removePage = (id) => {
+	// 	dispatch(remove(appState.token,id));
+	// }
 
-    const editPage = (page) => {
-		dispatch(edit(appState.token,page));
+    // const editPage = (page) => {
+	// 	dispatch(edit(appState.token,page));
+	// }
+
+
+	//Handler for the clickable link buttons in Row component
+	const handleNavigate = (id) => {
+		console.log("Handlenavigate ",errorState )
+
+		if (!id){
+			console.log("No Category found. Navigating to Home")
+			navigate("/")
+		} else {
+			setErrorState(errorState+1)
+			if(errorState<10){
+
+			//The actual code:::
+			console.log("Navigating to category id",id)
+			dispatch(getCategory(appState.token,id));
+			navigate("/category/"+id)
+
+
+		} else console.log("Over 10 Get category attempts!")
+		}
 	}
     // const pages = appState.page.map((page,index) => {
 	// 	// if(index === state.removeIndex) {
@@ -51,10 +84,28 @@ const LorePage = (props) => {
 	// })
     // const categoryList = page.categories.map((category) => <h3>{category}</h3>)
 
+	
+
+	const getCategoryTitle = (id) => {
+		for(let i = 0;i<categorylist.length;i++) {
+			if(categorylist[i].id === id) {
+				return categorylist[i].title;
+			}
+		}
+		return id;
+	}
+	let categories_listed = page.categories.map((id,index)=>{
+		let categoryTitle = getCategoryTitle(id)
+		return <td key={id}>{index}: {categoryTitle}</td>}
+		)
+
 	return(
         <div>
             {/* {categoryList} */}
             {/* <Link to category */}
+		<button onClick={() => handleNavigate(appState.parent_category)}
+			className="btn btn-primary"
+			>Category</button>
 		<table className="table table-striped">
 			<thead>
 				<tr>
@@ -79,6 +130,9 @@ const LorePage = (props) => {
                 <td>TBD</td>
                 <td>{page.notes}</td>
             </tr>
+			<tr><td>Categories:</td>
+				{categories_listed}
+			</tr>
 			</tbody>
 		</table>
         </div>

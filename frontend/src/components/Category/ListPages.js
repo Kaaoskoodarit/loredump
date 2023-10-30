@@ -5,11 +5,10 @@ import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,remove,edit} from '../../actions/pageActions';
 import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
-import LorePage from '../LorePage/LorePage';
 
 
 
-const Category = (props) => {
+const ListPages = (props) => {
 	// Set state of the component: indices of objects to be 
 	// removed or edited. Only one can be other than -1 at a time
 	const [state,setState] = useState({
@@ -17,11 +16,11 @@ const Category = (props) => {
 		editIndex:-1
 	})
 	
-	// Get token and links from "store" state with useSelector
+	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
 		return {
 			token:state.login.token,
-			links:state.category.page.links
+			list:state.page.list
 		}
 	})
 	
@@ -70,7 +69,7 @@ const Category = (props) => {
 		changeMode("cancel");
 	}
 	
-	const pages = appState.links.map((page,index) => {
+	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {
 			return(
 				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
@@ -105,4 +104,4 @@ const Category = (props) => {
 	)
 }
 
-export default Category;
+export default ListPages;
