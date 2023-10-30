@@ -14,15 +14,12 @@ const AddLorePage = (props) => {
 		image:"",
         summary:"",
         description:"",
-        relationships:[],
+        relationships:[{
+            reltype:"",
+            target:""
+        }],
         notes:""
 	})
-
-    // Set state for relationships
-    const [relState,setRelState] = useState({
-        reltype:"",
-        target:""
-    })
 
     // Get token and pagestate from the store
     const token = useSelector(state => state.login.token);
@@ -43,27 +40,29 @@ const AddLorePage = (props) => {
         })
     }
 
-    //OnChange function specifically for Categories
+    // OnChange function specifically for Categories
     const onCatChange = (event) => {
 
         let tempArr =state.categories
         //event target = Select html element, ID HAS to be the index of the row
         tempArr[event.target.id] = event.target.value
-        setState(() => {
+        setState((state) => {
             return{ 
                 ...state,
                 [event.target.name]:tempArr
-               }
-            })
-
+            }
+        })
     }
 
-    //OnChange function specifically for Relationships
+    // OnChange function specifically for Relationships
     const onRelChange = (event) => {
-        setRelState((relState) => {
+        let tempRel = state.relationships
+        //event target = Select html element, ID HAS to be the index of the row
+        tempRel[event.target.id] = event.target.value 
+        setState((state) => {
             return {
-                ...relState,
-                [event.target.name]:event.target.value
+                ...state,
+                [event.target.name]:tempRel
             }
         })
     }
@@ -72,7 +71,6 @@ const AddLorePage = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         // Add relationships to state
-        state.relationships.push(relState)
         let page = {
             ...state,
             creator: props.user
@@ -85,16 +83,15 @@ const AddLorePage = (props) => {
         // Reset the state of the page and relationships
         setState({
             title:"",
-            categories:[],
+            categories:["Uncategorised"],
             image:"",
             summary:"",
             description:"",
-            relationships:[],
+            relationships:[{
+                reltype:"",
+                target:""
+            }],
             notes:""
-        })
-        setRelState({
-            reltype:"",
-            target:""
         })
     }
 
@@ -140,7 +137,7 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <Relationships onChange={onRelChange} relationships={relState}/> 
+                <Relationships state={state} setState={setState} onChange={onRelChange} /> 
                 <label htmlFor="notes" className="form-label">Private Notes</label>
 				<input type="text"
 						name="notes"

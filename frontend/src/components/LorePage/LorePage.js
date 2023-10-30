@@ -1,10 +1,5 @@
-import {useState} from 'react';
-import Row from '../Category/Row';
-import RemoveRow from '../../components-old/RemoveRow';
-import EditRow from '../../components-old/EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {remove,edit} from '../../actions/pageActions';
-import { Link } from 'react-router-dom';
+//import {remove,edit} from '../../actions/pageActions';
 
 //page: list, page, error
 
@@ -26,7 +21,7 @@ const LorePage = (props) => {
     const getPage = (id) => {
         dispatch(getPage(appState.token,id));
     }
-
+	/*
     const removePage = (id) => {
 		dispatch(remove(appState.token,id));
 	}
@@ -34,6 +29,7 @@ const LorePage = (props) => {
     const editPage = (page) => {
 		dispatch(edit(appState.token,page));
 	}
+	*/
     // const pages = appState.page.map((page,index) => {
 	// 	// if(index === state.removeIndex) {
 	// 	// 	return(
