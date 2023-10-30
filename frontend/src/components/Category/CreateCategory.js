@@ -1,31 +1,22 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {add,getPage} from '../../actions/pageActions';
-import {edit,getCategory,getCategoryList} from '../../actions/categoryActions';
-import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 
-const AddLorePage = (props) => {
+const CreateCategory = (props) => {
 	// Set state for page
     //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
 		title:"",
-		categories:["Uncategorised"],
 		image:"",
-        summary:"",
         description:"",
-        relationships:[{
-            reltype:"",
-            target:""
-        }],
-        notes:""
-	})    
+        notes:"",
+		links:[]
+	})
 
-    // Get token and pagestate from the store
+    // Get token and categorystate from the store
     const token = useSelector(state => state.login.token);
-    const pagestate = useSelector(state => state.page.page);
-    const categorylist = useSelector(state => state.category.list);
     const categorystate = useSelector(state => state.category.page);
 
     // Use dispatch and navigate
@@ -58,37 +49,12 @@ const AddLorePage = (props) => {
 
     }
 
-    //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
-    const editACategory = (category,page_id) => {
-        const tempData = category.links.concat(page_id)
-        const tempCat = {
-            ...category,
-            links:tempData
-        }
-        console.log("Dispatching edit on category",tempCat)
-        dispatch(edit(token,tempCat));
-    }
-
-    //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
-    const linkCategories = (page_id) =>{
-
-        //get full list of categories
-        dispatch(getCategoryList(token,"verbose"))
-        
-        // iterate through categories in the list
-        for (let thiscategory of categorylist)
-            if (state.categories.includes(thiscategory.id)) {
-                editACategory(thiscategory,page_id)
-            } else {
-                //CREATE A NEW CATEGORY HERE
-                console.log("AddLorePage says: Error. Create a new category for ",thiscategory," or category not found.")
-            }
-        }
-
     
     // Handle onSubmit event
     const onSubmit = (event) => {
         event.preventDefault();
+        // Add relationships to state
+        state.relationships.push(relState)
         let page = {
             ...state,
             creator: props.user
@@ -96,22 +62,17 @@ const AddLorePage = (props) => {
         // Add the new page to the database
         dispatch(add(token,page));
         // Redirect to the new page
-        dispatch(getPage(token,pagestate.id));
-        navigate("/lorepage/"+pagestate.id);
-        linkCategories(pagestate.id)
+        dispatch(getPage(token,categorystate.id));
+        navigate("/category/"+categorystate.id);
         // Reset the state of the page and relationships
         setState({
             title:"",
-            categories:[],
             image:"",
-            summary:"",
             description:"",
-            relationships:[{
-                reltype:"",
-                target:""
-            }],
-            notes:""
+            notes:"",
+            links:[]
         })
+
     }
 
     return (
@@ -130,9 +91,8 @@ const AddLorePage = (props) => {
 						onChange={onChange}
 						value={state.title}/>
                     <div id="title-help" className="form-text">
-                    This will be the title of your Lore Page!
+                    This will be the title of your Category!
                     </div>
-                <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
                 <br/>
                 <br/>
                 <label htmlFor="image" className="form-label">Image link</label>
@@ -156,9 +116,6 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <Relationships state={state} setState={setState}/>
-                <br/>
-                <br/>
                 <label htmlFor="notes" className="form-label">Private Notes</label>
 				<input type="text"
 						name="notes"
@@ -166,6 +123,13 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.notes}/>
+                <select name={"categories"}
+                            id={index}
+                            className="form-select"
+                            aria-label="Select Categories"
+                            onChange={onCatChange}>
+                        <option key={"selected"} value={state.categories[index]}>{selectedText}</option>
+                </select>
                 <br/>
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>
@@ -175,4 +139,4 @@ const AddLorePage = (props) => {
 	
 }
 
-export default AddLorePage;
+export default CreateCategory;

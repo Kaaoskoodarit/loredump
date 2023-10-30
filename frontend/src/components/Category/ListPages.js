@@ -5,11 +5,10 @@ import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,remove,edit} from '../../actions/pageActions';
 import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
-import LorePage from '../LorePage/LorePage';
 
 
 
-const Category = (props) => {
+const ListPages = (props) => {
 	// Set state of the component: indices of objects to be 
 	// removed or edited. Only one can be other than -1 at a time
 	const [state,setState] = useState({
@@ -17,15 +16,13 @@ const Category = (props) => {
 		editIndex:-1
 	})
 	
-	// Get token and links from "store" state with useSelector
+	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
 		return {
 			token:state.login.token,
-			links:state.category.page.links
+			list:state.page.list
 		}
 	})
-	const token = appState.token
-	const links = appState.links
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
@@ -57,41 +54,38 @@ const Category = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
-		dispatch(getPage(token,id));
+		dispatch(getPage(appState.token,id));
 		navigate("/lorepage/"+id)
 	}
 	
 	const removePage = (id) => {
-		dispatch(remove(token,id));
+		dispatch(remove(appState.token,id));
 		changeMode("cancel");
 	}
 	
 	const editPage = (page) => {
 		console.log("EDITING")
-		dispatch(edit(token,page));
+		dispatch(edit(appState.token,page));
 		changeMode("cancel");
 	}
-
-	let pages = <tr><td>No Lore pages linked yet.</td></tr>
-	if (links.length>0){
-		pages = links.map((page,index) => {
-			if(index === state.removeIndex) {
-				return(
-					<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
-				)
-			}
-			if(index === state.editIndex) {
-			console.log("make editrow")
-
-				return(
-					<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
-				)
-			}
+	
+	const pages = appState.list.map((page,index) => {
+		if(index === state.removeIndex) {
 			return(
-				<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
 			)
-		})
-	}
+		}
+		if(index === state.editIndex) {
+		console.log("make editrow")
+
+			return(
+				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
+			)
+		}
+		return(
+			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+		)
+	})
 	return(
 		<table className="table table-striped">
 			<thead>
@@ -110,4 +104,4 @@ const Category = (props) => {
 	)
 }
 
-export default Category;
+export default ListPages;
