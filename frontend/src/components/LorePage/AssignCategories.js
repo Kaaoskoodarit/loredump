@@ -1,6 +1,6 @@
 import {useSelector} from 'react-redux';
 
-export const CategoryRows = (props) => {
+const AssignCategories = (props) => {
 
     //PROPS passed information
     const onCatChange = props.onChange
@@ -12,7 +12,6 @@ export const CategoryRows = (props) => {
     //CODE TO BE REPLACED LATER - - This is for testing
     /*
     const defaultCategories = ["Characters","NPCs","Locations","Dates"]
-    //list of categories that can be used on default, is missing ids tho
     
     let categoriesDropdown = []
     defaultCategories.map(category => {
@@ -138,3 +137,4 @@ export const CategoryRows = (props) => {
     )
 }
         
+export default AssignCategories;

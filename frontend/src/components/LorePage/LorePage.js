@@ -1,9 +1,9 @@
 import {useState} from 'react';
-import Row from '../components/Row';
-import RemoveRow from '../components-old//RemoveRow';
-import EditRow from '../components-old//EditRow';
+import Row from '../Category/Row';
+import RemoveRow from '../../components-old/RemoveRow';
+import EditRow from '../../components-old/EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {remove,edit} from '../actions/pageActions';
+import {remove,edit} from '../../actions/pageActions';
 import { Link } from 'react-router-dom';
 
 //page: list, page, error

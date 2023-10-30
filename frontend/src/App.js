@@ -4,9 +4,9 @@ import Navbar2 from './components/Navbar2';
 import LoginPage from './components-old/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import AddLorePage from './components/AddLorePage';
-import Category from './components/Category';
-import LorePage from './components/LorePage';
+import AddLorePage from './components/LorePage/AddLorePage';
+import Category from './components/Category/Category';
+import LorePage from './components/LorePage/LorePage';
 
 // Main App component
 function App() {

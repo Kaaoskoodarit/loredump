@@ -1,11 +1,11 @@
 import {useState} from 'react';
-import Row from '../components/Row';
-import RemoveRow from '../components/RemoveRow';
-import EditRow from '../components-old//EditRow';
+import Row from './Row';
+import RemoveRow from './RemoveRow';
+import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {getPage,remove,edit} from '../actions/pageActions';
+import {getPage,remove,edit} from '../../actions/pageActions';
 import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
-import LorePage from './LorePage';
+import LorePage from '../LorePage/LorePage';
 
 
 
@@ -65,6 +65,7 @@ const Category = (props) => {
 	}
 	
 	const editPage = (page) => {
+		console.log("EDITING")
 		dispatch(edit(appState.token,page));
 		changeMode("cancel");
 	}
@@ -76,6 +77,8 @@ const Category = (props) => {
 			)
 		}
 		if(index === state.editIndex) {
+		console.log("make editrow")
+
 			return(
 				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
 			)
