@@ -1,6 +1,7 @@
+import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {getCategory} from '../../actions/categoryActions';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 //page: list, page, error
 
@@ -31,7 +32,7 @@ const LorePage = (props) => {
 	// 	console.log("got catpaged")
     //     dispatch(getCategory(appState.token,id));
     // }
-	/*
+	
 
     // const removePage = (id) => {
 	// 	dispatch(remove(appState.token,id));
@@ -62,7 +63,7 @@ const LorePage = (props) => {
 		} else console.log("Over 10 Get category attempts!")
 		}
 	}
-	*/
+	
     // const pages = appState.page.map((page,index) => {
 	// 	// if(index === state.removeIndex) {
 	// 	// 	return(
