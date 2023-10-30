@@ -1,5 +1,6 @@
 import os
-from flask import current_app, jsonify, request
+import pprint
+from flask import current_app, jsonify, request, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,8 +25,8 @@ class User:
     required_fields = ['username', 'password']
     unique_fields = ['username']
 
-    def __init__(self, username, password):
-        # self.id = id
+    def __init__(self, id, username, password):
+        self.id = id
         self.username = username
         self.password = password
     
@@ -73,7 +74,11 @@ class User:
             users_collection = db['users']
             user_data = users_collection.find_one({'username': username})
             if user_data:
-                return User(user_data['username'], user_data['password'])
+                return User(
+                    id=str(user_data['_id']),
+                    username=user_data['username'],
+                    password=user_data['password'],
+                ) 
             else:
                 return None
 
@@ -168,7 +173,7 @@ class World:
     required_fields = ['creator', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, image, description, private_notes, categories):
+    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=None):
         self.id = id
         self.creator = creator
         self.name = name
@@ -177,10 +182,22 @@ class World:
         self.private_notes = private_notes
         self.categories = categories
 
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'creator': self.creator,
+            'name': self.name,
+            'image': self.image,
+            'description': self.description,
+            'private_notes': self.private_notes,
+            'categories': self.categories
+        }
+
     def save(self):
         worlds_collection = db['worlds']
         # TODO: GET CURRENTLY LOGGED IN USER AND USE THAT AS CREATOR
-        self.creator = request.headers['X-Username'] # requires testing
+        #self.creator = request.headers['X-Username'] # requires testing
+        self.creator = session['username']
         result = worlds_collection.insert_one({
             'creator': self.creator,
             'name': self.name,
