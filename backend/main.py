@@ -71,6 +71,8 @@ def user():
             # user.username = request.json['username']
             if 'password' in request.json:
                 user.password = request.json['password']
+            else:
+                user.password = user.password
             user.save()
             return jsonify({'success': 'User successfully updated'}), 200
         except Exception as e:
@@ -183,7 +185,6 @@ def add_token_headers(response):
 @app.route('/logout' , methods=['POST'])
 def logout():
     # Clear session:
-    pprint(vars(session))
     session.clear()
     return jsonify({'success': 'User successfully logged out'}), 200
     """ vanhaa koodia:
@@ -212,27 +213,8 @@ def get_user(id):
         else:
             return jsonify({'id': str(user.id), 'username': user.username})"""
 
-# TODO: Edit PUT and DELETE methods so that user can only edit their own account.
-    # elif request.method == 'PUT':
-    #     try:
-    #         user = User.get_by_id(id)
-    #         user.username = request.json['username']
-    #         user.password = request.json['password']
-    #         user.save()
-    #         return jsonify({'success': 'User successfully updated'}), 200
-    #     except Exception as e:
-    #         return jsonify({'error': str(e)}), 400
-        
-    # elif request.method == 'DELETE':
-    #     try:
-    #         user = User.get_by_id(id)
-    #         user.delete()
-    #         return jsonify({'success': 'User successfully deleted'}), 200
-    #     except Exception as e:
-    #         return jsonify({'error': str(e)}), 400
-    
 # Routes for World model
-@app.route('/api/worlds', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/api/worlds', methods=['GET', 'POST'])
 def get_worlds():
     if request.method == 'GET':
         worlds = World.get_all_by_creator(session['username'])
@@ -246,11 +228,47 @@ def get_worlds():
             world = World(
                 id=None,
                 name=request.json['name'],
+                creator=session['username'],
                 description=request.json['description'],
-                creator=session['username']
+                image=request.json['image'],
+                private_notes=request.json['private_notes'],
             )
             world.save()
             return jsonify({'success': 'World successfully created'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+        
+@app.route('/api/worlds/<id>', methods=['GET', 'PUT', 'DELETE'])
+def get_world(id):
+    if request.method == 'GET':
+        world = World.get_by_id(id)
+        if not world:
+            return jsonify({'error': 'World not found'}), 404
+        else:
+            return jsonify(world.serialize())
+    elif request.method == 'PUT':
+        try:
+            world = World.get_by_id(id)
+            if not world:
+                return jsonify({'error': 'World not found'}), 404
+            world.name = request.json['name']
+            world.description = request.json['description']
+            world.image=request.json['image']
+            world.private_notes=request.json['private_notes']
+            world.save()
+            return jsonify({'success': 'World successfully updated'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    elif request.method == 'DELETE':
+        try:
+            world = World.get_by_id(id)
+            if not world:
+                return jsonify({'error': 'World not found'}), 404
+            pprint(vars(world))
+            world.delete()
+            Category.delete_all_by_world(id)
+            LorePage.delete_all_by_world(id)
+            return jsonify({'success': 'World successfully deleted'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 

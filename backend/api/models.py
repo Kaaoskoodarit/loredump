@@ -134,6 +134,7 @@ class User:
         # check_password_hash returns True if the password matches the hash
         return check_password_hash(self.password, password)
     
+    """ Following functions are done in main.py
     # TODO: Implement delete method so that user can only delete their own account.
     def delete(self):
         users_collection = db['users']
@@ -157,7 +158,7 @@ class User:
     #TODO: Implement logout method. Delete token from database.
     def logout(self):
         pass
-    
+    """
 
 # Define World model
 class World:
@@ -249,7 +250,7 @@ class World:
 
     def delete(self):
         worlds_collection = db['worlds']
-        result = worlds_collection.delete_one({'_id': ObjectId(id)})
+        result = worlds_collection.delete_one({'_id': ObjectId(self.id)})
         if result.deleted_count == 1:
             return True
         else:
@@ -343,6 +344,12 @@ class Category:
         categories_collection = db['categories']
         result = categories_collection.delete_many({'creator': creator})
         return result.deleted_count
+    
+    @staticmethod
+    def delete_all_by_world(world):
+        categories_collection = db['categories']
+        result = categories_collection.delete_many({'world': world})
+        return result.deleted_count
 
     def update(self):
         categories_collection = db['categories']
@@ -408,7 +415,7 @@ class LorePage:
     relationships: list
     private_notes: str
 
-    def __init__(self, id, creator, name, categories, image, description, short_description, relationships, private_notes):
+    def __init__(self, id, creator, name, categories=None, image=None, description=None, short_description=None, relationships=None, private_notes=None):
         self.id = id
         self.creator = creator
         self.name = name
@@ -443,11 +450,16 @@ class LorePage:
         lorepages_collection = db['lorepages']
         lorepages_collection.delete_many({'creator': creator})
 
+    @staticmethod
+    def delete_all_by_world(world):
+        lorepages_collection = db['lorepages']
+        lorepages_collection.delete_many({'world': world})
+
     def update(self):
         lorepages_collection = db['lorepages']
         lorepage_data = {
-            'creator': self.creator,
             'name': self.name,
+            'creator': self.creator,
             'categories': self.categories,
             'image': self.image,
             'description': self.description,
