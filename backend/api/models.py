@@ -195,8 +195,6 @@ class World:
 
     def save(self):
         worlds_collection = db['worlds']
-        # TODO: GET CURRENTLY LOGGED IN USER AND USE THAT AS CREATOR
-        #self.creator = request.headers['X-Username'] # requires testing
         self.creator = session['username']
         result = worlds_collection.insert_one({
             'creator': self.creator,
@@ -270,18 +268,44 @@ class World:
 
 # Define Category model
 class Category:
-    def __init__(self, id, creator, name, image, description, pages, private_notes):
+
+    # Category Schema:
+    id: ObjectId
+    creator: str
+    name: str
+    world: ObjectId
+    image: str #???
+    description: str
+    pages: list
+    private_notes: str
+    required_fields = ['creator', 'name']
+    unique_fields = ['id']
+
+    def __init__(self, id, creator, name, world=None, image=None, description=None, pages=None, private_notes=None):
         self.id = id
         self.creator = creator
         self.name = name
+        self.world = world
         self.image = image
         self.description = description
         self.pages = pages
         self.private_notes = private_notes
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'creator': self.creator,
+            'name': self.name,
+            'world': self.world,
+            'image': self.image,
+            'description': self.description,
+            'pages': self.pages,
+            'private_notes': self.private_notes
+        }
     
     def save(self):
         categories_collection = db['categories']
-        # TODO: GET CURRENTLY LOGGED IN USER AND USE THAT AS CREATOR
+        self.creator = session['username']
         result = categories_collection.insert_one({
             'creator': self.creator,
             'name': self.name,
@@ -355,6 +379,18 @@ class Category:
         ]
 
 class LorePage:
+
+    # LorePage Schema:
+    id: ObjectId
+    creator: str
+    name: str
+    categories: list
+    image: str #???
+    description: str
+    short_description: str
+    relationships: list
+    private_notes: str
+
     def __init__(self, id, creator, name, categories, image, description, short_description, relationships, private_notes):
         self.id = id
         self.creator = creator
