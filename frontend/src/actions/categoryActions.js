@@ -200,6 +200,40 @@ export const editCategory = (token,category) => {
 	}
 }
 
+// (async) function that dispatches a "update category" action to the reducer
+export const updateCategory = (token,id,update) => {
+	return async (dispatch) => {
+		let request = {
+			"method":"PUT",
+			"headers":{
+				"Content-type":"application/json",
+				"token":token
+			},
+			"body":{
+				"update":JSON.stringify(update)
+			}
+		}
+		dispatch(loading());
+		const response = await fetch("/category/update/"+id,request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
+			return;
+		}
+		if(response.ok) {
+			// If fetch succesful, show new list
+			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
+			dispatch(getCategoryList(token));
+		} else {
+			if(response.status === 403) {
+				dispatch(logoutFailed("Your session has expired. Logging you out."));
+				return;
+			}
+			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
+}
+
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with

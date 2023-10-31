@@ -187,6 +187,40 @@ export const editPage = (token,page) => {
 	}
 }
 
+// (async) function that dispatches a "update page" action to the reducer
+export const updatePage = (token,id,update) => {
+	return async (dispatch) => {
+		let request = {
+			"method":"PUT",
+			"headers":{
+				"Content-type":"application/json",
+				"token":token
+			},
+			"body":{
+				"update":JSON.stringify(update)
+			}
+		}
+		dispatch(loading());
+		const response = await fetch("/lorepage/update/"+id,request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
+			return;
+		}
+		if(response.ok) {
+			// If fetch succesful, show new list
+			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
+			dispatch(getList(token));
+		} else {
+			if(response.status === 403) {
+				dispatch(logoutFailed("Your session has expired. Logging you out."));
+				return;
+			}
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
+}
+
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with

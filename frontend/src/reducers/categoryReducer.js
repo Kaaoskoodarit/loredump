@@ -37,6 +37,7 @@ const categoryReducer = (state = initialState,action) => {
 		case actionConstants.FETCH_CATEGORYLIST_SUCCESS:
 			tempState = {
 				...state,
+				error:"",
 				list:action.list
 			}
 			saveToStorage(tempState);
@@ -44,6 +45,7 @@ const categoryReducer = (state = initialState,action) => {
 		case actionConstants.FETCH_CATEGORY_SUCCESS:
 			tempState = {
 				...state,
+				error:"",
 				page:action.page
 			}
 			saveToStorage(tempState);

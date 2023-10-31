@@ -37,6 +37,7 @@ const pageReducer = (state = initialState,action) => {
 		case actionConstants.FETCH_LIST_SUCCESS:
 			tempState = {
 				...state,
+				error:"",
 				list:action.list
 			}
 			saveToStorage(tempState);
@@ -44,6 +45,7 @@ const pageReducer = (state = initialState,action) => {
 		case actionConstants.FETCH_PAGE_SUCCESS:
 			tempState = {
 				...state,
+				error:"",
 				page:action.page
 			}
 			saveToStorage(tempState);
