@@ -4,8 +4,7 @@ import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,remove,edit} from '../../actions/pageActions';
-import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
-import LorePage from '../LorePage/LorePage';
+import { useNavigate} from 'react-router-dom';
 
 
 
@@ -17,13 +16,14 @@ const Category = (props) => {
 		editIndex:-1
 	})
 	
-	// Get token and list from "store" state with useSelector
-	const appState = useSelector((state) => {
-		return {
-			token:state.login.token,
-			list:state.page.list
-		}
-	})
+	// Get token and links from "store" state with useSelector
+    const token = useSelector(state => state.login.token);
+    const links = useSelector(state => state.category.page.links);
+    const catpage = useSelector(state => state.category.page);
+    const lorelist = useSelector(state => state.page.list);
+
+
+	//mode:verbose
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
@@ -55,39 +55,60 @@ const Category = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
-		dispatch(getPage(appState.token,id));
+		dispatch(getPage(token,id));
 		navigate("/lorepage/"+id)
 	}
 	
 	const removePage = (id) => {
-		dispatch(remove(appState.token,id));
+		dispatch(remove(token,id));
 		changeMode("cancel");
 	}
 	
 	const editPage = (page) => {
 		console.log("EDITING")
-		dispatch(edit(appState.token,page));
+		dispatch(edit(token,page));
 		changeMode("cancel");
 	}
-	
-	const pages = appState.list.map((page,index) => {
-		if(index === state.removeIndex) {
-			return(
-				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
-			)
-		}
-		if(index === state.editIndex) {
-		console.log("make editrow")
 
-			return(
-				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
-			)
+	//Get one Lore Page from the list of all pages in the database based on ID
+	const getLore = (id) => {
+		for (const lore of lorelist){
+			if (lore.id === id) return lore
 		}
-		return(
-			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
-		)
-	})
+		return id;
+	}
+
+	let pages = <tr><td>No Lore pages linked yet.</td></tr>
+
+	//if category has at least one link to a lore saved:
+	if (links.length>0){
+		pages = links.map((id,index) => {
+			//define an instance of lore page
+			let page = getLore(id)
+			if(index === state.removeIndex) {
+				return(
+					<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
+				)
+			}
+			if(index === state.editIndex) {
+
+				return(
+					<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
+				)
+			}
+			return(
+				<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+			)
+		})
+	}
 	return(
+		<div>
+		<h2>{catpage.title}</h2>
+		<p>Image: {catpage.image}</p>
+		<p>Description: {catpage.description}</p>
+		<p>Notes: {catpage.notes}</p>
+		<br/>
+		<h3>Links to Lore in this Category:</h3>
 		<table className="table table-striped">
 			<thead>
 				<tr>
@@ -102,6 +123,7 @@ const Category = (props) => {
 			{pages}
 			</tbody>
 		</table>
+		</div>
 	)
 }
 

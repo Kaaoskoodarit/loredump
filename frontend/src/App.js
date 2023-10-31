@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux';
 import AddLorePage from './components/LorePage/AddLorePage';
 import Category from './components/Category/Category';
 import LorePage from './components/LorePage/LorePage';
+import ListPages from './components/Category/ListPages';
 
 // Main App component
 function App() {
@@ -48,9 +49,11 @@ function App() {
 					{message}
 				</div>
 				<Routes>
-					<Route path="/" element={<Category />}/>
+					<Route path="/" element={<ListPages />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
-					<Route path="/lorepage" element={<Category />}/>
+					<Route path="/category" element={<Category />}/>
+					<Route path="/category/*" element={<Category />}/>
+					<Route path="/lorepage" element={<ListPages />}/>
 					<Route path="/lorepage/*" element={<LorePage />}/>
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
