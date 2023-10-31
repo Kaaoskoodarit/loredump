@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add,getPage} from '../../actions/pageActions';
-import {edit,getCategory,getCategoryList} from '../../actions/categoryActions';
+import {addPage,getPage} from '../../actions/pageActions';
+import {editCategory,getCategory,getCategoryList} from '../../actions/categoryActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
@@ -65,7 +65,7 @@ const AddLorePage = (props) => {
             links:tempData
         }
         console.log("Dispatching edit on category",tempCat)
-        dispatch(edit(token,tempCat));
+        dispatch(editCategory(token,tempCat));
     }
 
     //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
@@ -90,7 +90,7 @@ const AddLorePage = (props) => {
             creator: props.user
         }
         // Add the new page to the database
-        dispatch(add(token,page));
+        dispatch(addPage(token,page));
         // Redirect to the new page
         dispatch(getPage(token,pagestate.id));
         navigate("/lorepage/"+pagestate.id);

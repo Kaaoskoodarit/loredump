@@ -89,7 +89,7 @@ export const getPage = (token,id) => {
 }
 
 // (async) function that dispatches a "add page" action to the reducer
-export const add = (token,page) => {
+export const addPage = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
@@ -125,7 +125,7 @@ export const add = (token,page) => {
 }
 
 // (async) function that dispatches a "remove page" action to the reducer
-export const remove = (token,id) => {
+export const removePage = (token,id) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE",
@@ -156,7 +156,7 @@ export const remove = (token,id) => {
 }
 
 // (async) function that dispatches a "edit page" action to the reducer
-export const edit = (token,page) => {
+export const editPage = (token,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",

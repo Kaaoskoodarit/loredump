@@ -3,7 +3,7 @@ import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {getPage,remove,edit} from '../../actions/pageActions';
+import {getPage,removePage,editPage} from '../../actions/pageActions';
 import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
 
 
@@ -58,28 +58,28 @@ const ListPages = (props) => {
 		navigate("/lorepage/"+id)
 	}
 	
-	const removePage = (id) => {
-		dispatch(remove(appState.token,id));
+	const removeAPage = (id) => {
+		dispatch(removePage(appState.token,id));
 		changeMode("cancel");
 	}
 	
-	const editPage = (page) => {
+	const editAPage = (page) => {
 		console.log("EDITING")
-		dispatch(edit(appState.token,page));
+		dispatch(editPage(appState.token,page));
 		changeMode("cancel");
 	}
 	
 	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {
 			return(
-				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removePage}/>
+				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
 			)
 		}
 		if(index === state.editIndex) {
 		console.log("make editrow")
 
 			return(
-				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editPage}/>
+				<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editAPage}/>
 			)
 		}
 		return(

@@ -138,7 +138,7 @@ export const addCategory = (token,category) => {
 }
 
 // (async) function that dispatches a "remove category" action to the reducer
-export const remove = (token,id) => {
+export const removeCategory = (token,id) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE",
@@ -169,7 +169,7 @@ export const remove = (token,id) => {
 }
 
 // (async) function that dispatches a "edit category" action to the reducer
-export const edit = (token,category) => {
+export const editCategory = (token,category) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",

@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add,getPage} from '../../actions/pageActions';
+import {addPage,getPage} from '../../actions/pageActions';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 
@@ -60,7 +60,7 @@ const CreateCategory = (props) => {
             creator: props.user
         }
         // Add the new page to the database
-        dispatch(add(token,page));
+        dispatch(addPage(token,page));
         // Redirect to the new page
         dispatch(getPage(token,categorystate.id));
         navigate("/category/"+categorystate.id);
