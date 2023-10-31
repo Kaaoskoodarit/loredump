@@ -240,6 +240,12 @@ class World:
             )
             worlds.append(world)
         return worlds
+    
+    @staticmethod
+    def delete_all_by_creator(creator):
+        worlds_collection = db['worlds']
+        results = worlds_collection.delete_many({'creator': creator})
+        return results.deleted_count
 
     def delete(self):
         worlds_collection = db['worlds']
@@ -248,6 +254,11 @@ class World:
             return True
         else:
             return False
+        
+    def delete_many(self, ids):
+        worlds_collection = db['worlds']
+        results = worlds_collection.delete_many({'_id': {'$in': ids}})
+        return results.deleted_count
 
     def update(self):
         worlds_collection = db['worlds']
@@ -326,6 +337,12 @@ class Category:
             return True
         else:
             return False
+    
+    @staticmethod
+    def delete_all_by_creator(creator):
+        categories_collection = db['categories']
+        result = categories_collection.delete_many({'creator': creator})
+        return result.deleted_count
 
     def update(self):
         categories_collection = db['categories']
@@ -420,6 +437,11 @@ class LorePage:
     def delete(self):
         lorepages_collection = db['lorepages']
         lorepages_collection.delete_one({'_id': ObjectId(self.id)})
+
+    @staticmethod
+    def delete_all_by_creator(creator):
+        lorepages_collection = db['lorepages']
+        lorepages_collection.delete_many({'creator': creator})
 
     def update(self):
         lorepages_collection = db['lorepages']
