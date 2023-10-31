@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const LorePage = (props) => {
+
 	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
 		return {
@@ -26,6 +27,12 @@ const LorePage = (props) => {
 	// use navigate from react-router-dom
 	const navigate = useNavigate();
 	
+
+	//IMAGES
+	const default_img = '../../shepherd-dog-defaultimg.jpg'
+	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
+
+
 	
 	// //This kinda infiniloops oops
     // const loadCategory = (id) => {
@@ -85,13 +92,17 @@ const LorePage = (props) => {
         <div>
             {/* {categoryList} */}
             {/* <Link to category */}
-		
+		<h2>{page.title}</h2>
+
+		<img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={"Image for "+page.title}></img>
+
+		<p id="image-desc" className="form-text">
+                    Image link: {page.image}
+                    </p>
 		<table className="table table-striped">
 			<thead>
 				<tr>
 					<th>Creator, id (TEST DATA)</th>
-					<th>Title</th>
-					<th>Image</th>
 					<th>Summary</th>
 					<th>Description</th>
 					<th>Relationships</th>
@@ -102,8 +113,6 @@ const LorePage = (props) => {
 			<tbody>
             <tr>
                 <td>{page.creator} {page.id}</td>
-                <td>{page.title}</td>
-                <td>{page.image}</td>
                 <td>{page.summary}</td>
                 <td>{page.description}</td>
                 {/* <td>{page.relationships}</td> */}
@@ -115,6 +124,7 @@ const LorePage = (props) => {
 			</tr>
 			</tbody>
 		</table>
+
         </div>
 	)
 }
