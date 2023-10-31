@@ -46,17 +46,13 @@ def index():
 
 # Routes for User model
 # Get currently logged in user:
-@app.route('/api/user', methods=['GET'])
+@app.route('/api/user', methods=['GET', 'PUT', 'DELETE'])
 def user():
     """
     Returns the username of the logged in user, if any.
     """
     if request.method == 'GET':
         try:
-            # token = request.headers['Authorization'].split()[1]
-            # session = Session.get_by_token(token)
-            # if not session:
-            #     return jsonify({'error': 'User not logged in'}), 403
             if 'user_id' not in session:
                 return jsonify({'error': 'User not logged in'}), 401
             user = User.get_by_id(session['user_id'])
@@ -67,6 +63,31 @@ def user():
             })
         except Exception as e:
             return jsonify({'error': str(e)}), 401
+    if request.method == 'PUT':
+        try:
+            if 'user_id' not in session:
+                return jsonify({'error': 'User not logged in'}), 401
+            user = User.get_by_id(session['user_id'])
+            # user.username = request.json['username']
+            if 'password' in request.json:
+                user.password = request.json['password']
+            user.save()
+            return jsonify({'success': 'User successfully updated'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    if request.method == 'DELETE':
+        try:
+            if 'user_id' not in session:
+                return jsonify({'error': 'User not logged in'}), 401
+            user = User.get_by_id(session['user_id'])
+            user.delete()
+            World.delete_all_by_creator(user.username)
+            Category.delete_all_by_creator(user.username)
+            LorePage.delete_all_by_creator(user.username)
+            session.clear()
+            return jsonify({'success': 'User successfully deleted'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -82,6 +103,8 @@ def register():
             user.register()
             return jsonify({'success': 'User successfully created'}), 200
         except Exception as e:
+            if str(e) == 'User already exists':
+                return jsonify({'error': 'User already exists'}), 409
             return jsonify({'error': str(e)})
         
 @app.route('/login', methods=['POST'])
@@ -126,7 +149,7 @@ def protected():
 
 @app.before_request
 def before_request():
-    if request.endpoint in ['register', 'login']:
+    if request.endpoint in ['register', 'login'] or request.method != 'POST':
         return
     if 'user_id' not in session:
         return jsonify({'error': 'User not logged in'}), 401
