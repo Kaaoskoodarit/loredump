@@ -103,5 +103,24 @@ router.put("/:id",function(req,res) {
     });
 })
 
+// "Function" to edit selected properties of a page in database
+router.put("/update/:id",function(req,res) {
+    if(!req.body) {              
+        return res.status(400).json({"Message":"Bad Request"})
+    }
+    if(!req.body.update) {          
+        return res.status(400).json({"Message":"Bad Request"})
+    }
+    let update = req.body.update
+    // Replace selected parameters in page in the database with the edited ones, note "category" after ID&user check
+    // This is a promise, so.... .then().catch()!
+    loreModel.findOneAndUpdate({"_id":req.params.id,"creator":req.session.user},update).then(function() {
+        return res.status(204).json({"Message":"Success"});
+    }).catch(function(error) {
+        console.log("Failed to edit category. Reason",error);
+        return res.status(500).json({"Message":"Internal Server Error"});
+    });
+})
+
 // Export "router" from module
 module.exports = router;
