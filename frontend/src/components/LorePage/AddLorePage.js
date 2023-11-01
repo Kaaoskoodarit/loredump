@@ -5,6 +5,8 @@ import {editCategory,getCategory,getCategoryList} from '../../actions/categoryAc
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
+import UploadWidget from '../Cloudinary/UploadWidget';
+
 
 const AddLorePage = (props) => {
 	// Set state for page
@@ -30,6 +32,10 @@ const AddLorePage = (props) => {
     // Use dispatch and navigate
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // Create preview image:
+    const default_img = '../../shepherd-dog-defaultimg.jpg'
+	const image = (state.image !== 'error.jpg' && state.image !== "") ? state.image : default_img
 
    
     // Handle normal onChange events    
@@ -131,6 +137,15 @@ const AddLorePage = (props) => {
                 <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
                 <br/>
                 <br/>
+                <label htmlFor="image" className="form-label">Add Image:</label>
+                <br/>
+                <UploadWidget state={state} setState={setState} />
+                <br/>
+                <br/>
+                <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img>
+                <br/>
+                <br/>
+                {/*
                 <label htmlFor="image" className="form-label">Image link</label>
 				<input type="url"
 						name="image"
@@ -138,6 +153,7 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.image}/>
+                */}
                 <label htmlFor="summary" className="form-label">Summary</label>
 				<input type="text"
 						name="summary"
