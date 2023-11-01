@@ -93,6 +93,7 @@ const ListPages = (props) => {
 					<th>Title</th>
 					<th>Image</th>
 					<th>Summary</th>
+					<th>Categories</th>
 					<th>Edit</th>
 					<th>Remove</th>
 				</tr>
