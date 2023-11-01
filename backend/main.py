@@ -264,11 +264,122 @@ def get_world(id):
             world = World.get_by_id(id)
             if not world:
                 return jsonify({'error': 'World not found'}), 404
-            pprint(vars(world))
             world.delete()
             Category.delete_all_by_world(id)
             LorePage.delete_all_by_world(id)
             return jsonify({'success': 'World successfully deleted'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+        
+# Routes for Category model
+@app.route('/api/worlds/<world_id>/categories', methods=['GET', 'POST'])
+def get_categories(world_id):
+    if request.method == 'GET':
+        categories = Category.get_all_by_world(world_id)
+        if categories:
+            return jsonify([category.serialize() for category in categories])
+        else:
+            return jsonify({'error': 'World doesn\'t have any categories'}), 404
+    elif request.method == 'POST':
+        try:
+            category = Category(
+                id=None,
+                name=request.json['name'],
+                creator=session['username'],
+                description=request.json['description'],
+                image=request.json['image'],
+                private_notes=request.json['private_notes'],
+                world=world_id
+            )
+            category.save()
+            return jsonify({'success': 'Category successfully created'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+        
+@app.route('/api/categories/<category_id>', methods=['GET', 'PUT', 'DELETE'])
+def get_category(category_id):
+    if request.method == 'GET':
+        category = Category.get_by_id(category_id)
+        if not category:
+            return jsonify({'error': 'Category not found'}), 404
+        else:
+            return jsonify(category.serialize())
+    elif request.method == 'PUT':
+        try:
+            category = Category.get_by_id(category_id)
+            if not category:
+                return jsonify({'error': 'Category not found'}), 404
+            category.name = request.json['name']
+            category.description = request.json['description']
+            category.image=request.json['image']
+            category.private_notes=request.json['private_notes']
+            category.save()
+            return jsonify({'success': 'Category successfully updated'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    elif request.method == 'DELETE':
+        try:
+            category = Category.get_by_id(category_id)
+            if not category:
+                return jsonify({'error': 'Category not found'}), 404
+            category.delete()
+            return jsonify({'success': 'Category successfully deleted'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+        
+# Routes for LorePage model
+@app.route('/api/categories/<category_id>/lore-pages', methods=['GET', 'POST'])
+def get_lore_pages(category_id):
+    if request.method == 'GET':
+        lore_pages = LorePage.get_all_by_category(category_id)
+        if lore_pages:
+            return jsonify([lore_page.serialize() for lore_page in lore_pages])
+        else:
+            return jsonify({'error': 'Category doesn\'t have any lore pages'}), 404
+    elif request.method == 'POST':
+        try:
+            lore_page = LorePage(
+                id=None,
+                name=request.json['name'],
+                creator=session['username'],
+                description=request.json['description'],
+                image=request.json['image'],
+                private_notes=request.json['private_notes'],
+                category=category_id
+            )
+            lore_page.save()
+            return jsonify({'success': 'Lore page successfully created'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+        
+@app.route('/api/lore-pages/<lore_page_id>', methods=['GET', 'PUT', 'DELETE'])
+def get_lore_page(lore_page_id):
+    if request.method == 'GET':
+        lore_page = LorePage.get_by_id(lore_page_id)
+        if not lore_page:
+            return jsonify({'error': 'Lore page not found'}), 404
+        else:
+            return jsonify(lore_page.serialize())
+    elif request.method == 'PUT':
+        try:
+            lore_page = LorePage.get_by_id(lore_page_id)
+            if not lore_page:
+                return jsonify({'error': 'Lore page not found'}), 404
+            lore_page.name = request.json['name']
+            lore_page.description = request.json['description']
+            lore_page.image=request.json['image']
+            lore_page.private_notes=request.json['private_notes']
+            lore_page.save()
+            return jsonify({'success': 'Lore page successfully updated'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+    elif request.method == 'DELETE':
+        try:
+            lore_page = LorePage.get_by_id(lore_page_id)
+            if not lore_page:
+                return jsonify({'error': 'Lore page not found'}), 404
+            lore_page.delete()
+            return jsonify({'success': 'Lore page successfully deleted'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 400
 

@@ -426,6 +426,19 @@ class LorePage:
         self.relationships = relationships
         self.private_notes = private_notes
 
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'creator': self.creator,
+            'name': self.name,
+            'categories': self.categories,
+            'image': self.image,
+            'description': self.description,
+            'short_description': self.short_description,
+            'relationships': self.relationships,
+            'private_notes': self.private_notes
+        }
+
     def save(self):
         lorepages_collection = db['lorepages']
         lorepage_data = {
