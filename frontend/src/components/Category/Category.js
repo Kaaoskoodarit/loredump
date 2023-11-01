@@ -5,6 +5,8 @@ import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
 import { useNavigate} from 'react-router-dom';
+import { getCategoryList } from '../../actions/categoryActions';
+import { addLink,removeLink } from '../ManageLinks';
 
 
 
@@ -21,6 +23,8 @@ const Category = (props) => {
     const links = useSelector(state => state.category.page.links);
     const catpage = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.page.list);
+    const categorylist = useSelector(state => state.category.list);
+
 
 
 	//mode:verbose
@@ -59,8 +63,18 @@ const Category = (props) => {
 		navigate("/lorepage/"+id)
 	}
 	
-	const removeAPage = (id) => {
-		dispatch(removePage(token,id));
+	const removeAPage = (page,category_ids) => {
+		dispatch(removePage(token,page.id));
+		dispatch(getCategoryList(token,"verbose"))
+        
+        // iterate through categories in the list
+        for (let thiscategory of categorylist)
+            if (category_ids.includes(thiscategory.id)) {
+				
+				removeLink(page,thiscategory)
+				//remove page link from templinks
+			}
+             
 		changeMode("cancel");
 	}
 	

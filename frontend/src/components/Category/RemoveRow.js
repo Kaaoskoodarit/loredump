@@ -9,7 +9,7 @@ const RemoveRow = (props) => {
 			</td>
 			<td>{props.page.image}</td>
 			<td>{props.page.summary}</td>
-			<td><button onClick={() => props.removePage(props.page.id)}
+			<td><button onClick={() => props.removePage(props.page.id,props.page.categories)}
 				className="btn btn-danger"
 				>Confirm Remove</button></td>
 			<td><button onClick={() => props.changeMode("cancel")}
