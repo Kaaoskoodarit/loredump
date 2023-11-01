@@ -29,7 +29,7 @@ const LorePage = (props) => {
 	
 
 	//IMAGES
-	const default_img = '../../shepherd-dog-defaultimg.jpg'
+	const default_img = 'https://media.discordapp.net/attachments/1161992163765256203/1169189304220782662/image.png?ex=65547f64&is=65420a64&hm=32e108ff3fe3bb4e9bb89feed07a87015edb99fcc6a8f1d1ecc6b2ae8d4f0017&='
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
 
@@ -78,15 +78,18 @@ const LorePage = (props) => {
 		return id;
 	}
 
-	let categories_listed = page.categories.map((id,index)=>{
-		let categoryTitle = getCategoryTitle(id)
-		return <td key={index+id}>
-			{index}:
-			<button onClick={() => handleNavigate(id)}
-			className="btn btn-primary"
-			>{categoryTitle}</button>
-			</td>}
-		)
+	let categories_listed;
+	if(page.categories){
+		categories_listed = page.categories.map((id,index)=>{
+			let categoryTitle = getCategoryTitle(id)
+			return <td key={index+id}>
+				{index}:
+				<button onClick={() => handleNavigate(id)}
+				className="btn btn-primary"
+				>{categoryTitle}</button>
+				</td>}
+			)
+	}
 
 	return(
         <div>

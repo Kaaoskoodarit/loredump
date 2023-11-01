@@ -81,7 +81,7 @@ const Category = (props) => {
 	let pages = <tr><td>No Lore pages linked yet.</td></tr>
 
 	//if category has at least one link to a lore saved:
-	if (links.length>0){
+	if (links &&links.length>0){
 		pages = links.map((id,index) => {
 			//define an instance of lore page
 			let page = getLore(id)
