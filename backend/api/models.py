@@ -174,7 +174,7 @@ class World:
     required_fields = ['creator', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=None):
+    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=[]):
         self.id = id
         self.creator = creator
         self.name = name
@@ -209,13 +209,14 @@ class World:
     
     def add_category(self, category):
         worlds_collection = db['worlds']
-        result = worlds_collection.update_one(
-            {'_id': self.id},
-            {'$push': {'categories': category}}
-        )
-        if result.modified_count == 1:
-            return True
-        else:
+        try:
+            result = worlds_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'categories': category}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
             return False
     
     @staticmethod
@@ -335,10 +336,11 @@ class Category:
             'image': self.image,
             'description': self.description,
             'pages': self.pages,
-            'private_notes': self.private_notes
+            'private_notes': self.private_notes,
+            'world': self.world
         })
-        world = World.get_by_id(self.world)
-        world.add_category(self.name)
+        addCat = World.get_by_id(ObjectId(self.world))
+        addCat.add_category(self.name)
         if result.inserted_id:
             return True
         else:

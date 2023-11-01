@@ -399,6 +399,7 @@ def add_fake_data():
         num_worlds_per_user = request.json.get('num_worlds_per_user', 10)
         num_lore_pages_per_world = request.json.get('num_lore_pages_per_world', 5)
         num_categories_per_world = request.json.get('num_categories_per_world', 5)
+        categories = ['Uncategorized']
 
         for _ in range(num_users):
             username = fake.name()
@@ -419,7 +420,7 @@ def add_fake_data():
                     creator=session['username'],
                     name=fake.word()
                 )
-                world.save()
+                world.id = world.save()
 
                 for _ in range(num_categories_per_world):
                     category = Category(
@@ -432,11 +433,11 @@ def add_fake_data():
                         private_notes=fake.text()
                     )
                     category.save()
+                    categories.append(category.name)
+                    print(categories)
 
                 for _ in range(num_lore_pages_per_world):
-                    categories = [category for category in Category.get_all_by_creator(user.id)]
-                    categories.append(None)
-                    random_category = categories[Random().randrange(0, len(categories))] # adds random category
+                    random_category = categories[Random().randrange(0, len(categories)-1)] # adds random category
                     lore_page = LorePage(
                         id=ObjectId(),
                         creator=world.creator,
@@ -445,10 +446,11 @@ def add_fake_data():
                         description=fake.text(),
                         image=fake.image_url(),
                         private_notes=fake.text(),
-                        categories=[random_category.name if random_category else 'Uncategorized']
+                        categories=[random_category]
                     )
                     lore_page.save()
             session.clear()
+            categories = ['Uncategorized']
 
         return jsonify({'success': 'Fake data successfully added'}), 200
     except Exception as e:
