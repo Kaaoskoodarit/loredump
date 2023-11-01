@@ -207,6 +207,17 @@ class World:
         })
         return result.inserted_id
     
+    def add_category(self, category):
+        worlds_collection = db['worlds']
+        result = worlds_collection.update_one(
+            {'_id': self.id},
+            {'$push': {'categories': category}}
+        )
+        if result.modified_count == 1:
+            return True
+        else:
+            return False
+    
     @staticmethod
     def get_by_id(id):
         worlds_collection = db['worlds']
@@ -326,6 +337,8 @@ class Category:
             'pages': self.pages,
             'private_notes': self.private_notes
         })
+        world = World.get_by_id(self.world)
+        world.add_category(self.name)
         if result.inserted_id:
             return True
         else:
@@ -415,10 +428,11 @@ class LorePage:
     relationships: list
     private_notes: str
 
-    def __init__(self, id, creator, name, categories=None, image=None, description=None, short_description=None, relationships=None, private_notes=None):
+    def __init__(self, id, creator, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=None, private_notes=None):
         self.id = id
         self.creator = creator
         self.name = name
+        self.world_id = world_id
         self.categories = categories
         self.image = image
         self.description = description

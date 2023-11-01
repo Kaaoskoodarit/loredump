@@ -1,4 +1,5 @@
 import datetime, os, jwt
+from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, Response, jsonify, request, session
@@ -6,6 +7,8 @@ import pytz
 from api.models import User, Session, World, Category, LorePage
 from pprint import pprint
 import requests
+from faker import Faker
+from bson import ObjectId
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,6 +34,8 @@ try:
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+fake = Faker()
 
 @app.route('/', methods=['GET'])
 def index():
@@ -151,7 +156,7 @@ def protected():
 
 @app.before_request
 def before_request():
-    if request.endpoint in ['register', 'login'] or request.method != 'POST':
+    if request.endpoint in ['register', 'login', 'add_fake_data'] or request.method != 'POST':
         return
     if 'user_id' not in session:
         return jsonify({'error': 'User not logged in'}), 401
@@ -292,6 +297,7 @@ def get_categories(world_id):
                 world=world_id
             )
             category.save()
+            World.add_category(world_id, category.name)
             return jsonify({'success': 'Category successfully created'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 400
@@ -382,6 +388,71 @@ def get_lore_page(lore_page_id):
             return jsonify({'success': 'Lore page successfully deleted'}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 400
+        
+# add fake data:
+@app.route('/api/fake-data', methods=['POST'])
+def add_fake_data():
+    if app.debug == False:
+        return jsonify({'error': 'Can\'t add fake data outside of debug mode'}), 400
+    try:
+        num_users = request.json.get('num_users', 10)
+        num_worlds_per_user = request.json.get('num_worlds_per_user', 10)
+        num_lore_pages_per_world = request.json.get('num_lore_pages_per_world', 5)
+        num_categories_per_world = request.json.get('num_categories_per_world', 5)
+
+        for _ in range(num_users):
+            username = fake.name()
+            password = fake.password()
+            user = User(
+                id=ObjectId(),
+                username=username,
+                password=password
+            )
+            user.register()
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session['ttl'] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
+
+            for _ in range(num_worlds_per_user):
+                world = World(
+                    id=ObjectId(),
+                    creator=session['username'],
+                    name=fake.word()
+                )
+                world.save()
+
+                for _ in range(num_categories_per_world):
+                    category = Category(
+                        id=ObjectId(),
+                        creator=world.creator,
+                        world=world.id,
+                        name=fake.word(),
+                        description=fake.text(),
+                        image=fake.image_url(),
+                        private_notes=fake.text()
+                    )
+                    category.save()
+
+                for _ in range(num_lore_pages_per_world):
+                    categories = [category for category in Category.get_all_by_creator(user.id)]
+                    categories.append(None)
+                    random_category = categories[Random().randrange(0, len(categories))] # adds random category
+                    lore_page = LorePage(
+                        id=ObjectId(),
+                        creator=world.creator,
+                        world_id=world.id,
+                        name=fake.sentence(),
+                        description=fake.text(),
+                        image=fake.image_url(),
+                        private_notes=fake.text(),
+                        categories=[random_category.name if random_category else 'Uncategorized']
+                    )
+                    lore_page.save()
+            session.clear()
+
+        return jsonify({'success': 'Fake data successfully added'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == "__main__":
     app.run("127.0.0.1", port=3001, debug=True)
