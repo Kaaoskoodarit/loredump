@@ -39,12 +39,23 @@ class User:
         self.password = password
 
     def serialize(self):
+        worlds = {}
+        for world in World.get_all_by_creator(self.id):
+            worlds[str(world.id)] = world.name
+        categories = {}
+        for category in Category.get_all_by_creator(self.id):
+            categories[str(category.id)] = category.name
+        lore_pages = {}
+        for lore_page in LorePage.get_all_by_creator(self.id):
+            lore_pages[str(lore_page.id)] = lore_page.name
+
+        print(worlds)
         return {
             'id': str(self.id),
             'username': self.username,
-            'worlds': [str(world.id) for world in World.get_all_by_creator(self.id)],
-            'categories': [str(category.name) for category in Category.get_all_by_creator(self.id)],
-            'lore_pages': [str(lore_page.name) for lore_page in LorePage.get_all_by_creator(self.id)]
+            'worlds': worlds,
+            'categories': categories,
+            'lore_pages': lore_pages
         }
     
     def register(self):
