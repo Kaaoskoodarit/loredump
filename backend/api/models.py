@@ -13,6 +13,14 @@ import secrets
 client = MongoClient('mongodb://localhost:27017/')
 db = client['LoreDump']
 
+# import json
+
+# class JSONEncoder(json.JSONEncoder):
+#     def default(self, o):
+#         if isinstance(o, ObjectId):
+#             return str(o)
+#         return json.JSONEncoder.default(self, o)
+
 # Define User model
 class User:
 
@@ -29,6 +37,15 @@ class User:
         self.id = id
         self.username = username
         self.password = password
+
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'username': self.username,
+            'worlds': [str(world.id) for world in World.get_all_by_creator(self.id)],
+            'categories': [str(category.name) for category in Category.get_all_by_creator(self.id)],
+            'lore_pages': [str(lore_page.name) for lore_page in LorePage.get_all_by_creator(self.id)]
+        }
     
     def register(self):
         """
@@ -185,18 +202,18 @@ class World:
 
     # World Schema:
     id: ObjectId
-    creator: str
+    creator_id: str
     name: str
-    image: str #???
+    image: str
     description: str
     private_notes: str
     categories: list
-    required_fields = ['creator', 'name']
+    required_fields = ['creator_id', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=['Uncategorised']):
+    def __init__(self, id, creator_id, name, image=None, description=None, private_notes=None, categories=['Uncategorised']):
         self.id = id
-        self.creator = creator
+        self.creator_id = creator_id
         self.name = name
         self.image = image
         self.description = description
@@ -206,7 +223,7 @@ class World:
     def serialize(self):
         return {
             'id': str(self.id),
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'name': self.name,
             'image': self.image,
             'description': self.description,
@@ -216,9 +233,9 @@ class World:
 
     def save(self):
         worlds_collection = db['worlds']
-        self.creator = session['username']
+        self.creator_id = str(session['user_id'])
         result = worlds_collection.insert_one({
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'name': self.name,
             'image': self.image,
             'description': self.description,
@@ -226,6 +243,18 @@ class World:
             'categories': self.categories
         })
         return result.inserted_id
+    
+    def add_private_note(self):
+        worlds_collection = db['worlds']
+        try:
+            result = worlds_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'private_notes': self.private_notes}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
     
     def add_category(self, category):
         worlds_collection = db['worlds']
@@ -246,7 +275,7 @@ class World:
         if result:
             return World(
                 id=result['_id'],
-                creator=result['creator'],
+                creator_id=result['creator_id'],
                 name=result['name'],
                 image=result['image'],
                 description=result['description'],
@@ -257,14 +286,15 @@ class World:
             return jsonify({'error': 'World not found'}), 404
         
     @staticmethod
-    def get_all_by_creator(creator):
+    def get_all_by_creator(creator_id):
         worlds_collection = db['worlds']
-        results = worlds_collection.find({'creator': creator})
+        results = worlds_collection.find({'creator_id': creator_id})
+        results_list = list(results)
         worlds = []
-        for result in results:
+        for result in results_list:
             world = World(
                 id=result['_id'],
-                creator=result['creator'],
+                creator_id=result['creator_id'],
                 name=result['name'],
                 image=result['image'],
                 description=result['description'],
@@ -315,19 +345,19 @@ class Category:
 
     # Category Schema:
     id: ObjectId
-    creator: str
+    creator_id: str
     name: str
     world_id: ObjectId
     image: str
     description: str
-    pages: list
+    lore_pages: list
     private_notes: str
-    required_fields = ['creator', 'name']
+    required_fields = ['creator_id', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, world_id=None, image=None, description=None, lore_pages=[], private_notes=None):
+    def __init__(self, id, creator_id, name, world_id=None, image=None, description=None, lore_pages=[], private_notes=None):
         self.id = id
-        self.creator = creator
+        self.creator_id = creator_id
         self.name = name
         self.world_id = world_id
         self.image = image
@@ -336,38 +366,61 @@ class Category:
         self.private_notes = private_notes
 
     def serialize(self):
-        print(self.world_id)
         return {
             'id': str(self.id),
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'name': self.name,
             'world': {
                 'id': str(self.world_id),
-                'name': World.get_by_id(ObjectId(self.world_id)).name
+                'name': str(World.get_by_id(ObjectId(self.world_id)).name)
             },
             'image': self.image,
             'description': self.description,
-            'lore_pages': self.lore_pages,
-            'private_notes': self.private_notes
-        }
+            'lore_pages': [str(page) for page in self.lore_pages],
+            'private_notes': self.private_notes,
+    }
     
     def save(self):
         categories_collection = db['categories']
-        self.creator = session['username']
+        self.creator_id = session['user_id']
         result = categories_collection.insert_one({
-            'creator': self.creator,
+            'creator_id': str(self.creator_id),
             'name': self.name,
             'image': self.image,
             'description': self.description,
-            'lore_pages': self.lore_pages,
+            'lore_pages': [str(page) for page in self.lore_pages],
             'private_notes': self.private_notes,
-            'world_id': self.world_id
+            'world_id': str(self.world_id)
         })
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.name)
         if result.inserted_id:
             return True
         else:
+            return False
+        
+    def add_private_note(self):
+        categories_collection = db['categories']
+        try:
+            result = categories_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'private_notes': self.private_notes}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+        
+    def add_lore_page(self, lore_page):
+        categories_collection = db['categories']
+        try:
+            result = categories_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'lore_pages': str(lore_page)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
             return False
     
     def delete(self):
@@ -415,7 +468,7 @@ class Category:
         if category:
             return Category(
                 str(category['_id']),
-                category['creator'],
+                category['creator_id'],
                 category['name'],
                 category['world_id'],
                 category['image'],
@@ -427,18 +480,18 @@ class Category:
             return None
 
     @staticmethod
-    def get_all_by_creator(creator):
+    def get_all_by_creator(creator_id):
         categories_collection = db['categories']
-        categories = categories_collection.find({'creator': creator})
+        categories = categories_collection.find({'creator_id': creator_id})
         return [
             Category(
                 str(category['_id']),
-                category['creator'],
+                category['creator_id'],
                 category['name'],
                 category['world_id'],
                 category['image'],
                 category['description'],
-                category['pages'],
+                category['lore_pages'],
                 category['private_notes']
             ) for category in categories
         ]
@@ -465,7 +518,7 @@ class LorePage:
     # LorePage Schema:
     id: ObjectId
     world_id: ObjectId
-    creator: str
+    creator_id: ObjectId
     name: str
     categories: list
     image: str #???
@@ -474,9 +527,9 @@ class LorePage:
     relationships: list
     private_notes: str
 
-    def __init__(self, id, creator, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=[], private_notes=[]):
+    def __init__(self, id, creator_id, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=[], private_notes=[]):
         self.id = id
-        self.creator = creator
+        self.creator_id = creator_id
         self.name = name
         self.world_id = world_id
         self.categories = categories
@@ -489,7 +542,7 @@ class LorePage:
     def serialize(self):
         return {
             'id': str(self.id),
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'name': self.name,
             'categories': self.categories,
             'image': self.image,
@@ -502,7 +555,7 @@ class LorePage:
     def save(self):
         lorepages_collection = db['lorepages']
         lorepage_data = {
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'name': self.name,
             'categories': self.categories,
             'image': self.image,
@@ -511,8 +564,28 @@ class LorePage:
             'relationships': self.relationships,
             'private_notes': self.private_notes
         }
+        # add LorePage to Category
+        for category in self.categories:
+            categories_collection = db['categories']
+            result = categories_collection.update_one(
+                {'name': category},
+                {'$push': {'lore_pages': str(self.id)}}
+            )
+
         result = lorepages_collection.insert_one(lorepage_data)
         self.id = str(result.inserted_id)
+
+    def add_private_note(self):
+        lorepages_collection = db['lorepages']
+        try:
+            result = lorepages_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'private_notes': self.private_notes}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
 
     def delete(self):
         lorepages_collection = db['lorepages']
@@ -562,13 +635,13 @@ class LorePage:
             return None
 
     @staticmethod
-    def get_all_by_creator(creator):
+    def get_all_by_creator(creator_id):
         lorepages_collection = db['lorepages']
-        lorepages = lorepages_collection.find({'creator': creator})
+        lorepages = lorepages_collection.find({'creator_id': creator_id})
         return [
             LorePage(
                 str(lorepage['_id']),
-                lorepage['creator'],
+                lorepage['creator_id'],
                 lorepage['name'],
                 lorepage['categories'],
                 lorepage['image'],

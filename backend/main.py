@@ -61,11 +61,7 @@ def user():
             if 'user_id' not in session:
                 return jsonify({'error': 'User not logged in'}), 401
             user = User.get_by_id(session['user_id'])
-            return jsonify({
-                'id': str(user.id),
-                'username': user.username,
-                'worlds': [world.serialize() for world in World.get_all_by_creator(user.username)]
-            })
+            return jsonify(user.serialize())
         except Exception as e:
             return jsonify({'error': str(e)}), 401
     if request.method == 'PUT':
@@ -224,7 +220,7 @@ def get_user(id):
 @app.route('/api/worlds', methods=['GET', 'POST'])
 def get_worlds():
     if request.method == 'GET':
-        worlds = World.get_all_by_creator(session['username'])
+        worlds = World.get_all_by_creator(session['user_id'])
         if worlds:
             return jsonify([world.serialize() for world in worlds])
         else:
@@ -410,20 +406,22 @@ def add_fake_data():
                 username = fake.unique.first_name()
             password = fake.password()
             user = User(
-                id=ObjectId(),
+                id=None,
                 username=username,
                 password=password
             )
             print(f'username: {username}, password: {password}')
             user.register()
+            user = User.get_by_username(username)
             session['user_id'] = user.id
             session['username'] = user.username
             session['ttl'] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
+            print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
 
             for _ in range(num_worlds_per_user):
                 world = World(
                     id=ObjectId(),
-                    creator=session['username'],
+                    creator_id=session['user_id'],
                     name=fake.word(),
                     image=fake.image_url(),
                     private_notes=fake.text(),
@@ -435,7 +433,7 @@ def add_fake_data():
                 for _ in range(num_categories_per_world):
                     category = Category(
                         id=ObjectId(),
-                        creator=world.creator,
+                        creator_id=world.creator_id,
                         world_id=world.id,
                         name=fake.word(),
                         description=fake.text(),
@@ -449,7 +447,7 @@ def add_fake_data():
                     random_category = categories[Random().randrange(0, len(categories)-1)] # adds random category
                     lore_page = LorePage(
                         id=ObjectId(),
-                        creator=world.creator,
+                        creator_id=world.creator_id,
                         world_id=world.id,
                         name=fake.sentence(),
                         description=fake.text(),
