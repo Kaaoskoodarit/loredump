@@ -47,7 +47,7 @@ class User:
         
         # Validate username and password
         if not self.is_valid():
-            raise Exception('Username and password must be at least 4 and 8 characters long, respectively')
+            raise Exception('Invalid username or password')
         
         # Hash the password before saving
         hashed_password = generate_password_hash(self.password)
@@ -57,6 +57,20 @@ class User:
         }
         
         users_collection.insert_one(user_data)
+
+    def delete(self):
+        """
+            Deletes a user from the database.
+
+            Raises:
+                Exception: If the user does not exist.
+        """
+        users_collection = db['users']
+        result = users_collection.delete_one({'_id': ObjectId(self.id)})
+        if result.deleted_count == 1:
+            return True
+        else:
+            return False
 
     
     @staticmethod
@@ -106,7 +120,13 @@ class User:
                 return None
 
     def is_valid(self):
-        return len(self.username) >= 4 and len(self.password) >= 8
+        # no spaces in username
+        if ' ' in self.username:
+            return False
+        # username and password must be at least 4 and 8 characters long, respectively
+        if len(self.username) < 4 or len(self.password) < 8:
+            return False
+        return True
     
     # TODO: Implement save method so that user can only edit their own account.
     def save(self):
@@ -174,7 +194,7 @@ class World:
     required_fields = ['creator', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=[]):
+    def __init__(self, id, creator, name, image=None, description=None, private_notes=None, categories=['Uncategorised']):
         self.id = id
         self.creator = creator
         self.name = name
@@ -297,33 +317,37 @@ class Category:
     id: ObjectId
     creator: str
     name: str
-    world: ObjectId
-    image: str #???
+    world_id: ObjectId
+    image: str
     description: str
     pages: list
     private_notes: str
     required_fields = ['creator', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator, name, world=None, image=None, description=None, pages=None, private_notes=None):
+    def __init__(self, id, creator, name, world_id=None, image=None, description=None, lore_pages=[], private_notes=None):
         self.id = id
         self.creator = creator
         self.name = name
-        self.world = world
+        self.world_id = world_id
         self.image = image
         self.description = description
-        self.pages = pages
+        self.lore_pages = lore_pages
         self.private_notes = private_notes
 
     def serialize(self):
+        print(self.world_id)
         return {
             'id': str(self.id),
             'creator': self.creator,
             'name': self.name,
-            'world': self.world,
+            'world': {
+                'id': str(self.world_id),
+                'name': World.get_by_id(ObjectId(self.world_id)).name
+            },
             'image': self.image,
             'description': self.description,
-            'pages': self.pages,
+            'lore_pages': self.lore_pages,
             'private_notes': self.private_notes
         }
     
@@ -335,11 +359,11 @@ class Category:
             'name': self.name,
             'image': self.image,
             'description': self.description,
-            'pages': self.pages,
+            'lore_pages': self.lore_pages,
             'private_notes': self.private_notes,
-            'world': self.world
+            'world_id': self.world_id
         })
-        addCat = World.get_by_id(ObjectId(self.world))
+        addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.name)
         if result.inserted_id:
             return True
@@ -361,9 +385,9 @@ class Category:
         return result.deleted_count
     
     @staticmethod
-    def delete_all_by_world(world):
+    def delete_all_by_world(world_id):
         categories_collection = db['categories']
-        result = categories_collection.delete_many({'world': world})
+        result = categories_collection.delete_many({'world_id': world_id})
         return result.deleted_count
 
     def update(self):
@@ -393,9 +417,10 @@ class Category:
                 str(category['_id']),
                 category['creator'],
                 category['name'],
+                category['world_id'],
                 category['image'],
                 category['description'],
-                category['pages'],
+                category['lore_pages'],
                 category['private_notes']
             )
         else:
@@ -410,9 +435,27 @@ class Category:
                 str(category['_id']),
                 category['creator'],
                 category['name'],
+                category['world_id'],
                 category['image'],
                 category['description'],
                 category['pages'],
+                category['private_notes']
+            ) for category in categories
+        ]
+    
+    @staticmethod
+    def get_all_by_world(world_id):
+        categories_collection = db['categories']
+        categories = categories_collection.find({'world_id': world_id})
+        return [
+            Category(
+                str(category['_id']),
+                category['creator'],
+                category['name'],
+                category['world_id'],
+                category['image'],
+                category['description'],
+                category['lore_pages'],
                 category['private_notes']
             ) for category in categories
         ]
@@ -421,6 +464,7 @@ class LorePage:
 
     # LorePage Schema:
     id: ObjectId
+    world_id: ObjectId
     creator: str
     name: str
     categories: list
@@ -430,7 +474,7 @@ class LorePage:
     relationships: list
     private_notes: str
 
-    def __init__(self, id, creator, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=None, private_notes=None):
+    def __init__(self, id, creator, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=[], private_notes=[]):
         self.id = id
         self.creator = creator
         self.name = name
@@ -534,6 +578,45 @@ class LorePage:
                 lorepage['private_notes']
             ) for lorepage in lorepages
         ]
+    
+    @staticmethod
+    def get_all_by_world(world):
+        lorepages_collection = db['lorepages']
+        lorepages = lorepages_collection.find({'world': world})
+        return [
+            LorePage(
+                str(lorepage['_id']),
+                lorepage['creator'],
+                lorepage['name'],
+                lorepage['categories'],
+                lorepage['image'],
+                lorepage['description'],
+                lorepage['short_description'],
+                lorepage['relationships'],
+                lorepage['private_notes']
+            ) for lorepage in lorepages
+        ]
+    
+    @staticmethod
+    def get_all_by_category(category):
+        lorepages_collection = db['lorepages']
+        lorepages = lorepages_collection.find({'categories': category})
+        return [
+            LorePage(
+                str(lorepage['_id']),
+                lorepage['creator'],
+                lorepage['name'],
+                lorepage['categories'],
+                lorepage['image'],
+                lorepage['description'],
+                lorepage['short_description'],
+                lorepage['relationships'],
+                lorepage['private_notes']
+            ) for lorepage in lorepages
+        ]
+
+
+''' OLD SESSION CLASS:
 class Session:
     # Create random token of 64 bytes
     user: str
@@ -599,7 +682,6 @@ class Session:
             User.logout(self.user)
             return None
 
-    ''' OLD SESSION CLASS:
     def __init__(self, id, user_id, token):
     #     self.id = id
     #     self.user_id = user_id
