@@ -4,7 +4,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from flask import Flask, Response, jsonify, request, session
 import pytz
-from api.models import User, Session, World, Category, LorePage
+from api.models import User, World, Category, LorePage
 from pprint import pprint
 import requests
 from faker import Faker
@@ -112,7 +112,9 @@ def register():
         except Exception as e:
             if str(e) == 'User already exists':
                 return jsonify({'error': 'User already exists'}), 409
-            return jsonify({'error': str(e)})
+            if str(e) == 'Invalid username or password':
+                return jsonify({'error': 'Invalid username or password'}), 400
+            return jsonify({'error': str(e)}, 400)
         
 @app.route('/login', methods=['POST'])
 def login():
@@ -392,7 +394,7 @@ def get_lore_page(lore_page_id):
 # add fake data:
 @app.route('/api/fake-data', methods=['POST'])
 def add_fake_data():
-    if app.debug == False:
+    if app.debug == False and client != MongoClient('mongodb://localhost:27017/'):
         return jsonify({'error': 'Can\'t add fake data outside of debug mode'}), 400
     try:
         num_users = request.json.get('num_users', 10)
@@ -402,13 +404,17 @@ def add_fake_data():
         categories = ['Uncategorized']
 
         for _ in range(num_users):
-            username = fake.name()
+            username = fake.unique.first_name()
+            # Make sure username is at least 4 characters long
+            while len(username) < 4:
+                username = fake.unique.first_name()
             password = fake.password()
             user = User(
                 id=ObjectId(),
                 username=username,
                 password=password
             )
+            print(f'username: {username}, password: {password}')
             user.register()
             session['user_id'] = user.id
             session['username'] = user.username
@@ -418,15 +424,19 @@ def add_fake_data():
                 world = World(
                     id=ObjectId(),
                     creator=session['username'],
-                    name=fake.word()
+                    name=fake.word(),
+                    image=fake.image_url(),
+                    private_notes=fake.text(),
+                    description=fake.text()
                 )
                 world.id = world.save()
-
+# TODO: Add LorePage and Category to World
+# AND Add Category to LorePage
                 for _ in range(num_categories_per_world):
                     category = Category(
                         id=ObjectId(),
                         creator=world.creator,
-                        world=world.id,
+                        world_id=world.id,
                         name=fake.word(),
                         description=fake.text(),
                         image=fake.image_url(),
@@ -434,7 +444,6 @@ def add_fake_data():
                     )
                     category.save()
                     categories.append(category.name)
-                    print(categories)
 
                 for _ in range(num_lore_pages_per_world):
                     random_category = categories[Random().randrange(0, len(categories)-1)] # adds random category
