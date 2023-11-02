@@ -5,6 +5,8 @@ import {editCategory,getCategory,getCategoryList} from '../../actions/categoryAc
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
+import {addLinkToCategory} from '../ManageLinks_func';
+
 
 const AddLorePage = (props) => {
 	// Set state for page
@@ -26,6 +28,7 @@ const AddLorePage = (props) => {
     const token = useSelector(state => state.login.token);
     const pagestate = useSelector(state => state.page.page);
     const categorylist = useSelector(state => state.category.list);
+    const store = useSelector(state => state);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -59,6 +62,7 @@ const AddLorePage = (props) => {
 
     //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
     const editACategory = (category,page_id) => {
+        console.log("AddLorePAge: Adding a category link!")
         const tempData = category.links.concat(page_id)
         const tempCat = {
             ...category,
@@ -92,9 +96,11 @@ const AddLorePage = (props) => {
         // Add the new page to the database
         dispatch(addPage(token,page));
         // Redirect to the new page
-        dispatch(getPage(token,pagestate.id));
+        //dispatch(getPage(token,pagestate.id));
         navigate("/lorepage/"+pagestate.id);
-        linkCategories(pagestate.id)
+        //linkCategories(pagestate.id)
+        dispatch(addLinkToCategory(token,pagestate))
+
         // Reset the state of the page and relationships
         setState({
             title:"",

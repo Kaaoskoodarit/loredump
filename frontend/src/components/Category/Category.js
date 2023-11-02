@@ -1,12 +1,13 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
 import { useNavigate} from 'react-router-dom';
+//import ManageLinks from '../ManageLinks';
+import {addLinkToCategory, removeLinkFromCategory} from '../ManageLinks_func';
 import { getCategoryList } from '../../actions/categoryActions';
-import { addLink,removeLink } from '../ManageLinks';
 
 
 
@@ -17,15 +18,18 @@ const Category = (props) => {
 		removeIndex:-1,
 		editIndex:-1
 	})
+
+	// const [managelinks,setManagelinks] = useState({
+	// 	mode:"",
+	// 	page:""
+	// })
 	
 	// Get token and links from "store" state with useSelector
     const token = useSelector(state => state.login.token);
     const links = useSelector(state => state.category.page.links);
     const catpage = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.page.list);
-    const categorylist = useSelector(state => state.category.list);
-
-
+	const store = useSelector(state => state)
 
 	//mode:verbose
 	
@@ -54,8 +58,13 @@ const Category = (props) => {
 				removeIndex:-1,
 				editIndex:-1
 			})
+			// setManagelinks({
+			// 	mode:"",
+			// 	page:""
+			//})
 		}
 	}
+
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
@@ -63,19 +72,17 @@ const Category = (props) => {
 		navigate("/lorepage/"+id)
 	}
 	
-	const removeAPage = (page,category_ids) => {
-		dispatch(removePage(token,page.id));
-		dispatch(getCategoryList(token,"verbose"))
-        
-        // iterate through categories in the list
-        for (let thiscategory of categorylist)
-            if (category_ids.includes(thiscategory.id)) {
-				
-				removeLink(page,thiscategory)
-				//remove page link from templinks
-			}
-             
+	const removeAPage = (page) => {
+		//dispatch(removePage(token,page.id))
+		console.log("removePage");
+		dispatch(removeLinkFromCategory(page,store))
 		changeMode("cancel");
+		return;
+
+
+		// removeLinkFromCategory(page,store)
+		//setManagelinks({mode:"remove-page",page:page})
+		
 	}
 	
 	const editAPage = (page) => {
@@ -101,22 +108,27 @@ const Category = (props) => {
 			let page = getLore(id)
 			if(index === state.removeIndex) {
 				return(
-					<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
+					<RemoveRow key={index+page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
 				)
 			}
 			if(index === state.editIndex) {
 
 				return(
-					<EditRow key={page.id} page={page} changeMode={changeMode} editPage={editAPage}/>
+					<EditRow key={index+page.id} page={page} changeMode={changeMode} editPage={editAPage}/>
 				)
 			}
 			return(
-				<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+				<Row key={index+page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
 			)
 		})
+	
 	}
+	// let managelinks_message = managelinks.mode!=="" ?
+	// 	<ManageLinks mode ={managelinks.mode} page={managelinks.page}/> : ""
+
 	return(
 		<div>
+			{/* {managelinks_message} */}
 		<h2>{catpage.title}</h2>
 		<p>Image: {catpage.image}</p>
 		<p>Description: {catpage.description}</p>

@@ -1,6 +1,6 @@
 // Component that shows a normal list entry, with "remove" and "edit" buttons
 const Row = (props) => {
-	console.log("Row: props.page",props.page)
+	//console.log("Row: props.page",props.page)
 	// const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
 	const categories =<p>Categories</p>
 	const image = (props.page.image!=="")? 
