@@ -203,15 +203,14 @@ export const editCategory = (token,category) => {
 // (async) function that dispatches a "update category" action to the reducer
 export const updateCategory = (token,id,update) => {
 	return async (dispatch) => {
+		let tempbody = {"update":update}
 		let request = {
 			"method":"PUT",
 			"headers":{
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":{
-				"update":JSON.stringify(update)
-			}
+			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
 		const response = await fetch("/category/update/"+id,request);

@@ -190,15 +190,14 @@ export const editPage = (token,page) => {
 // (async) function that dispatches a "update page" action to the reducer
 export const updatePage = (token,id,update) => {
 	return async (dispatch) => {
+		let tempbody = {"update":update}
 		let request = {
 			"method":"PUT",
 			"headers":{
 				"Content-type":"application/json",
 				"token":token
 			},
-			"body":{
-				"update":JSON.stringify(update)
-			}
+			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
 		const response = await fetch("/lorepage/update/"+id,request);

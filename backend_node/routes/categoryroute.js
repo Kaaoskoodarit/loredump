@@ -109,7 +109,7 @@ router.put("/:id",function(req,res) {
     categoryModel.replaceOne({"_id":req.params.id,"creator":req.session.user},category).then(function() {
         return res.status(204).json({"Message":"Success"});
     }).catch(function(error) {
-        console.log("Failed to edit page. Reason",error);
+        console.log("Failed to edit Category. Reason",error);
         return res.status(500).json({"Message":"Internal Server Error"});
     });
 })
