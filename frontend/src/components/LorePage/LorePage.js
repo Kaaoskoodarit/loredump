@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {getCategory} from '../../actions/categoryActions';
 import { useNavigate } from 'react-router-dom';
+import { Card, Paper, Container } from '@mui/material';
 
 //page: list, page, error
 
@@ -92,16 +93,20 @@ const LorePage = (props) => {
 	}
 
 	return(
-        <div>
+		<Container maxWidth="sm">
+		<Paper elevation={3}>
             {/* {categoryList} */}
             {/* <Link to category */}
 		<h2>{page.title}</h2>
 
+		<Card>
 		<img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={"Image for "+page.title}></img>
-
 		<p id="image-desc" className="form-text">
                     Image link: {page.image}
                     </p>
+		<p>Summary:{page.summary}</p>
+		</Card>
+		
 		<table className="table table-striped">
 			<thead>
 				<tr>
@@ -128,7 +133,9 @@ const LorePage = (props) => {
 			</tbody>
 		</table>
 
-        </div>
+        </Paper>
+		</Container>
+        
 	)
 }
 export default LorePage;

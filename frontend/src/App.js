@@ -1,3 +1,4 @@
+import Navbar1 from './components/Navbar1';
 import Navbar2 from './components/Navbar2';
 import LoginPage from './components/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
@@ -44,6 +45,7 @@ function App() {
 	if(appState.isLogged) {
 		return (
 			<div className="App">
+				<Navbar1/>
 				<Navbar2 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
@@ -63,7 +65,7 @@ function App() {
 	} else {
 		return (
 			<div className="App">
-				<Navbar2 />
+				<Navbar1 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
 				</div>
