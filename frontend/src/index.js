@@ -8,6 +8,8 @@ import thunk from 'redux-thunk';
 import loginReducer from './reducers/loginReducer';
 import pageReducer from './reducers/pageReducer';
 import categoryReducer from './reducers/categoryReducer';
+import CssBaseline from '@mui/material/CssBaseline';
+
 
 // Combine different reducers into one
 const rootReducer = combineReducers({
@@ -30,6 +32,7 @@ root.render(
   <React.StrictMode>
   <BrowserRouter>
   <Provider store={store}>
+    <CssBaseline enableColorScheme/>
     <App />
   </Provider>
   </BrowserRouter>
