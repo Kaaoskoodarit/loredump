@@ -3,6 +3,7 @@ import pprint
 from flask import current_app, jsonify, request, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import pytz
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import jwt
@@ -49,7 +50,6 @@ class User:
         for lore_page in LorePage.get_all_by_creator(self.id):
             lore_pages[str(lore_page.id)] = lore_page.name
 
-        print(worlds)
         return {
             'id': str(self.id),
             'username': self.username,
@@ -85,6 +85,29 @@ class User:
         }
         
         users_collection.insert_one(user_data)
+
+    def login(self):
+        """
+            Logs a user in.
+
+            Raises:
+                Exception: If the user does not exist or if the password is incorrect.
+        """
+        users_collection = db['users']
+        # Does user exist?
+        existing_user = users_collection.find_one({'username': self.username})
+        if not existing_user:
+            raise Exception('User does not exist')
+        
+        # Check password
+        if not check_password_hash(existing_user['password'], self.password):
+            raise Exception('Incorrect password')
+        
+        # Create session
+        session['user_id'] = str(existing_user['_id'])
+        session['username'] = existing_user['username']
+        session['ttl'] = datetime.now(pytz.utc) + timedelta(minutes=60)
+
 
     def delete(self):
         """
@@ -219,10 +242,11 @@ class World:
     description: str
     private_notes: str
     categories: list
+    lore_pages: list
     required_fields = ['creator_id', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator_id, name, image=None, description=None, private_notes=None, categories=['Uncategorised']):
+    def __init__(self, id, creator_id, name, image=None, description=None, private_notes=None, categories=['Uncategorised'], lore_pages=[]):
         self.id = id
         self.creator_id = creator_id
         self.name = name
@@ -230,6 +254,7 @@ class World:
         self.description = description
         self.private_notes = private_notes
         self.categories = categories
+        self.lore_pages = lore_pages
 
     def serialize(self):
         return {
@@ -239,22 +264,26 @@ class World:
             'image': self.image,
             'description': self.description,
             'private_notes': self.private_notes,
-            'categories': self.categories
+            'categories': self.categories,
+            'lore_pages': self.lore_pages
         }
 
     def save(self):
         worlds_collection = db['worlds']
         self.creator_id = str(session['user_id'])
+        if self.categories.count('Uncategorised') == 0:
+            self.categories.insert(0, 'Uncategorised') # Force "Uncategorised" to be first category
         result = worlds_collection.insert_one({
             'creator_id': self.creator_id,
             'name': self.name,
             'image': self.image,
             'description': self.description,
             'private_notes': self.private_notes,
-            'categories': self.categories
+            'categories': self.categories,
+            'lore_pages': self.lore_pages
         })
         return result.inserted_id
-    
+
     def add_private_note(self):
         worlds_collection = db['worlds']
         try:
@@ -270,9 +299,27 @@ class World:
     def add_category(self, category):
         worlds_collection = db['worlds']
         try:
+            #if there's no categories, add "Uncategorised" as default
+            # if len(self.categories) == 0:
+            #     result = worlds_collection.update_one(
+            #         {'_id': ObjectId(self.id)},
+            #         {'$push': {'categories': 'Uncategorised'}}
+            #     )
             result = worlds_collection.update_one(
                 {'_id': ObjectId(self.id)},
-                {'$push': {'categories': category}}
+                {'$push': {'categories': str(category)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+        
+    def add_lore_page(self, lore_page):
+        worlds_collection = db['worlds']
+        try:
+            result = worlds_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'lore_pages': str(lore_page)}}
             )
             return result.modified_count == 1
         except Exception as e:
@@ -291,7 +338,8 @@ class World:
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
-                categories=result['categories']
+                categories=result['categories'],
+                lore_pages=result['lore_pages']
             )
         else:
             return jsonify({'error': 'World not found'}), 404
@@ -310,7 +358,8 @@ class World:
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
-                categories=result['categories']
+                categories=result['categories'],
+                lore_pages=result['lore_pages']
             )
             worlds.append(world)
         return worlds
@@ -318,7 +367,7 @@ class World:
     @staticmethod
     def delete_all_by_creator(creator):
         worlds_collection = db['worlds']
-        results = worlds_collection.delete_many({'creator': creator})
+        results = worlds_collection.delete_many({'creator_id': creator})
         return results.deleted_count
 
     def delete(self):
@@ -404,7 +453,25 @@ class Category:
             'world_id': str(self.world_id)
         })
         addCat = World.get_by_id(ObjectId(self.world_id))
-        addCat.add_category(self.name)
+        addCat.add_category(self.id)
+        if result.inserted_id:
+            return True
+        else:
+            return False
+        
+    # Add Uncategorised to database
+    @staticmethod
+    def add_uncategorised(world_id):
+        categories_collection = db['categories']
+        result = categories_collection.insert_one({
+            'creator_id': session['user_id'],
+            'name': 'Uncategorised',
+            'image': None,
+            'description': None,
+            'lore_pages': [],
+            'private_notes': None,
+            'world_id': world_id
+        })
         if result.inserted_id:
             return True
         else:
@@ -434,6 +501,18 @@ class Category:
             print(e)
             return False
     
+    def remove_lore_page(self, lore_page):
+        categories_collection = db['categories']
+        try:
+            result = categories_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$pull': {'lore_pages': str(lore_page)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+    
     def delete(self):
         categories_collection = db['categories']
         result = categories_collection.delete_one({'_id': ObjectId(self.id)})
@@ -445,7 +524,7 @@ class Category:
     @staticmethod
     def delete_all_by_creator(creator):
         categories_collection = db['categories']
-        result = categories_collection.delete_many({'creator': creator})
+        result = categories_collection.delete_many({'creator_id': creator})
         return result.deleted_count
     
     @staticmethod
@@ -514,7 +593,7 @@ class Category:
         return [
             Category(
                 str(category['_id']),
-                category['creator'],
+                category['creator_id'],
                 category['name'],
                 category['world_id'],
                 category['image'],
@@ -523,6 +602,24 @@ class Category:
                 category['private_notes']
             ) for category in categories
         ]
+    
+    @staticmethod
+    def get_by_name(name, world_id):
+        categories_collection = db['categories']
+        category = categories_collection.find_one({'name': name, 'world_id': world_id})
+        if category:
+            return Category(
+                str(category['_id']),
+                category['creator_id'],
+                category['name'],
+                category['world_id'],
+                category['image'],
+                category['description'],
+                category['lore_pages'],
+                category['private_notes']
+            )
+        else:
+            return None
 
 class LorePage:
 
@@ -531,8 +628,9 @@ class LorePage:
     world_id: ObjectId
     creator_id: ObjectId
     name: str
+    world_id: ObjectId
     categories: list
-    image: str #???
+    image: str
     description: str
     short_description: str
     relationships: list
@@ -554,6 +652,7 @@ class LorePage:
         return {
             'id': str(self.id),
             'creator_id': self.creator_id,
+            'world_id': self.world_id,
             'name': self.name,
             'categories': self.categories,
             'image': self.image,
@@ -567,6 +666,7 @@ class LorePage:
         lorepages_collection = db['lorepages']
         lorepage_data = {
             'creator_id': self.creator_id,
+            'world_id': str(self.world_id),
             'name': self.name,
             'categories': self.categories,
             'image': self.image,
@@ -579,9 +679,13 @@ class LorePage:
         for category in self.categories:
             categories_collection = db['categories']
             result = categories_collection.update_one(
-                {'name': category},
+                {'_id': ObjectId(category)},
                 {'$push': {'lore_pages': str(self.id)}}
             )
+
+        # add LorePage to World
+        addLore = World.get_by_id(ObjectId(self.world_id))
+        addLore.add_lore_page(self.id)
 
         result = lorepages_collection.insert_one(lorepage_data)
         self.id = str(result.inserted_id)
@@ -597,6 +701,26 @@ class LorePage:
         except Exception as e:
             print(e)
             return False
+        
+    #Add relationship to lorepage, it has two properties: the lore page it's related to and the type of relationship
+    def add_relationship(self, relationship, type):
+        lorepages_collection = db['lorepages']
+        try:
+            result = lorepages_collection.update_one(
+                {'_id': ObjectId(self.id)},
+                {'$push': {'relationships': {
+                    'relationship': self.get_by_id(relationship).id,
+                    'type': type
+                }}
+                }
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+        
+    """TODO: if lorepage is deleted, delete it from all relationships and add its name as a string
+    to all lorepages that had a relationship with it"""
 
     def delete(self):
         lorepages_collection = db['lorepages']
@@ -605,7 +729,7 @@ class LorePage:
     @staticmethod
     def delete_all_by_creator(creator):
         lorepages_collection = db['lorepages']
-        lorepages_collection.delete_many({'creator': creator})
+        lorepages_collection.delete_many({'creator_id': creator})
 
     @staticmethod
     def delete_all_by_world(world):
@@ -616,7 +740,7 @@ class LorePage:
         lorepages_collection = db['lorepages']
         lorepage_data = {
             'name': self.name,
-            'creator': self.creator,
+            'creator_id': self.creator_id,
             'categories': self.categories,
             'image': self.image,
             'description': self.description,
@@ -633,7 +757,7 @@ class LorePage:
         if lorepage:
             return LorePage(
                 str(lorepage['_id']),
-                lorepage['creator'],
+                lorepage['creator_id'],
                 lorepage['name'],
                 lorepage['categories'],
                 lorepage['image'],
@@ -664,14 +788,15 @@ class LorePage:
         ]
     
     @staticmethod
-    def get_all_by_world(world):
+    def get_all_by_world(world_id):
         lorepages_collection = db['lorepages']
-        lorepages = lorepages_collection.find({'world': world})
+        lorepages = lorepages_collection.find({'world_id': world_id})
         return [
             LorePage(
                 str(lorepage['_id']),
-                lorepage['creator'],
+                lorepage['creator_id'],
                 lorepage['name'],
+                lorepage['world_id'],
                 lorepage['categories'],
                 lorepage['image'],
                 lorepage['description'],
