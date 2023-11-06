@@ -2,8 +2,8 @@ import * as actionConstants from '../actions/actionConstants';
 
 // Check if we have a state stored in sessionStorage
 const getInitialState = () => {
-	if(sessionStorage.getItem("categorystate")) {
-		let state = JSON.parse(sessionStorage.getItem("categorystate"));
+	if(sessionStorage.getItem("worldstate")) {
+		let state = JSON.parse(sessionStorage.getItem("worldstate"));
 		return state;
 	} else {
 		return {
@@ -16,15 +16,15 @@ const getInitialState = () => {
 
 // Save to sessionStorage
 const saveToStorage = (state) => {
-	sessionStorage.setItem("categorystate",JSON.stringify(state));
+	sessionStorage.setItem("pagestate",JSON.stringify(state));
 }
 
 // Initialize state
 const initialState = getInitialState();
 
 // Reducer to handle shopping actions
-const categoryReducer = (state = initialState,action) => {
-	console.log("categoryReducer,action",action);
+const worldReducer = (state = initialState,action) => {
+	console.log("worldReducer,action",action);
 	let tempState = {
 		...state
 	}
@@ -34,35 +34,35 @@ const categoryReducer = (state = initialState,action) => {
 				...state,
 				error:""
 			}
-		case actionConstants.FETCH_CATEGORYLIST_SUCCESS:
+		case actionConstants.FETCH_WORLDLIST_SUCCESS:
 			tempState = {
 				...state,
 				list:action.list
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.FETCH_CATEGORY_SUCCESS:
+		case actionConstants.FETCH_WORLD_SUCCESS:
 			tempState = {
 				...state,
 				page:action.page
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.REMOVE_CATEGORY_SUCCESS:
-			tempState = {
+        case actionConstants.REMOVE_WORLD_SUCCESS:
+            tempState = {
 				...state,
 				page:{}
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.ADD_CATEGORY_SUCCESS:
-		case actionConstants.EDIT_CATEGORY_SUCCESS:
+		case actionConstants.ADD_WORLD_SUCCESS:
+		case actionConstants.EDIT_WORLD_SUCCESS:
 			return state;
-		case actionConstants.FETCH_CATEGORYLIST_FAILED:
-		case actionConstants.FETCH_CATEGORY_FAILED:
-		case actionConstants.ADD_CATEGORY_FAILED:
-		case actionConstants.REMOVE_CATEGORY_FAILED:
-		case actionConstants.EDIT_CATEGORY_FAILED:
+		case actionConstants.FETCH_WORLDLIST_FAILED:
+		case actionConstants.FETCH_WORLD_FAILED:
+		case actionConstants.ADD_WORLD_FAILED:
+		case actionConstants.REMOVE_WORLD_FAILED:
+		case actionConstants.EDIT_WORLD_FAILED:
 			tempState = {
 				...state,
 				error:action.error
@@ -73,7 +73,7 @@ const categoryReducer = (state = initialState,action) => {
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {
 				list:[],
-                page:{},
+				page:{},
 				error:""
 			}
 			saveToStorage(tempState);
@@ -83,4 +83,4 @@ const categoryReducer = (state = initialState,action) => {
 	}
 }
 
-export default categoryReducer;
+export default worldReducer;

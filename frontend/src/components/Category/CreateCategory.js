@@ -16,7 +16,7 @@ const CreateCategory = (props) => {
 	})
 
     // Get token and categorystate from the store
-    const token = useSelector(state => state.login.token);
+    const worldid = useSelector(state => state.world.page.id);
     const categorystate = useSelector(state => state.category.page);
 
     // Use dispatch and navigate
@@ -60,10 +60,10 @@ const CreateCategory = (props) => {
             creator: props.user
         }
         // Add the new page to the database
-        dispatch(addPage(token,page));
-        // Redirect to the new page
-        dispatch(getPage(token,categorystate.id));
-        navigate("/category/"+categorystate.id);
+        dispatch(addPage(worldid,page));
+        // Redirect to the new page (getPage maybe redundant? test after merge!)
+        dispatch(getPage(worldid,categorystate.id));
+        navigate("/api/worlds/"+worldid+"/category/"+categorystate.id);
         // Reset the state of the page and relationships
         setState({
             title:"",

@@ -1,6 +1,8 @@
 import * as actionConstants from './actionConstants';
 import {getList} from './pageActions';
 import {getCategoryList} from '../actions/categoryActions';
+import { getWorldList } from './worldActions';
+import {useSelector} from "react-redux";
 
 //ASYNC THUNK
 
@@ -67,10 +69,15 @@ export const login = (user) => {
 			}
 			// If data parsed, set current user, assign them a token, and 
 			// display the user's shopping list
-			dispatch(loginSuccess(data.token));
+			dispatch(loginSuccess());
 			dispatch(setUsername(user.username));
-			dispatch(getList(data.token));			
-			dispatch(getCategoryList(data.token));			
+			dispatch(getWorldList());
+			const worldlist = useSelector(state => state.world.list);
+			if (worldlist) {
+				const worldid = worldlist[0].id;
+				dispatch(getList(worldid));			
+				dispatch(getCategoryList(worldid));	
+			}	
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
@@ -78,13 +85,10 @@ export const login = (user) => {
 }
 
 // (async) function that dispatches a logout action to the reducer
-export const logout = (token) => {
+export const logout = () => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
-			"headers":{
-				"token":token
-			}
 		}
 		dispatch(loading());
 		const response = await fetch("/logout",request);
@@ -130,10 +134,9 @@ export const registerFailed = (error) => {
 	}
 }
 
-const loginSuccess = (token) => {
+const loginSuccess = () => {
 	return {
-		type:actionConstants.LOGIN_SUCCESS,
-		token:token
+		type:actionConstants.LOGIN_SUCCESS
 	}
 }
 

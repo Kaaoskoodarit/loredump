@@ -11,8 +11,8 @@ const LorePage = (props) => {
 	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
 		return {
-			token:state.login.token,
-            page:state.page.page,
+			worldid:state.world.page.id,
+            page:state.lore.page,
 			categorylist: state.category.list
 		}
 	})
@@ -63,8 +63,8 @@ const LorePage = (props) => {
 
 				//The actual code:::
 				console.log("Navigating to category id",id)
-				dispatch(getCategory(appState.token,id));
-				navigate("/category/"+id)
+				dispatch(getCategory(appState.worldid,id));
+				navigate("/api/worlds/"+appState.worldid+"/category/"+id)
 
 
 			} else console.log("Over 10 Get category attempts!")

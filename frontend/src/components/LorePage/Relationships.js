@@ -6,7 +6,7 @@ const RelRow = (props) => {
     let state = props.state
     let index = props.index
 
-    const pagelist = useSelector(state => state.page.list);
+    const pagelist = useSelector(state => state.lore.list);
 
     // Gets the Title of a category based on its ID
     const getRelTitle = (selected) => {
@@ -67,7 +67,7 @@ const Relationships = (props) => {
     const state = props.state
     const setState = props.setState
 
-    const pagelist = useSelector(state => state.page.list);
+    const pagelist = useSelector(state => state.lore.list);
 
     //OnChange function specifically for Relationships
     const onChange = (event) => {

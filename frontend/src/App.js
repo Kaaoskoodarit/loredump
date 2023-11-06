@@ -12,10 +12,12 @@ function App() {
 	
 	// "Selects" data to be used from the state of the "store"
 	const appState = useSelector((state) => {
-		let error = state.page.error;
+		let error = state.lore.error;
 		// If there is an error in the login, set that as app error
 		if(state.category.error) {
 			error = state.category.error;
+		} else if(state.world.error) {
+			error = state.world.error;
 		} else if(state.login.error) {
 			error = state.login.error;
 		}

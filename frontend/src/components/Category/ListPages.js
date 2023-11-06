@@ -4,7 +4,7 @@ import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
-import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 
 
@@ -19,8 +19,8 @@ const ListPages = (props) => {
 	// Get token and list from "store" state with useSelector
 	const appState = useSelector((state) => {
 		return {
-			token:state.login.token,
-			list:state.page.list
+			worldid:state.world.page.id,
+			list:state.lore.list
 		}
 	})
 	
@@ -54,18 +54,18 @@ const ListPages = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
-		dispatch(getPage(appState.token,id));
+		dispatch(getPage(appState.worldid,id));
 		navigate("/lorepage/"+id)
 	}
 	
 	const removeAPage = (id) => {
-		dispatch(removePage(appState.token,id));
+		dispatch(removePage(appState.worldid,id));
 		changeMode("cancel");
 	}
 	
 	const editAPage = (page) => {
 		console.log("EDITING")
-		dispatch(editPage(appState.token,page));
+		dispatch(editPage(appState.worldid,page));
 		changeMode("cancel");
 	}
 	

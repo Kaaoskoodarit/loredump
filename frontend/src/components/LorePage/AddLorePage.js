@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {addPage,getPage} from '../../actions/pageActions';
-import {editCategory,getCategory,getCategoryList} from '../../actions/categoryActions';
+import {editCategory,getCategoryList} from '../../actions/categoryActions';
 import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
@@ -25,8 +25,8 @@ const AddLorePage = (props) => {
 	})    
 
     // Get token and pagestate from the store
-    const token = useSelector(state => state.login.token);
-    const pagestate = useSelector(state => state.page.page);
+    const worldid = useSelector(state => state.world.page.id);
+    const pagestate = useSelector(state => state.lore.page);
     const categorylist = useSelector(state => state.category.list);
 
     // Use dispatch and navigate
@@ -71,14 +71,14 @@ const AddLorePage = (props) => {
             links:tempData
         }
         console.log("Dispatching edit on category",tempCat)
-        dispatch(editCategory(token,tempCat));
+        dispatch(editCategory(worldid,tempCat));
     }
 
     //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
     const linkCategories = (page_id) =>{
 
         //get full list of categories
-        dispatch(getCategoryList(token,"verbose"))
+        dispatch(getCategoryList(worldid))
         
         // iterate through categories in the list
         for (let thiscategory of categorylist)
@@ -96,10 +96,10 @@ const AddLorePage = (props) => {
             creator: props.user
         }
         // Add the new page to the database
-        dispatch(addPage(token,page));
+        dispatch(addPage(worldid,page));
         // Redirect to the new page
-        dispatch(getPage(token,pagestate.id));
-        navigate("/lorepage/"+pagestate.id);
+        dispatch(getPage(worldid,pagestate.id));
+        navigate("/api/worlds/"+worldid+"/lore-pages/"+pagestate.id);
         linkCategories(pagestate.id)
         // Reset the state of the page and relationships
         setState({

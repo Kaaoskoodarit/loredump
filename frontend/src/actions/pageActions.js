@@ -5,19 +5,16 @@ import * as actionConstants from './actionConstants';
 
 // (async) function that dispatches a getList action to the reducer
 // This displays the list of pages
-export const getList = (token) => {
+export const getList = (worldid) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
 			"method":"GET",
-			"headers":{
-				"token":token
-			}
 		}
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page list from the server, wait for response
-		const response = await fetch("/lorepage",request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -47,19 +44,16 @@ export const getList = (token) => {
 }
 
 // (async) function that dispatches a getPage action to the reducer
-export const getPage = (token,id) => {
+export const getPage = (worldid,id) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
-			"method":"GET",
-			"headers":{
-				"token":token
-			}
+			"method":"GET"
 		}
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page from the server, wait for response
-		const response = await fetch("/lorepage/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages/"+id,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -89,18 +83,17 @@ export const getPage = (token,id) => {
 }
 
 // (async) function that dispatches a "add page" action to the reducer
-export const addPage = (token,page) => {
+export const addPage = (worldid,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/lorepage",request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
@@ -110,10 +103,10 @@ export const addPage = (token,page) => {
 			// If fetch successful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.ADD_PAGE_SUCCESS));
 			// Get updated list
-			dispatch(getList(token));
+			dispatch(getList(worldid));
 			// Get new page
 			const newpage = await response.json();
-			dispatch(getPage(token,newpage.id))
+			dispatch(getPage(worldid,newpage.id))
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -125,16 +118,13 @@ export const addPage = (token,page) => {
 }
 
 // (async) function that dispatches a "remove page" action to the reducer
-export const removePage = (token,id) => {
+export const removePage = (worldid,id) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"DELETE",
-			"headers":{
-				"token":token
-			}
+			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/lorepage/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
@@ -144,7 +134,7 @@ export const removePage = (token,id) => {
 			// If fetch succesful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.REMOVE_PAGE_SUCCESS));
 			// Get updated list
-			dispatch(getList(token));
+			dispatch(getList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -156,18 +146,17 @@ export const removePage = (token,id) => {
 }
 
 // (async) function that dispatches a "edit page" action to the reducer
-export const editPage = (token,page) => {
+export const editPage = (worldid,page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/lorepage/"+page.id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages/"+page.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
@@ -176,7 +165,7 @@ export const editPage = (token,page) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
-			dispatch(getList(token));
+			dispatch(getList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -188,19 +177,18 @@ export const editPage = (token,page) => {
 }
 
 // (async) function that dispatches a "update page" action to the reducer
-export const updatePage = (token,id,update) => {
+export const updatePage = (worldid,id,update) => {
 	return async (dispatch) => {
 		let tempbody = {"update":update}
 		let request = {
 			"method":"PUT",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/lorepage/update/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/lore-pages/update/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
@@ -209,7 +197,7 @@ export const updatePage = (token,id,update) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
-			dispatch(getList(token));
+			dispatch(getList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));

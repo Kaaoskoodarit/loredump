@@ -48,8 +48,14 @@ const pageReducer = (state = initialState,action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.ADD_PAGE_SUCCESS:
 		case actionConstants.REMOVE_PAGE_SUCCESS:
+			tempState = {
+				...state,
+				page:{}
+			}
+			saveToStorage(tempState);
+			return tempState;
+		case actionConstants.ADD_PAGE_SUCCESS:
 		case actionConstants.EDIT_PAGE_SUCCESS:
 			return state;
 		case actionConstants.FETCH_LIST_FAILED:

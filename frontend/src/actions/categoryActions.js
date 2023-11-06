@@ -6,30 +6,17 @@ import * as actionConstants from './actionConstants';
 // (async) function that dispatches a getCategoryList action to the reducer
 // This displays the list of category pages
 // if "mode" = names, only get list of names+ids
-export const getCategoryList = (token,mode) => {
+export const getCategoryList = (worldid) => {
 	return async (dispatch) => {
 		let request = {}
 		// Set request
-        if(!mode) {
-            request = {
-                "method":"GET",
-                "headers":{
-                    "token":token
-                }
-            }
-        } else {
-            request = {
-                "method":"GET",
-                "headers":{
-                    "token":token,
-                    "mode":mode
-                }
-            }
-        }
+        request = {
+            "method":"GET"
+         }
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/category",request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -60,19 +47,16 @@ export const getCategoryList = (token,mode) => {
 
 // (async) function that dispatches a getCategory action to the reducer
 // This displays the category page
-export const getCategory = (token,id) => {
+export const getCategory = (worldid,id) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
-			"method":"GET",
-			"headers":{
-				"token":token
-			}
+			"method":"GET"
 		}
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the category from the server, wait for response
-		const response = await fetch("/category/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories/"+id,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -102,18 +86,17 @@ export const getCategory = (token,id) => {
 }
 
 // (async) function that dispatches a "add category" action to the reducer
-export const addCategory = (token,category) => {
+export const addCategory = (worldid,category) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":JSON.stringify(category)
 		}
 		dispatch(loading());
-		const response = await fetch("/category",request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.ADD_CATEGORY_FAILED,"Failed to add new category. Server never responded. Try again later"))
@@ -123,10 +106,10 @@ export const addCategory = (token,category) => {
 			// If fetch successful, show new list!
 			dispatch(fetchCategorySuccess(actionConstants.ADD_CATEGORY_SUCCESS));
 			// Get updated list
-			dispatch(getCategoryList(token));
+			dispatch(getCategoryList(worldid));
 			// Get new page
 			const newcategory = await response.json();
-			dispatch(getCategory(token,newcategory.id))
+			dispatch(getCategory(worldid,newcategory.id))
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -138,16 +121,13 @@ export const addCategory = (token,category) => {
 }
 
 // (async) function that dispatches a "remove category" action to the reducer
-export const removeCategory = (token,id) => {
+export const removeCategory = (worldid,id) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"DELETE",
-			"headers":{
-				"token":token
-			}
+			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/category/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.REMOVE_CATEGORY_FAILED,"Failed to remove category. Server never responded. Try again later"))
@@ -157,7 +137,7 @@ export const removeCategory = (token,id) => {
 			// If fetch succesful, show new list!
 			dispatch(fetchCategorySuccess(actionConstants.REMOVE_CATEGORY_SUCCESS));
 			// Get updated list
-			dispatch(getCategoryList(token));
+			dispatch(getCategoryList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -169,18 +149,17 @@ export const removeCategory = (token,id) => {
 }
 
 // (async) function that dispatches a "edit category" action to the reducer
-export const editCategory = (token,category) => {
+export const editCategory = (worldid,category) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":JSON.stringify(category)
 		}
 		dispatch(loading());
-		const response = await fetch("/category/"+category.id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories/"+category.id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
@@ -189,7 +168,7 @@ export const editCategory = (token,category) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
-			dispatch(getCategoryList(token));
+			dispatch(getCategoryList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -201,19 +180,18 @@ export const editCategory = (token,category) => {
 }
 
 // (async) function that dispatches a "update category" action to the reducer
-export const updateCategory = (token,id,update) => {
+export const updateCategory = (worldid,id,update) => {
 	return async (dispatch) => {
 		let tempbody = {"update":update}
 		let request = {
 			"method":"PUT",
 			"headers":{
-				"Content-type":"application/json",
-				"token":token
+				"Content-type":"application/json"
 			},
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/category/update/"+id,request);
+		const response = await fetch("/api/worlds/"+worldid+"/categories/update/"+id,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
@@ -222,7 +200,7 @@ export const updateCategory = (token,id,update) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
-			dispatch(getCategoryList(token));
+			dispatch(getCategoryList(worldid));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));

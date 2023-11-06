@@ -17,10 +17,10 @@ const Category = (props) => {
 	})
 	
 	// Get token and links from "store" state with useSelector
-    const token = useSelector(state => state.login.token);
+	const worldid = useSelector(state => state.world.page.id)
     const links = useSelector(state => state.category.page.links);
     const catpage = useSelector(state => state.category.page);
-    const lorelist = useSelector(state => state.page.list);
+    const lorelist = useSelector(state => state.lore.list);
 
 
 	//mode:verbose
@@ -55,18 +55,18 @@ const Category = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
-		dispatch(getPage(token,id));
+		dispatch(getPage(worldid,id));
 		navigate("/lorepage/"+id)
 	}
 	
 	const removeAPage = (id) => {
-		dispatch(removePage(token,id));
+		dispatch(removePage(worldid,id));
 		changeMode("cancel");
 	}
 	
 	const editAPage = (page) => {
 		console.log("EDITING")
-		dispatch(editPage(token,page));
+		dispatch(editPage(worldid,page));
 		changeMode("cancel");
 	}
 

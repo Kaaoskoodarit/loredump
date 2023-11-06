@@ -8,7 +8,6 @@ const Navbar2 = (props) => {
 	const state = useSelector((state) => {
 		return {
 			isLogged:state.login.isLogged,
-			token:state.login.token,
 			user:state.login.user
 		}
 	})
@@ -30,7 +29,7 @@ const Navbar2 = (props) => {
 						<p style={{color:"blue"}} className="nav-link">Logged in as {state.user}</p>
 					</li>
 					<li className="nav-item" style={{marginLeft:10}}>
-						<Link className="nav-link" to="/" onClick={() => dispatch(logout(state.token))}>Logout</Link>
+						<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
 					</li>
 				</ul>
 			</nav>
