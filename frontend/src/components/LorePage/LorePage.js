@@ -1,8 +1,15 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {getCategory} from '../../actions/categoryActions';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, Paper, Container } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { getPage } from '../../actions/pageActions';
+import {Link as RouterLink} from 'react-router-dom'
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import CardMedia from '@mui/material/CardMedia';
 
 //page: list, page, error
 
@@ -19,14 +26,23 @@ const LorePage = (props) => {
 	})
     const page = appState.page
 	const categorylist = appState.categorylist
-
 	const [errorState,setErrorState] = useState(0)
+
+	//ID RECIEVED FROM ROUTER URL
+	let { id } = useParams();
+	const [loading,setLoading] = useState("");
 
 
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
 	const navigate = useNavigate();
+
+	
+	if (page.id !== id && loading===""){
+		setLoading (<CircularProgress color="inherit" />);
+		dispatch(getPage(appState.token,id));
+	} else if (page.id ===id &&loading!=="") {setLoading("")}
 	
 
 	//IMAGES
@@ -83,56 +99,41 @@ const LorePage = (props) => {
 	if(page.categories){
 		categories_listed = page.categories.map((id,index)=>{
 			let categoryTitle = getCategoryTitle(id)
-			return <td key={index+id}>
-				{index}:
-				<button onClick={() => handleNavigate(id)}
-				className="btn btn-primary"
-				>{categoryTitle}</button>
-				</td>}
+			return (
+			<Link key={index+id} color="alert" underline="hover" component={RouterLink} 
+			to={"/category/"+id}>{categoryTitle}</Link>
 			)
+		})	
 	}
 
 	return(
 		<Container maxWidth="sm">
 		<Paper elevation={3}>
+		
+		{loading}
             {/* {categoryList} */}
             {/* <Link to category */}
 		<h2>{page.title}</h2>
-
-		<Card>
-		<img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={"Image for "+page.title}></img>
-		<p id="image-desc" className="form-text">
-                    Image link: {page.image}
-                    </p>
-		<p>Summary:{page.summary}</p>
+		<Card sx={{ maxWidth: 500 }}>
+		<CardMedia
+			sx={{ height:200, maxWidth: 200 }}
+			image={image}
+			title={"Image for "+page.title}
+		/>
+		<Typography variant="h6">Summary:</Typography>
+		<Typography variant="body1">{page.summary}</Typography>
 		</Card>
 		
-		<table className="table table-striped">
-			<thead>
-				<tr>
-					<th>Creator, id (TEST DATA)</th>
-					<th>Summary</th>
-					<th>Description</th>
-					<th>Relationships</th>
-					<th>Notes</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-            <tr>
-                <td>{page.creator} {page.id}</td>
-                <td>{page.summary}</td>
-                <td>{page.description}</td>
-                {/* <td>{page.relationships}</td> */}
-                <td>TBD</td>
-                <td>{page.notes}</td>
-            </tr>
-			<tr><td>Categories:</td>
-				{categories_listed}
-			</tr>
-			</tbody>
-		</table>
+		<Typography variant="h6">Description:</Typography>
+		<Typography variant="body1">{page.description}</Typography>
+		<Typography variant="h6">Relationships:</Typography>
+		<Typography variant="body1">TBD</Typography>
+		<Typography variant="h6">Notes:</Typography>
+		<Typography variant="body1">{page.notes}</Typography>
 
+                {/* <td>{page.relationships}</td> */}
+		<Typography variant="h6">Categories:</Typography>
+		<Stack>{categories_listed}</Stack>
         </Paper>
 		</Container>
         

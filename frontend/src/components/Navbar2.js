@@ -27,18 +27,18 @@ const Navbar2 = (props) => {
 			isLogged:state.login.isLogged,
 			token:state.login.token,
 			user:state.login.user,
-			title:state.page.page.title
+			title:state.page.page.title,
+			categorylist:state.category.list
 		}
 	})
 	const isLogged = state.isLogged
 	const title = state.title
+	const categorylist = state.categorylist
 
 	//const [auth, setAuth] = useState(true);
 	const [anchorE1, setAnchorE1] = useState(null);
   
-	// const handleChange = (event) => {
-	//   setAuth(event.target.checked);
-	// };
+
   
 	const handleMenu = (event) => {
 		console.log("handling menu...",)
@@ -48,6 +48,12 @@ const Navbar2 = (props) => {
 	const handleClose = () => {
 		setAnchorE1(null) ;
 	};
+	
+	const catLinks = categorylist? categorylist.map((cat,index) => {
+		return(<Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
+		to={"/category/"+cat.id}>{cat.title}</Link>)
+		}): "" ;
+	
 	
 	
 	if(state.isLogged) {
@@ -65,11 +71,14 @@ const Navbar2 = (props) => {
 				label={isLogged ? 'Logout' : 'Login'}
 			  />
 			</FormGroup> */}
-			<AppBar position="static">
+			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" separator="|">
 				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"}>All Pages</Link>
-				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>
+			  {catLinks}
+				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>
+
+			  
 			  </Breadcrumbs>
 			  </Toolbar>
 			</AppBar>

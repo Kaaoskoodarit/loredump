@@ -2,12 +2,16 @@ import {useEffect, useState} from 'react';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
+import { useParams } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
 import { useNavigate} from 'react-router-dom';
 //import ManageLinks from '../ManageLinks';
 import {addLinkToCategory, removeLinkFromCategory} from '../ManageLinks_func';
-import { getCategoryList } from '../../actions/categoryActions';
+import { getCategory, getCategoryList } from '../../actions/categoryActions';
+import { Grid, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 
@@ -37,6 +41,16 @@ const Category = (props) => {
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
 	const navigate = useNavigate();
+
+	
+	//ID RECIEVED FROM ROUTER URL
+	let { id } = useParams();
+	const [loading,setLoading] = useState("");
+
+	if (catpage.id !== id && loading===""){
+		setLoading (<CircularProgress color="inherit" />);
+		dispatch(getCategory(token,id));
+	} else if (catpage.id ===id &&loading!=="") {setLoading("")}
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode
@@ -108,7 +122,7 @@ const Category = (props) => {
 			let page = getLore(id)
 			if(index === state.removeIndex) {
 				return(
-					<RemoveRow key={index+page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
+					<RemoveRow key={index+page.id} page={page} changeMode={changeMode} removePage={removeAPage}/>
 				)
 			}
 			if(index === state.editIndex) {
@@ -118,7 +132,9 @@ const Category = (props) => {
 				)
 			}
 			return(
-				<Row key={index+page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+				<Grid item xs={4}>
+				<Row key={index+page.id} page={page} index={index} changeMode={changeMode}/>
+				</Grid>
 			)
 		})
 	
@@ -129,26 +145,19 @@ const Category = (props) => {
 	return(
 		<div>
 			{/* {managelinks_message} */}
-		<h2>{catpage.title}</h2>
+		<Typography variant='h5' >{catpage.title}</Typography>
+		
+
 		<p>Image: {catpage.image}</p>
 		<p>Description: {catpage.description}</p>
 		<p>Notes: {catpage.notes}</p>
 		<br/>
-		<h3>Links to Lore in this Category:</h3>
-		<table className="table table-striped">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Image</th>
-					<th>Summary</th>
-					<th>Edit</th>
-					<th>Remove</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Typography variant='h5' >Lore in this Category:</Typography>
+		<Grid container spacing={3}>
 			{pages}
-			</tbody>
-		</table>
+		</Grid>
+			
+
 		</div>
 	)
 }

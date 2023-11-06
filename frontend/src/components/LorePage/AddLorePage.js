@@ -6,6 +6,7 @@ import Relationships from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 import {addLinkToCategory} from '../ManageLinks_func';
+import { Paper } from '@mui/material';
 
 
 const AddLorePage = (props) => {
@@ -117,8 +118,7 @@ const AddLorePage = (props) => {
     }
 
     return (
-        <>
-        <div style={{
+        <Paper style={{
 			margin:"auto",
 			width:"40%",
 			textAlign:"left"
@@ -171,8 +171,8 @@ const AddLorePage = (props) => {
                 <br/>
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>
-        </div>
-         </>
+        </Paper>
+
     )
 	
 }
