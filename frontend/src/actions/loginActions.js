@@ -1,5 +1,5 @@
 import * as actionConstants from './actionConstants';
-import {getList} from './shoppingActions';
+import {getList} from './pageActions';
 
 //ASYNC THUNK
 

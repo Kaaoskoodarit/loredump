@@ -2,12 +2,13 @@ import * as actionConstants from '../actions/actionConstants';
 
 // Check if we have a state stored in sessionStorage
 const getInitialState = () => {
-	if(sessionStorage.getItem("shoppingstate")) {
-		let state = JSON.parse(sessionStorage.getItem("shoppingstate"));
+	if(sessionStorage.getItem("pagestate")) {
+		let state = JSON.parse(sessionStorage.getItem("pagestate"));
 		return state;
 	} else {
 		return {
 			list:[],
+			page:{},
 			error:""
 		}
 	}
@@ -15,15 +16,15 @@ const getInitialState = () => {
 
 // Save to sessionStorage
 const saveToStorage = (state) => {
-	sessionStorage.setItem("shoppingstate",JSON.stringify(state));
+	sessionStorage.setItem("pagestate",JSON.stringify(state));
 }
 
 // Initialize state
 const initialState = getInitialState();
 
 // Reducer to handle shopping actions
-const shoppingReducer = (state = initialState,action) => {
-	console.log("shoppingReducer,action",action);
+const pageReducer = (state = initialState,action) => {
+	console.log("pageReducer,action",action);
 	let tempState = {
 		...state
 	}
@@ -40,14 +41,22 @@ const shoppingReducer = (state = initialState,action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.ADD_ITEM_SUCCESS:
-		case actionConstants.REMOVE_ITEM_SUCCESS:
-		case actionConstants.EDIT_ITEM_SUCCESS:
+		case actionConstants.FETCH_PAGE_SUCCESS:
+			tempState = {
+				...state,
+				page:action.page
+			}
+			saveToStorage(tempState);
+			return tempState;
+		case actionConstants.ADD_PAGE_SUCCESS:
+		case actionConstants.REMOVE_PAGE_SUCCESS:
+		case actionConstants.EDIT_PAGE_SUCCESS:
 			return state;
 		case actionConstants.FETCH_LIST_FAILED:
-		case actionConstants.ADD_ITEM_FAILED:
-		case actionConstants.REMOVE_ITEM_FAILED:
-		case actionConstants.EDIT_ITEM_FAILED:
+		case actionConstants.FETCH_PAGE_FAILED:
+		case actionConstants.ADD_PAGE_FAILED:
+		case actionConstants.REMOVE_PAGE_FAILED:
+		case actionConstants.EDIT_PAGE_FAILED:
 			tempState = {
 				...state,
 				error:action.error
@@ -67,4 +76,4 @@ const shoppingReducer = (state = initialState,action) => {
 	}
 }
 
-export default shoppingReducer;
+export default pageReducer;

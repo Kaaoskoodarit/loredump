@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {add} from '../actions/shoppingActions';
+import {add} from '../actions/pageActions';
 
 // Component that shows the form to add new items
 const ShoppingForm = (props) => {

@@ -6,13 +6,12 @@ const router = express.Router();
 
 // REST API
 
-// Function to get pages belonging to a user: "GET" request to "/shopping" 
+// Function to get pages belonging to a user: "GET" request to "/lorepage" 
 router.get("/lorepage",function(req,res) {
     // Find items belonging to a user
     let query = {"creator":req.session.user}
     // This is a PROMISE; so .then().catch()
     loreModel.find(query).then(function(pages) {
-        console.log(pages.map((page) => page.id))
         // Return status code + items in JSON format       
         return res.status(200).json(pages);    
     }).catch(function(error) {
@@ -35,7 +34,7 @@ router.get("/lorepage/:id",function(req,res) {
     })
 })
 
-// "Function" to add items into database: "POST" request to "/shopping"
+// "Function" to add items into database: "POST" request to "/lorepage"
 router.post("/lorepage",function(req,res) {
     // Check if request has a "body"...so that we can check "body.type" without issues
     if(!req.body) {               
@@ -45,11 +44,11 @@ router.post("/lorepage",function(req,res) {
     if(!req.body.title) {          
         return res.status(400).json({"Message":"Bad Request"})
     }
-    // If we have a body, create item, add it to database, and return it via json
+    // If we have a body, create a page, add it to database, and return it via json
     let page = new loreModel({                  
-        "creator":req.body.creator,
+        "creator":req.session.user,
         "title":req.body.title,
-        "category":req.body.category,
+        "categories":req.body.categories,
         "image":req.body.image,            // image url
         "summary":req.body.summary,
         "description":req.body.description,
@@ -66,7 +65,7 @@ router.post("/lorepage",function(req,res) {
 })
 
 
-// "Function" to remove items from database: "DELETE" request to "/shopping/id"
+// "Function" to remove pages from database: "DELETE" request to "/lorepage/id"
 router.delete("/lorepage/:id",function(req,res) {
     loreModel.deleteOne({"_id":req.params.id,"creator":req.session.user}).then(function() {
         return res.status(200).json({"Message":"Success"});
@@ -76,7 +75,7 @@ router.delete("/lorepage/:id",function(req,res) {
     });
 })
 
-// "Function" to edit items in database: "PUT" request to "/shopping/id"
+// "Function" to edit pages in database: "PUT" request to "/shopping/id"
 router.put("/lorepage/:id",function(req,res) {
     if(!req.body) {               
         return res.status(400).json({"Message":"Bad Request"})
@@ -84,10 +83,10 @@ router.put("/lorepage/:id",function(req,res) {
     if(!req.body.title) {          
         return res.status(400).json({"Message":"Bad Request"})
     }
-    let page = {                  
-        "creator":req.body.creator,
+    let page = {       
+        "creator":req.session.user,           
         "title":req.body.title,
-        "category":req.body.category,
+        "categories":req.body.categories,
         "image":req.body.image,            // image url
         "summary":req.body.summary,
         "description":req.body.description,
