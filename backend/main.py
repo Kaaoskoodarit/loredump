@@ -410,7 +410,7 @@ def get_lore_page(world_id, lore_page_id):
             if not lore_page:
                 return jsonify({"error": "Lore page not found"}), 404
             # Delete lore page from all categories
-            Category.delete_lore_page(lore_page_id)
+            Category.remove_lore_page(lore_page_id)
             lore_page.delete()
             return jsonify({"success": "Lore page successfully deleted"}), 200
         except Exception as e:

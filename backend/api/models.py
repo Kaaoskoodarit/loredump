@@ -558,11 +558,11 @@ class Category:
             {"_id": ObjectId(self.id)},
             {
                 "$set": {
-                    "creator": self.creator,
+                    "creator_id": self.creator_id,
                     "name": self.name,
                     "image": self.image,
                     "description": self.description,
-                    "pages": self.pages,
+                    "lore_pages": self.lore_pages,
                     "private_notes": self.private_notes,
                 }
             },
@@ -756,8 +756,7 @@ class LorePage:
             print(e)
             return False
 
-    """TODO: if lorepage is deleted, delete it from all connections and add its name as a string
-    to all lorepages that had a connection with it"""
+    """TODO: if lorepage is deleted, delete it from all connections"""
 
     def delete(self):
         lorepages_collection = db["lorepages"]
