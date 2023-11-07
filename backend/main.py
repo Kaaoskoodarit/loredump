@@ -477,7 +477,6 @@ def add_fake_data():
                     random_category = categories[
                         Random().randrange(0, len(categories))
                     ]  # adds random category
-                    # insert random relationship to another lorepage
                     lore_page = LorePage(
                         id=ObjectId(),
                         creator_id=world.creator_id,
