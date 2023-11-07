@@ -1,7 +1,7 @@
 import {useSelector} from 'react-redux';
 
 //THE COMPONENT THAT GENERATES EACH ROW OF CATEGORIES
-const RelRow = (props) => {
+const ConRow = (props) => {
 
     let state = props.state
     let index = props.index
@@ -9,7 +9,7 @@ const RelRow = (props) => {
     const pagelist = useSelector(state => state.lore.list);
 
     // Gets the Title of a category based on its ID
-    const getRelTitle = (selected) => {
+    const getConTitle = (selected) => {
         for(let i = 0;i<pagelist.length;i++) {
             if(pagelist[i].id === selected) {
                 return pagelist[i].title;
@@ -17,11 +17,11 @@ const RelRow = (props) => {
         }
         return selected;
     }
-    let relTitle = getRelTitle(state.relationships[index].target)
+    let conTitle = getConTitle(state.connections[index].target_id)
     //console.log(relTitle);
 
     //ADDING DEFAULT TEXT TO RELATIONSHIP ROWS IF NEWLY ADDED ("")
-    let selectedText = state.relationships[index].target !== "" ? relTitle : "Select a Category"
+    let selectedText = state.connections[index].target_id !== "" ? conTitle : "Select a Category"
 
     
     //ONLY ADD REMOVE BUTTONS TO ROWS AFTER THE INITAL ONE
@@ -29,7 +29,7 @@ const RelRow = (props) => {
     if (index > 0){
         removeButton =(   
             <td>
-            <button htmlFor="relationships" type='button' onClick={() => props.handleClick("REMOVE",index)}
+            <button htmlFor="connections" type='button' onClick={() => props.handleClick("REMOVE",index)}
                 className="btn btn-primary">Remove</button>
             </td>
         )
@@ -40,19 +40,19 @@ const RelRow = (props) => {
             <td>
                 <input type="text"
                     id={index}
-                    name="reltype"
+                    name="type"
                     className="form-control"
                     onChange={props.onChange}
-                    value={state.relationships[index].reltype}/>
+                    value={state.connections[index].type}/>
             </td>
             <td>
-                <select name="target"
+                <select name="target_id"
                     id={index}
                     className="form-select"
-                    aria-label="Select Relationship Link"
+                    aria-label="Select Connection Link"
                     onChange={props.onChange}>
-                <option key={"selected"} value={state.relationships[index].target}>{selectedText}</option>
-                {props.relDropdown}
+                <option key={"selected"} value={state.connections[index].target_id}>{selectedText}</option>
+                {props.conDropdown}
                 </select>
             </td>
             {removeButton}
@@ -60,7 +60,7 @@ const RelRow = (props) => {
     )
 }
 
-const Relationships = (props) => {
+const Connections = (props) => {
 
     //PROPS passed information
     //const onChange = props.onChange
@@ -71,15 +71,15 @@ const Relationships = (props) => {
 
     //OnChange function specifically for Relationships
     const onChange = (event) => {
-        let tempRel=state.relationships
-        tempRel[event.target.id] = {
-            ...state.relationships[event.target.id],
+        let tempCon=state.connections
+        tempCon[event.target.id] = {
+            ...state.connections[event.target.id],
             [event.target.name]:event.target.value
         } 
         setState(() => {
             return {
                 ...state,
-                relationships:tempRel
+                connections:tempCon
             }
         })
     }
@@ -93,32 +93,32 @@ const Relationships = (props) => {
        rel_dropdown.push(<option key={lore.name} value={lore.id}>{lore.name}</option>)
     });
     */
-    let relDropdown = pagelist.map(page => {
+    let conDropdown = pagelist.map(page => {
         return <option key={page.id} value={page.id}>{page.title}</option>
     })
 
-    const addRelRow = () => {
+    const addConRow = () => {
         setState((state)=>{
             //add one "" entry to the end of state relationships 
-            let tempRel = state.relationships.concat({
-                reltype:"",
-                target:""
+            let tempCon = state.connections.concat({
+                type:"",
+                target_id:""
             })
-            console.log(tempRel);
+            console.log(tempCon);
             return {
                 ...state,
-                relationships:tempRel
+                connections:tempCon
             }
         })
     }
 
-    const removeRelRow = (index) => {
+    const removeConRow = (index) => {
         setState((state)=>{
             //take out one entry from that index location
-            let tempRel = state.relationships.toSpliced(index,1)
+            let tempCon = state.connections.toSpliced(index,1)
             return {
                 ...state,
-                relationships:tempRel
+                connections:tempCon
             }
         })
     }
@@ -126,21 +126,21 @@ const Relationships = (props) => {
     const handleClick = (event,index) =>{
         if (event==="ADD"){
             //console.log("ADDING");
-            addRelRow();     
+            addConRow();     
         }
         else if (event==="REMOVE"){
             //console.log("REMOVING index:", index)
-            removeRelRow(index);
+            removeConRow(index);
         }  
     }
 
     //rows , a list of all RelRows, if none get added reads ERR
     let rows = [<>LOADING ERR</>]
     //for each entry in state.relationships, generate one row of RelRow
-    rows = state.relationships.map((relationship,index)=>{
+    rows = state.connections.map((connection,index)=>{
         //console.log(relationship.reltype,relationship.target,index);
-        return <RelRow key={index+":"+relationship.target} state={state} index={index} 
-            relDropdown={relDropdown} onChange={onChange} handleClick={handleClick}/>
+        return <ConRow key={index+":"+connection.target_id} state={state} index={index} 
+            conDropdown={conDropdown} onChange={onChange} handleClick={handleClick}/>
     })
 
 
@@ -148,16 +148,16 @@ const Relationships = (props) => {
 
     return(
         <>
-            <label htmlFor="relationships" className="form-label">Add to Relationships:</label>
-            <table name="relationships">
+            <label htmlFor="connections" className="form-label">Add to Connections:</label>
+            <table name="connections">
                 <tbody>
                     {rows}
                 </tbody>
             </table>
-            <button htmlFor="relationships" type='button' onClick={() => handleClick("ADD",rows)}
+            <button htmlFor="connections" type='button' onClick={() => handleClick("ADD",rows)}
             className="btn btn-primary">+</button>
         </>
     )
 }
 
-export default Relationships;
+export default Connections;

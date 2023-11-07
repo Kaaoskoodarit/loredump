@@ -12,6 +12,7 @@ const LorePage = (props) => {
 	const appState = useSelector((state) => {
 		return {
 			worldid:state.world.page.id,
+			//worldurl:state.world.page.custom_url,  // when transitioning from ids to urls
             page:state.lore.page,
 			categorylist: state.category.list
 		}
@@ -108,8 +109,8 @@ const LorePage = (props) => {
 					<th>Creator, id (TEST DATA)</th>
 					<th>Summary</th>
 					<th>Description</th>
-					<th>Relationships</th>
-					<th>Notes</th>
+					<th>Connections</th>
+					<th>Private Notes</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -118,9 +119,9 @@ const LorePage = (props) => {
                 <td>{page.creator} {page.id}</td>
                 <td>{page.summary}</td>
                 <td>{page.description}</td>
-                {/* <td>{page.relationships}</td> */}
+                {/* <td>{page.connections}</td> */}
                 <td>TBD</td>
-                <td>{page.notes}</td>
+                <td>{page.private_notes}</td>
             </tr>
 			<tr><td>Categories:</td>
 				{categories_listed}

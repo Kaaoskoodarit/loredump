@@ -6,7 +6,7 @@ import * as actionConstants from './actionConstants';
 // (async) function that dispatches a getCategoryList action to the reducer
 // This displays the list of category pages
 // if "mode" = names, only get list of names+ids
-export const getCategoryList = (worldid) => {
+export const getCategoryList = (worldurl) => {
 	return async (dispatch) => {
 		let request = {}
 		// Set request
@@ -16,7 +16,7 @@ export const getCategoryList = (worldid) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the shopping list from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldid+"/categories",request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -47,7 +47,7 @@ export const getCategoryList = (worldid) => {
 
 // (async) function that dispatches a getCategory action to the reducer
 // This displays the category page
-export const getCategory = (worldid,id) => {
+export const getCategory = (worldurl,url) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
@@ -56,7 +56,7 @@ export const getCategory = (worldid,id) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the category from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldid+"/categories/"+id,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories/"+url,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -86,7 +86,7 @@ export const getCategory = (worldid,id) => {
 }
 
 // (async) function that dispatches a "add category" action to the reducer
-export const addCategory = (worldid,category) => {
+export const addCategory = (worldurl,category) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
@@ -96,7 +96,7 @@ export const addCategory = (worldid,category) => {
 			"body":JSON.stringify(category)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/categories",request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.ADD_CATEGORY_FAILED,"Failed to add new category. Server never responded. Try again later"))
@@ -106,10 +106,11 @@ export const addCategory = (worldid,category) => {
 			// If fetch successful, show new list!
 			dispatch(fetchCategorySuccess(actionConstants.ADD_CATEGORY_SUCCESS));
 			// Get updated list
-			dispatch(getCategoryList(worldid));
+			dispatch(getCategoryList(worldurl));
 			// Get new page
 			const newcategory = await response.json();
-			dispatch(getCategory(worldid,newcategory.id))
+			dispatch(getCategory(worldurl,newcategory.id))
+			//dispatch(getCategory(worldurl,newcategory.custom_url)) // when transitioning from ids to urls
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -121,13 +122,13 @@ export const addCategory = (worldid,category) => {
 }
 
 // (async) function that dispatches a "remove category" action to the reducer
-export const removeCategory = (worldid,id) => {
+export const removeCategory = (worldurl,url) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/categories/"+id,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.REMOVE_CATEGORY_FAILED,"Failed to remove category. Server never responded. Try again later"))
@@ -137,7 +138,7 @@ export const removeCategory = (worldid,id) => {
 			// If fetch succesful, show new list!
 			dispatch(fetchCategorySuccess(actionConstants.REMOVE_CATEGORY_SUCCESS));
 			// Get updated list
-			dispatch(getCategoryList(worldid));
+			dispatch(getCategoryList(worldurl));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -149,7 +150,7 @@ export const removeCategory = (worldid,id) => {
 }
 
 // (async) function that dispatches a "edit category" action to the reducer
-export const editCategory = (worldid,category) => {
+export const editCategory = (worldurl,category) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
@@ -159,7 +160,8 @@ export const editCategory = (worldid,category) => {
 			"body":JSON.stringify(category)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/categories/"+category.id,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories/"+category.id,request);
+		//const response = await fetch("/api/worlds/"+worldurl+"/categories/"+category.custom_url,request); // once we transition from IDs
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
@@ -168,7 +170,7 @@ export const editCategory = (worldid,category) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
-			dispatch(getCategoryList(worldid));
+			dispatch(getCategoryList(worldurl));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -180,7 +182,7 @@ export const editCategory = (worldid,category) => {
 }
 
 // (async) function that dispatches a "update category" action to the reducer
-export const updateCategory = (worldid,id,update) => {
+export const updateCategory = (worldurl,url,update) => {
 	return async (dispatch) => {
 		let tempbody = {"update":update}
 		let request = {
@@ -191,7 +193,7 @@ export const updateCategory = (worldid,id,update) => {
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/categories/update/"+id,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/categories/update/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
@@ -200,7 +202,7 @@ export const updateCategory = (worldid,id,update) => {
 		if(response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
-			dispatch(getCategoryList(worldid));
+			dispatch(getCategoryList(worldurl));
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));

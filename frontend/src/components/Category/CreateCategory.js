@@ -9,14 +9,16 @@ const CreateCategory = (props) => {
     //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
 		title:"",
+        custom_url:"",         // custom_url = title
 		image:"",
         description:"",
-        notes:"",
-		links:[]
+        private_notes:"",
+		lore_pages:[]            
 	})
 
     // Get token and categorystate from the store
     const worldid = useSelector(state => state.world.page.id);
+    //const worldurl = useSelector(state => state.world.page.custom_url);
     const categorystate = useSelector(state => state.category.page);
 
     // Use dispatch and navigate
@@ -67,10 +69,11 @@ const CreateCategory = (props) => {
         // Reset the state of the page and relationships
         setState({
             title:"",
+            custom_url:"",
             image:"",
             description:"",
-            notes:"",
-            links:[]
+            private_notes:"",
+            lore_pages:[]
         })
 
     }
@@ -122,7 +125,7 @@ const CreateCategory = (props) => {
 						id="notes"
 						className="form-control"
 						onChange={onChange}
-						value={state.notes}/>
+						value={state.private_notes}/>
                 <select name={"categories"}
                             id={index}
                             className="form-select"

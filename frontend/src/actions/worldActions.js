@@ -44,7 +44,7 @@ export const getWorldList = () => {
 }
 
 // (async) function that dispatches a getWorld action to the reducer
-export const getWorld = (id) => {
+export const getWorld = (url) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
@@ -53,7 +53,7 @@ export const getWorld = (id) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the world from the server, wait for response
-		const response = await fetch("/api/worlds/"+id,request);
+		const response = await fetch("/api/worlds/"+url,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -107,6 +107,7 @@ export const addWorld = (world) => {
 			// Get new world
 			const newworld = await response.json();
 			dispatch(getWorld(newworld.id));
+			//dispatch(getWorld(newworld.custom_url));	// when transitioning from ids to urls
 		} else {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -118,13 +119,13 @@ export const addWorld = (world) => {
 }
 
 // (async) function that dispatches a "remove world" action to the reducer
-export const removeWorld = (id) => {
+export const removeWorld = (url) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+id,request);
+		const response = await fetch("/api/worlds/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchWorldFailed(actionConstants.REMOVE_WORLD_FAILED,"Failed to remove world. Server never responded. Try again later"))
@@ -157,6 +158,7 @@ export const editWorld = (world) => {
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds/"+world.id,request);
+		//const response = await fetch("/api/worlds/"+world.custom_url,request); // when transitioning from ids to urls
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchWorldFailed(actionConstants.EDIT_WORLD_FAILED,"Failed to edit world. Server never responded. Try again later"))
@@ -177,7 +179,7 @@ export const editWorld = (world) => {
 }
 
 // (async) function that dispatches a "update world" action to the reducer
-export const updateWorld = (id,update) => {
+export const updateWorld = (url,update) => {
 	return async (dispatch) => {
 		let tempbody = {"update":update}
 		let request = {
@@ -188,7 +190,7 @@ export const updateWorld = (id,update) => {
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/update/"+id,request);
+		const response = await fetch("/api/worlds/update/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchWorldFailed(actionConstants.EDIT_WORLD_FAILED,"Failed to edit world. Server never responded. Try again later"))

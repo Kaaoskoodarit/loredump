@@ -1,8 +1,4 @@
 import * as actionConstants from './actionConstants';
-import {getList} from './pageActions';
-import {getCategoryList} from '../actions/categoryActions';
-import { getWorldList } from './worldActions';
-import {useSelector} from "react-redux";
 
 //ASYNC THUNK
 
@@ -71,13 +67,6 @@ export const login = (user) => {
 			// display the user's shopping list
 			dispatch(loginSuccess());
 			dispatch(setUsername(user.username));
-			dispatch(getWorldList());
-			const worldlist = useSelector(state => state.world.list);
-			if (worldlist) {
-				const worldid = worldlist[0].id;
-				dispatch(getList(worldid));			
-				dispatch(getCategoryList(worldid));	
-			}	
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}

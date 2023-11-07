@@ -2,30 +2,32 @@ import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {addPage,getPage} from '../../actions/pageActions';
 import {editCategory,getCategoryList} from '../../actions/categoryActions';
-import Relationships from './Relationships';
+import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
-
+import Connections from './Relationships';
 
 const AddLorePage = (props) => {
 	// Set state for page
     //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
 		title:"",
+        custom_url:"",
 		categories:["Uncategorised"],
 		image:"",
         summary:"",
         description:"",
-        relationships:[{
-            reltype:"",
-            target:""
+        connections:[{
+            type:"",             // Change names reltype -> connection
+            target_id:""            // ----> change everywhere!!!!!!!!!
         }],
-        notes:""
+        private_notes:""            // notes -> private_notes
 	})    
 
     // Get token and pagestate from the store
     const worldid = useSelector(state => state.world.page.id);
+    //const worldurl = useSelector(state => state.world.page.custom_url);  // when transitioning from ids to urls
     const pagestate = useSelector(state => state.lore.page);
     const categorylist = useSelector(state => state.category.list);
 
@@ -104,15 +106,16 @@ const AddLorePage = (props) => {
         // Reset the state of the page and relationships
         setState({
             title:"",
+            custom_url:"",
             categories:[],
             image:"",
             summary:"",
             description:"",
-            relationships:[{
-                reltype:"",
-                target:""
+            connections:[{
+                type:"",
+                target_id:""
             }],
-            notes:""
+            private_notes:""
         })
     }
 
@@ -168,7 +171,7 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.description}/>
-                <Relationships state={state} setState={setState}/>
+                <Connections state={state} setState={setState}/>
                 <br/>
                 <br/>
                 <label htmlFor="notes" className="form-label">Private Notes</label>
@@ -177,7 +180,7 @@ const AddLorePage = (props) => {
 						id="notes"
 						className="form-control"
 						onChange={onChange}
-						value={state.notes}/>
+						value={state.private_notes}/>
                 <br/>
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>

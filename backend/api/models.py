@@ -10,8 +10,12 @@ import jwt
 from jwt import encode
 import secrets
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
+client = MongoClient(mongourl)
 db = client['LoreDump']
 
 # import json
@@ -237,19 +241,21 @@ class World:
     # World Schema:
     id: ObjectId
     creator_id: str
-    name: str
+    title: str                   # name -> title
+    custom_url: str
     image: str
     description: str
     private_notes: str
     categories: list
     lore_pages: list
-    required_fields = ['creator_id', 'name']
+    required_fields = ['creator_id', 'title']
     unique_fields = ['id']
 
-    def __init__(self, id, creator_id, name, image=None, description=None, private_notes=None, categories=['Uncategorised'], lore_pages=[]):
+    def __init__(self, id, creator_id, title, image=None, description=None, private_notes=None, categories=['Uncategorised'], lore_pages=[]):
         self.id = id
         self.creator_id = creator_id
-        self.name = name
+        self.title = title
+        self.custom_url = title         # Change to be set separately!!!!!!!!!!!!
         self.image = image
         self.description = description
         self.private_notes = private_notes
@@ -260,7 +266,8 @@ class World:
         return {
             'id': str(self.id),
             'creator_id': self.creator_id,
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'image': self.image,
             'description': self.description,
             'private_notes': self.private_notes,
@@ -275,7 +282,8 @@ class World:
             self.categories.insert(0, 'Uncategorised') # Force "Uncategorised" to be first category
         result = worlds_collection.insert_one({
             'creator_id': self.creator_id,
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'image': self.image,
             'description': self.description,
             'private_notes': self.private_notes,
@@ -334,7 +342,8 @@ class World:
             return World(
                 id=result['_id'],
                 creator_id=result['creator_id'],
-                name=result['name'],
+                title=result['title'],
+                custom_url=result['custom_url'],
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
@@ -354,7 +363,8 @@ class World:
             world = World(
                 id=result['_id'],
                 creator_id=result['creator_id'],
-                name=result['name'],
+                title=result['title'],
+                custom_url=result['custom_url'],
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
@@ -388,7 +398,8 @@ class World:
         result = worlds_collection.update_one(
             {'_id': self.id},
             {'$set': {
-                'name': self.name,
+                'title': self.title,
+                'custom_url':self.custom_url,
                 'image': self.image,
                 'description': self.description,
                 'private_notes': self.private_notes,
@@ -406,7 +417,8 @@ class Category:
     # Category Schema:
     id: ObjectId
     creator_id: str
-    name: str
+    title: str                   # name -> title
+    custom_url: str
     world_id: ObjectId
     image: str
     description: str
@@ -415,10 +427,11 @@ class Category:
     required_fields = ['creator_id', 'name']
     unique_fields = ['id']
 
-    def __init__(self, id, creator_id, name, world_id=None, image=None, description=None, lore_pages=[], private_notes=None):
+    def __init__(self, id, creator_id, title, world_id=None, image=None, description=None, lore_pages=[], private_notes=None):
         self.id = id
         self.creator_id = creator_id
-        self.name = name
+        self.title = title
+        self.custom_url = title             # Change to be set separately!!!!!!
         self.world_id = world_id
         self.image = image
         self.description = description
@@ -429,10 +442,11 @@ class Category:
         return {
             'id': str(self.id),
             'creator_id': self.creator_id,
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'world': {
                 'id': str(self.world_id),
-                'name': str(World.get_by_id(ObjectId(self.world_id)).name)
+                'title': str(World.get_by_id(ObjectId(self.world_id)).title)
             },
             'image': self.image,
             'description': self.description,
@@ -445,7 +459,8 @@ class Category:
         self.creator_id = session['user_id']
         result = categories_collection.insert_one({
             'creator_id': str(self.creator_id),
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'image': self.image,
             'description': self.description,
             'lore_pages': [str(page) for page in self.lore_pages],
@@ -465,7 +480,8 @@ class Category:
         categories_collection = db['categories']
         result = categories_collection.insert_one({
             'creator_id': session['user_id'],
-            'name': 'Uncategorised',
+            'title': 'Uncategorised',
+            'custom_url': 'Uncategorised',
             'image': None,
             'description': None,
             'lore_pages': [],
@@ -538,11 +554,12 @@ class Category:
         result = categories_collection.update_one(
             {'_id': ObjectId(self.id)},
             {'$set': {
-                'creator': self.creator,
-                'name': self.name,
+                'creator_id': self.creator_id,
+                'title': self.title,
+                'custom_url': self.custom_url,
                 'image': self.image,
                 'description': self.description,
-                'pages': self.pages,
+                'lore_pages': self.lore_pages,
                 'private_notes': self.private_notes
             }}
         )
@@ -559,7 +576,8 @@ class Category:
             return Category(
                 str(category['_id']),
                 category['creator_id'],
-                category['name'],
+                category['title'],
+                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -577,7 +595,8 @@ class Category:
             Category(
                 str(category['_id']),
                 category['creator_id'],
-                category['name'],
+                category['title'],
+                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -594,7 +613,8 @@ class Category:
             Category(
                 str(category['_id']),
                 category['creator_id'],
-                category['name'],
+                category['title'],
+                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -604,14 +624,15 @@ class Category:
         ]
     
     @staticmethod
-    def get_by_name(name, world_id):
+    def get_by_name(title, world_id):
         categories_collection = db['categories']
-        category = categories_collection.find_one({'name': name, 'world_id': world_id})
+        category = categories_collection.find_one({'title': title, 'world_id': world_id})
         if category:
             return Category(
                 str(category['_id']),
                 category['creator_id'],
-                category['name'],
+                category['title'],
+                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -627,24 +648,26 @@ class LorePage:
     id: ObjectId
     world_id: ObjectId
     creator_id: ObjectId
-    name: str
+    title: str              # name -> title
+    custom_url: str
     world_id: ObjectId
     categories: list
     image: str
     description: str
-    short_description: str
-    relationships: list
+    summary: str            #short_description -> summary
+    relationships: list         # ---> connections
     private_notes: str
 
-    def __init__(self, id, creator_id, name, world_id, categories=['Uncategorised'], image=None, description=None, short_description=None, relationships=[], private_notes=[]):
+    def __init__(self, id, creator_id, title, world_id, categories=['Uncategorised'], image=None, description=None, summary=None, relationships=[], private_notes=[]):
         self.id = id
         self.creator_id = creator_id
-        self.name = name
+        self.title = title
+        self.custom_url = title                 # change to be set separately!!!!!!!!!!!
         self.world_id = world_id
         self.categories = categories
         self.image = image
         self.description = description
-        self.short_description = short_description
+        self.summary = summary
         self.relationships = relationships
         self.private_notes = private_notes
 
@@ -653,11 +676,12 @@ class LorePage:
             'id': str(self.id),
             'creator_id': self.creator_id,
             'world_id': self.world_id,
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'categories': self.categories,
             'image': self.image,
             'description': self.description,
-            'short_description': self.short_description,
+            'summary': self.summary,
             'relationships': self.relationships,
             'private_notes': self.private_notes
         }
@@ -667,11 +691,12 @@ class LorePage:
         lorepage_data = {
             'creator_id': self.creator_id,
             'world_id': str(self.world_id),
-            'name': self.name,
+            'title': self.title,
+            'custom_url': self.custom_url,
             'categories': self.categories,
             'image': self.image,
             'description': self.description,
-            'short_description': self.short_description,
+            'summary': self.summary,
             'relationships': self.relationships,
             'private_notes': self.private_notes
         }

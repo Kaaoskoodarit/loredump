@@ -18,7 +18,8 @@ const Category = (props) => {
 	
 	// Get token and links from "store" state with useSelector
 	const worldid = useSelector(state => state.world.page.id)
-    const links = useSelector(state => state.category.page.links);
+	//const worldurl = useSelector(state => state.world.page.custom_url) // when transitioning from ids to urls
+    const links = useSelector(state => state.category.page.lore_pages);
     const catpage = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.lore.list);
 
@@ -106,7 +107,7 @@ const Category = (props) => {
 		<h2>{catpage.title}</h2>
 		<p>Image: {catpage.image}</p>
 		<p>Description: {catpage.description}</p>
-		<p>Notes: {catpage.notes}</p>
+		<p>Notes: {catpage.private_notes}</p>
 		<br/>
 		<h3>Links to Lore in this Category:</h3>
 		<table className="table table-striped">

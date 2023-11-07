@@ -24,7 +24,8 @@ app.json.sort_keys = False # Stop jsonify from sorting keys alphabetically
 # client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
+mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
+client = MongoClient(mongourl)
 db = client['LoreDump']
 
 # Session Time-To-Alive, until user has to log in again
@@ -144,7 +145,7 @@ def login():
             session['ttl'] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)"""
             return jsonify({'success': 'User successfully logged in'}), 200
         except Exception as e:
-            return jsonify({'error': str(e)})
+            return jsonify({'error': str(e)}), 401
         
 @app.route('/protected')
 def protected():
