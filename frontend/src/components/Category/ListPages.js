@@ -87,14 +87,14 @@ const ListPages = (props) => {
 			)
 		}
 		return(
-			<Grid item xs={4}>
+			<Grid item xs={3}>
 			<Row key={page.id} page={page} index={index} changeMode={changeMode}/>
 			</Grid>
 
 		)
 	})
 	return(
-		<Grid container spacing={2}>
+		<Grid container spacing={3}>
 			{pages}
 		</Grid>
 

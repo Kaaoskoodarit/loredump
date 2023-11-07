@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { amber,orange,pink } from '@mui/material/colors';
+import { amber,orange,pink, } from '@mui/material/colors';
 
 
 const themeLight = createTheme(  {
@@ -40,6 +40,19 @@ const themeLight = createTheme(  {
         alert:"#6101b5",
     }
     },
+
+    typography:{
+      lore: {
+        fontSize: '5rem',
+        color: '#d50000',
+        fontFamily: "'Lovers Quarrel', 'Lucida Handwriting', cursive",
+      },
+      loreSmall: {
+        fontSize: '1.5rem',
+        color: '#d50000',
+        fontFamily: "'Lucida Handwriting', cursive",
+      },
+    }
     
   })
 

@@ -1,21 +1,15 @@
 import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {register,registerFailed,login} from '../actions/loginActions';
-import { Button, Card, Divider } from '@mui/material';
+import { Button, Card } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import Typography from '@mui/material/Typography';
-import FilledInput from '@mui/material/FilledInput';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 

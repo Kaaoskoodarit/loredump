@@ -9,8 +9,13 @@ import { useNavigate} from 'react-router-dom';
 //import ManageLinks from '../ManageLinks';
 import {addLinkToCategory, removeLinkFromCategory} from '../ManageLinks_func';
 import { getCategory, getCategoryList } from '../../actions/categoryActions';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Paper, Divider } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
+import { Card, CardMedia, CardActionArea } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+
 
 
 
@@ -42,6 +47,32 @@ const Category = (props) => {
 	// use navigate from react-router-dom
 	const navigate = useNavigate();
 
+	//VARIABLES FOR VIEWING IMAGES
+	const [open, setOpen] = useState(false);
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	  };
+	
+	  const handleClose = () => {
+		setOpen(false);
+	  };
+
+	let image;
+	if( catpage.image){
+		image = 
+			<Grid item xs={4}>
+			<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
+				<CardActionArea onClick={handleClickOpen}>
+				<CardMedia sx={{ height:200}} image={catpage.image} title={"Image for "+catpage.title}/>
+				</CardActionArea>
+				<Dialog open={open} onClose={handleClose} aria-label="image-dialog">
+			<DialogContent maxWidth="1000" maxHeight="1000" >
+				<img height='100%' width='100%' src={catpage.image}/>
+			</DialogContent>
+				</Dialog> </Card> </Grid> 
+		}
+	 
 	
 	//ID RECIEVED FROM ROUTER URL
 	let { id } = useParams();
@@ -132,7 +163,7 @@ const Category = (props) => {
 				)
 			}
 			return(
-				<Grid item xs={4}>
+				<Grid item xs={3}>
 				<Row key={index+page.id} page={page} index={index} changeMode={changeMode}/>
 				</Grid>
 			)
@@ -143,22 +174,42 @@ const Category = (props) => {
 	// 	<ManageLinks mode ={managelinks.mode} page={managelinks.page}/> : ""
 
 	return(
-		<div>
-			{/* {managelinks_message} */}
-		<Typography variant='h5' >{catpage.title}</Typography>
+		<Paper elevation={3} sx={{ p:2}}>
+		<Grid container spacing={2}>
+		{loading}
 		
 
-		<p>Image: {catpage.image}</p>
-		<p>Description: {catpage.description}</p>
-		<p>Notes: {catpage.notes}</p>
+		<Grid item xs={8}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant="lore">{catpage.title}</Typography>
+
+		<Typography variant="h6">Description:</Typography>
+		<Typography variant="body1">{catpage.description}</Typography>
+		<Typography variant="h6">Notes:</Typography>
+		<Typography variant="body1">{catpage.notes}</Typography>
+		
+		</Container>
+		</Grid>
+		
+		{image}
+		
+		</Grid>
+		<Container>
 		<br/>
-		<Typography variant='h5' >Lore in this Category:</Typography>
+		<br/>
+		<Divider/>
+		<Typography variant='loreSmall' >Lore in this Category:</Typography>
+		<br/>
+		<br/>
+		</Container>
+		
 		<Grid container spacing={3}>
 			{pages}
 		</Grid>
 			
 
-		</div>
+	</Paper>
+
 	)
 }
 
