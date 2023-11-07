@@ -10,17 +10,19 @@ import jwt
 from jwt import encode
 import secrets
 
-# Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client["LoreDump"]
-
 # import json
 
+"""
 # class JSONEncoder(json.JSONEncoder):
 #     def default(self, o):
 #         if isinstance(o, ObjectId):
 #             return str(o)
 #         return json.JSONEncoder.default(self, o)
+"""
+
+# Connect to MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["LoreDump"]
 
 
 # Define User model
@@ -654,7 +656,7 @@ class LorePage:
     image: str
     description: str
     short_description: str
-    relationships: list
+    connections: list
     private_notes: str
 
     def __init__(
@@ -667,7 +669,7 @@ class LorePage:
         image=None,
         description=None,
         short_description=None,
-        relationships=[],
+        connections=[],
         private_notes=[],
     ):
         self.id = id
@@ -678,7 +680,7 @@ class LorePage:
         self.image = image
         self.description = description
         self.short_description = short_description
-        self.relationships = relationships
+        self.connections = connections
         self.private_notes = private_notes
 
     def serialize(self):
@@ -691,7 +693,7 @@ class LorePage:
             "image": self.image,
             "description": self.description,
             "short_description": self.short_description,
-            "relationships": self.relationships,
+            "connections": self.connections,
             "private_notes": self.private_notes,
         }
 
@@ -705,7 +707,7 @@ class LorePage:
             "image": self.image,
             "description": self.description,
             "short_description": self.short_description,
-            "relationships": self.relationships,
+            "connections": self.connections,
             "private_notes": self.private_notes,
         }
         # add LorePage to Category
@@ -734,17 +736,17 @@ class LorePage:
             print(e)
             return False
 
-    # Add relationship to lorepage, it has two properties: the lore page it's related to and the type of relationship
-    def add_relationship(self, relationship, type):
+    # Add connection to lorepage, it has two properties: the ID of the lore page it's connected to and the type of connection
+    def add_connection(self, type, connection):
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_one(
                 {"_id": ObjectId(self.id)},
                 {
                     "$push": {
-                        "relationships": {
-                            "relationship": self.get_by_id(relationship).id,
+                        "connections": {
                             "type": type,
+                            "target_id": self.get_by_id(connection).id,
                         }
                     }
                 },
@@ -754,8 +756,8 @@ class LorePage:
             print(e)
             return False
 
-    """TODO: if lorepage is deleted, delete it from all relationships and add its name as a string
-    to all lorepages that had a relationship with it"""
+    """TODO: if lorepage is deleted, delete it from all connections and add its name as a string
+    to all lorepages that had a connection with it"""
 
     def delete(self):
         lorepages_collection = db["lorepages"]
@@ -780,7 +782,7 @@ class LorePage:
             "image": self.image,
             "description": self.description,
             "short_description": self.short_description,
-            "relationships": self.relationships,
+            "connections": self.connections,
             "private_notes": self.private_notes,
         }
         lorepages_collection.update_one(
@@ -800,7 +802,7 @@ class LorePage:
                 lorepage["image"],
                 lorepage["description"],
                 lorepage["short_description"],
-                lorepage["relationships"],
+                lorepage["connections"],
                 lorepage["private_notes"],
             )
         else:
@@ -819,7 +821,7 @@ class LorePage:
                 lorepage["image"],
                 lorepage["description"],
                 lorepage["short_description"],
-                lorepage["relationships"],
+                lorepage["connections"],
                 lorepage["private_notes"],
             )
             for lorepage in lorepages
@@ -839,7 +841,7 @@ class LorePage:
                 lorepage["image"],
                 lorepage["description"],
                 lorepage["short_description"],
-                lorepage["relationships"],
+                lorepage["connections"],
                 lorepage["private_notes"],
             )
             for lorepage in lorepages
@@ -858,7 +860,7 @@ class LorePage:
                 lorepage["image"],
                 lorepage["description"],
                 lorepage["short_description"],
-                lorepage["relationships"],
+                lorepage["connections"],
                 lorepage["private_notes"],
             )
             for lorepage in lorepages
