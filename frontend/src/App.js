@@ -40,20 +40,20 @@ function App() {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (appState.isLogged) {
+		console.log(appState.worldlist);
+		if (appState.isLogged && appState.worldlist.length < 1) {
 			dispatch(getWorldList());
-			if (appState.worldlist) {
-				if (appState.worldlist.length > 0) {
-					console.log(appState.worldlist)
-					const worldid = appState.worldlist[0].id;
-					dispatch(getList(worldid));			
-					dispatch(getCategoryList(worldid));
-				} else {
-					console.log("No worlds created yet!")
-				}
+		} else if (appState.isLogged && appState.worldlist) {
+			if (appState.worldlist.length > 0) {
+				console.log(appState.worldlist)
+				const worldid = appState.worldlist[0].id;
+				dispatch(getList(worldid));			
+				dispatch(getCategoryList(worldid));
+			} else {
+				console.log("No worlds created yet!")
 			}
 		}
-	},[appState.isLogged])
+	},[appState.isLogged,appState.worldlist])
 
 	//RENDERING
 	
