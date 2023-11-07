@@ -48,6 +48,27 @@ const pageReducer = (state = initialState, action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
+		case actionConstants.REMOVE_PAGE_SUCCESS:
+			tempState = {
+				...state,
+				page: {}
+			}
+			saveToStorage(tempState);
+			return tempState;
+		case actionConstants.ADD_PAGE_SUCCESS:
+		case actionConstants.EDIT_PAGE_SUCCESS:
+			return state;
+		case actionConstants.FETCH_LIST_FAILED:
+		case actionConstants.FETCH_PAGE_FAILED:
+		case actionConstants.ADD_PAGE_FAILED:
+		case actionConstants.REMOVE_PAGE_FAILED:
+		case actionConstants.EDIT_PAGE_FAILED:
+			tempState = {
+				...state,
+				page: action.page
+			}
+			saveToStorage(tempState);
+			return tempState;
 		case actionConstants.ADD_PAGE_SUCCESS:
 		case actionConstants.REMOVE_PAGE_SUCCESS:
 		case actionConstants.EDIT_PAGE_SUCCESS:
@@ -67,6 +88,7 @@ const pageReducer = (state = initialState, action) => {
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {
 				list: [],
+				page: {},
 				error: ""
 			}
 			saveToStorage(tempState);

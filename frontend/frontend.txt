@@ -1,0 +1,58 @@
+Requests from front to back:
+
+LoginActions:
+- Register: Register new user
+    - POST -> "/register"
+    - "body": "username,password"
+- Login: Login with "username"
+    - POST -> "/login"
+    - "body": "username,password"
+- Logout: Logout
+    - POST -> "/logout"
+    - "headers": "token"
+
+PageActions:
+- getList: Get a list of all lorepages for user
+    - GET -> "/lorepage"
+    - "headers": "token"
+- getPage: Get information for one lorepage
+    - GET -> "/lorepage/ID"
+    - "headers": "token"
+- addPage: Add a lorepage to the user's page list (Backend: also add to associated categories?)
+    - POST -> "/lorepage"
+    - "headers": "token"
+    - "body": "title,categories,image,summary,description,notes,relationships"
+- removePage: Remove lorepage (Backend: also remove from all associated categories?)
+    - DELETE -> "/lorepage/ID"
+    - "headers": "token"
+- editPage: Edit lorepage (Backend: add/remove from associated categories)
+    - PUT -> "/lorepage/ID"
+    - "headers": "token"
+    - "body": "title,categories,image,summary,description,notes,relationships"
+- updatePage: Update a single property of lorepage (Backend: update associated category?)
+    - PUT -> "/lorepage/update/ID"
+    - "headers": "token"
+    - "body": "update" (object with changed parameters)
+
+CategoryActions:
+- getCategoryList: Get a list of all categories for user (normally list of names+ids)
+    - GET -> "/category"
+    - "headers": "token, (mode)" (if "mode" = "verbose", get list of full categories)
+- getCategoryPage: Get information for one category
+    - GET -> "/category/ID"
+    - "headers": "token"
+- addCategory: Add a category to the user's category list
+    - POST -> "/category"
+    - "headers": "token"
+    - "body": "title,links,image,description,notes"
+- removeCategory: Remove category (Backend: also remove from all associated lorepages)
+    - DELETE -> "/category/ID"
+    - "headers": "token"
+- editCategory: Edit category (Backend: add/remove from associated lorepages)
+    - PUT -> "/category/ID"
+    - "headers": "token"
+    - "body": "title,links,image,description,notes"
+- updateCategory: Update a single property of category (Backend: update associated lorepages?)
+    - PUT -> "/category/update/ID"
+    - "headers": "token"
+    - "body": "update" (object with changed parameters)

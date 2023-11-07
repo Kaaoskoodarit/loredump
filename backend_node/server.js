@@ -1,6 +1,7 @@
 const express = require("express");             // basically same as import
 const mongoose = require("mongoose");           // "import" Mongoose
-const loreroute = require("./routes/loreroute"); // "imports" shoppingroute.js
+const loreroute = require("./routes/loreroute"); // "imports" loreroute.js
+const categoryroute = require("./routes/categoryroute"); // "imports" categoryroute.js
 const crypto = require("crypto");               // "imports" crypto
 const bcrypt = require("bcrypt");               // "imports" bcrypt
 const userModel = require("./models/user");      // "import" user model
@@ -205,9 +206,10 @@ app.post("/logout",function(req,res) {
 
 // When trying to use app, first check isUserLogged (middleware), 
 // if that return "next(), go to shoppingrote"
-// This works on route "/api", the register, login and logout have their
-// own routes!
-app.use("/api",isUserLogged,loreroute);                  
+// This works on route "/lorepage" and "/categorypage", the register, 
+// login and logout have their own routes!
+app.use("/lorepage",isUserLogged,loreroute);
+app.use("/category",isUserLogged,categoryroute);
 
 console.log("Running in port ",port);           // Just to see that we are running the server
 

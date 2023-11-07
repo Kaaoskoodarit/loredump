@@ -1,6 +1,10 @@
 import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {register,registerFailed,login} from '../actions/loginActions';
+//import {getList} from '../actions/pageActions';
+//import {getCategoryList} from '../actions/categoryActions';
+//import { getWorldList } from '../actions/worldActions';
+//import { useSelector } from 'react-redux';
 
 // LoginPage component, that handles logging in
 const LoginPage = (props) => {
@@ -10,6 +14,8 @@ const LoginPage = (props) => {
 		username:"",
 		password:""
 	})
+	//const worldlist = useSelector(state => state.world.list);
+	//const loggedin = useSelector(state => state.login.isLogged)
 	
 	// Lets us use dispatch function from Redux store
 	const dispatch = useDispatch();
@@ -41,6 +47,8 @@ const LoginPage = (props) => {
 			dispatch(register(user));
 		// Else dispatch a login action
 		} else {
+			// ASYNC! Wait for login to finish first, then look for world list!
+			// useEffect? when "isLogged" changes!
 			dispatch(login(user));
 		}
 	}
@@ -66,8 +74,8 @@ const LoginPage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.password}/>
-				<button onClick={onSubmit} style={{marginRight:5}} name="register" className="btn btn-secondary">Register</button>
 				<button onClick={onSubmit} style={{marginLeft:5}} name="login" className="btn btn-secondary">Login</button>
+				<button onClick={onSubmit} style={{marginRight:5}} name="register" className="btn btn-secondary">Register</button>
 			</form>
 		</div>
 	)

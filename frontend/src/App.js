@@ -1,21 +1,30 @@
-import { useState, useEffect } from 'react';
-import ShoppingForm from './components-old/ShoppingForm';
 import Navbar2 from './components/Navbar2';
-import LoginPage from './components-old/LoginPage';
+import LoginPage from './components/LoginPage';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import AddLorePage from './components/AddLorePage';
-import Category from './components/Category';
-import LorePage from './components/LorePage';
+import { useEffect } from 'react';
+import AddLorePage from './components/LorePage/AddLorePage';
+import Category from './components/Category/Category';
+import LorePage from './components/LorePage/LorePage';
+import ListPages from './components/Category/ListPages';
+// Temp until we get user page!
+import { getList } from './actions/pageActions';
+import { getCategoryList } from './actions/categoryActions';
+import { getWorldList } from './actions/worldActions';
+import { useDispatch } from 'react-redux';
 
 // Main App component
 function App() {
 
 	// "Selects" data to be used from the state of the "store"
 	const appState = useSelector((state) => {
-		let error = state.page.error;
+		let error = state.lore.error;
 		// If there is an error in the login, set that as app error
-		if (state.login.error) {
+		if (state.category.error) {
+			error = state.category.error;
+		} else if (state.world.error) {
+			error = state.world.error;
+		} else if (state.login.error) {
 			error = state.login.error;
 		}
 		// Returns only "isLogged", "error" and "loading" parts of state
@@ -23,10 +32,28 @@ function App() {
 			isLogged: state.login.isLogged,
 			error: error,
 			loading: state.login.loading,
-			user: state.login.user
+			user: state.login.user,
+			worldlist: state.world.list
 		}
 	})
 
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (appState.isLogged) {
+			dispatch(getWorldList());
+			if (appState.worldlist) {
+				if (appState.worldlist.length > 0) {
+					console.log(appState.worldlist)
+					const worldid = appState.worldlist[0].id;
+					dispatch(getList(worldid));
+					dispatch(getCategoryList(worldid));
+				} else {
+					console.log("No worlds created yet!")
+				}
+			}
+		}
+	}, [appState.isLogged])
 
 	//RENDERING
 
@@ -48,11 +75,12 @@ function App() {
 					{message}
 				</div>
 				<Routes>
-					<Route path="/" element={<Category />} />
+					<Route path="/" element={<ListPages />} />
 					<Route path="/new-page" element={<AddLorePage user={appState.user} />} />
-					<Route path="/form" element={<ShoppingForm />} />
-					<Route path="/api/lorepage" element={<Category />} />
-					<Route path="/api/lorepage/*" element={<LorePage />} />
+					<Route path="/category" element={<Category />} />
+					<Route path="/category/*" element={<Category />} />
+					<Route path="/lorepage" element={<ListPages />} />
+					<Route path="/lorepage/*" element={<LorePage />} />
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>
 			</div>
