@@ -761,6 +761,13 @@ class LorePage:
     def delete(self):
         lorepages_collection = db["lorepages"]
         lorepages_collection.delete_one({"_id": ObjectId(self.id)})
+        # Find lorepages that have this lorepage as a connection and delete it from there
+        lorepages = lorepages_collection.find({"connections.target_id": self.id})
+        for lorepage in lorepages:
+            lorepages_collection.update_one(
+                {"_id": lorepage["_id"]},
+                {"$pull": {"connections": {"target_id": self.id}}},
+            )
 
     @staticmethod
     def delete_all_by_creator(creator):
