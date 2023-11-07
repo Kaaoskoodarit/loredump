@@ -6,7 +6,6 @@ import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
-import Connections from './Relationships';
 
 const AddLorePage = (props) => {
 	// Set state for page
