@@ -44,13 +44,13 @@ class User:
     def serialize(self):
         worlds = {}
         for world in World.get_all_by_creator(self.id):
-            worlds[str(world.id)] = world.name
+            worlds[str(world.id)] = world.title
         categories = {}
         for category in Category.get_all_by_creator(self.id):
-            categories[str(category.id)] = category.name
+            categories[str(category.id)] = category.title
         lore_pages = {}
         for lore_page in LorePage.get_all_by_creator(self.id):
-            lore_pages[str(lore_page.id)] = lore_page.name
+            lore_pages[str(lore_page.id)] = lore_page.title
 
         return {
             "id": str(self.id),
@@ -237,7 +237,7 @@ class World:
     private_notes: str
     categories: list
     lore_pages: list
-    required_fields = ["creator_id", "name"]
+    required_fields = ["creator_id", "title"]
     unique_fields = ["id"]
 
     def __init__(
@@ -245,6 +245,7 @@ class World:
         id,
         creator_id,
         title,
+        custom_url=None,
         image=None,
         description=None,
         private_notes=None,
@@ -254,7 +255,7 @@ class World:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title  # Change to be set separately!!!!!!!!!!!!
+        self.custom_url = custom_url  # Change to be set separately!!!!!!!!!!!!
         self.image = image
         self.description = description
         self.private_notes = private_notes
@@ -427,7 +428,7 @@ class Category:
     description: str
     lore_pages: list
     private_notes: str
-    required_fields = ["creator_id", "name"]
+    required_fields = ["creator_id", "title"]
     unique_fields = ["id"]
 
     def __init__(
@@ -435,6 +436,7 @@ class Category:
         id,
         creator_id,
         title,
+        custom_url=None,
         world_id=None,
         image=None,
         description=None,
@@ -444,7 +446,7 @@ class Category:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title  # Change to be set separately!!!!!!
+        self.custom_url = custom_url  # Change to be set separately!!!!!!
         self.world_id = world_id
         self.image = image
         self.description = description
@@ -799,12 +801,12 @@ class LorePage:
     def update(self):
         lorepages_collection = db["lorepages"]
         lorepage_data = {
-            "name": self.name,
+            "title": self.title,
             "creator_id": self.creator_id,
             "categories": self.categories,
             "image": self.image,
             "description": self.description,
-            "short_description": self.short_description,
+            "summary": self.summary,
             "connections": self.connections,
             "private_notes": self.private_notes,
         }
@@ -820,11 +822,11 @@ class LorePage:
             return LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -839,11 +841,11 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -858,12 +860,12 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["world_id"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -878,11 +880,11 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )

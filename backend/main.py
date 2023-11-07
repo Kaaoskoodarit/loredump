@@ -242,8 +242,8 @@ def get_worlds():
         try:
             world = World(
                 id=None,
-                name=request.json["name"],
-                creator=session["username"],
+                title=request.json["title"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -269,7 +269,7 @@ def get_world(world_id):
             world = World.get_by_id(world_id)
             if not world:
                 return jsonify({"error": "World not found"}), 404
-            world.name = request.json["name"]
+            world.title = request.json["title"]
             world.description = request.json["description"]
             world.image = request.json["image"]
             world.private_notes = request.json["private_notes"]
@@ -303,8 +303,8 @@ def get_categories(world_id):
         try:
             category = Category(
                 id=None,
-                name=request.json["name"],
-                creator=session["username"],
+                title=request.json["title"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -332,7 +332,7 @@ def get_category(world_id, category_id):
             category = Category.get_by_id(category_id)
             if not category:
                 return jsonify({"error": "Category not found"}), 404
-            category.name = request.json["name"]
+            category.title = request.json["title"]
             category.world_id = world_id
             category.description = request.json["description"]
             category.image = request.json["image"]
@@ -365,8 +365,8 @@ def get_lore_pages(world_id):
         try:
             lore_page = LorePage(
                 id=None,
-                name=request.json["name"],
-                creator=session["username"],
+                title=request.json["title"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -396,7 +396,7 @@ def get_lore_page(world_id, lore_page_id):
                 return jsonify({"error": "Lore page not found"}), 404
             lore_page.creator_id = session["user_id"]
             lore_page.world_id = world_id
-            lore_page.name = request.json["name"]
+            lore_page.title = request.json["title"]
             lore_page.description = request.json["description"]
             lore_page.image = request.json["image"]
             lore_page.private_notes = request.json["private_notes"]
@@ -418,93 +418,99 @@ def get_lore_page(world_id, lore_page_id):
 
 
 # add fake data:
-@app.route("/api/fake-data", methods=["POST"])
+@app.route("/api/fake-data", methods=["POST", "DELETE"])
 def add_fake_data():
     if app.debug == False and client != MongoClient("mongodb://localhost:27017/"):
         return jsonify({"error": "Can't add fake data outside of debug mode"}), 400
-    try:
-        num_users = request.json.get("num_users", 5)
-        num_worlds_per_user = request.json.get("num_worlds_per_user", 2)
-        num_lore_pages_per_world = request.json.get("num_lore_pages_per_world", 5)
-        num_categories_per_world = request.json.get("num_categories_per_world", 5)
-        categories = ["Uncategorised"]
+    if request.method == "POST":
+        try:
+            num_users = request.json.get("num_users", 5)
+            num_worlds_per_user = request.json.get("num_worlds_per_user", 2)
+            num_lore_pages_per_world = request.json.get("num_lore_pages_per_world", 5)
+            num_categories_per_world = request.json.get("num_categories_per_world", 5)
+            categories = ["Uncategorised"]
 
-        for _ in range(num_users):
-            username = fake.unique.first_name()
-            # Make sure username is at least 4 characters long
-            while len(username) < 4:
+            for _ in range(num_users):
                 username = fake.unique.first_name()
-            password = fake.password()
-            last_password = password
-            user = User(id=None, username=username, password=password)
-            print(f"username: {username}, password: {password}")
-            user.register()
-            user = User.get_by_username(username)
-            session["user_id"] = user.id
-            session["username"] = user.username
-            session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
-                minutes=ttl
-            )
-            # print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
-
-            for _ in range(num_worlds_per_user):
-                world = World(
-                    id=ObjectId(),
-                    creator_id=session["user_id"],
-                    name=fake.word(),
-                    image=fake.image_url(),
-                    private_notes=fake.text(),
-                    description=fake.text(),
+                # Make sure username is at least 4 characters long
+                while len(username) < 4:
+                    username = fake.unique.first_name()
+                password = fake.password()
+                last_password = password
+                user = User(id=None, username=username, password=password)
+                print(f"username: {username}, password: {password}")
+                user.register()
+                user = User.get_by_username(username)
+                session["user_id"] = user.id
+                session["username"] = user.username
+                session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
+                    minutes=ttl
                 )
-                world.id = world.save()
-                world = World.get_by_id(world.id)
-                Category.add_uncategorised(str(world.id))
+                # print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
 
-                for _ in range(num_categories_per_world):
-                    category = Category(
+                for _ in range(num_worlds_per_user):
+                    world = World(
                         id=ObjectId(),
                         creator_id=session["user_id"],
-                        world_id=world.id,
-                        name=fake.word(),
-                        description=fake.text(),
+                        title=fake.word(),
                         image=fake.image_url(),
                         private_notes=fake.text(),
+                        description=fake.text(),
                     )
-                    category.save()
-                    categories.append(category.name)
+                    world.id = world.save()
+                    world = World.get_by_id(world.id)
+                    Category.add_uncategorised(str(world.id))
 
-                for _ in range(num_lore_pages_per_world):
-                    random_category = categories[
-                        Random().randrange(0, len(categories))
-                    ]  # adds random category
-                    lore_page = LorePage(
-                        id=ObjectId(),
-                        creator_id=world.creator_id,
-                        world_id=world.id,
-                        name=fake.sentence(),
-                        description=fake.text(),
-                        image=fake.image_url(),
-                        private_notes=fake.text(),
-                        categories=[
-                            Category.get_by_name(random_category, str(world.id)).id
-                        ],
-                    )
-                    lore_page.save()
+                    for _ in range(num_categories_per_world):
+                        category = Category(
+                            id=ObjectId(),
+                            creator_id=session["user_id"],
+                            world_id=world.id,
+                            title=fake.word(),
+                            description=fake.text(),
+                            image=fake.image_url(),
+                            private_notes=fake.text(),
+                        )
+                        category.save()
+                        categories.append(category.title)
+
+                    for _ in range(num_lore_pages_per_world):
+                        random_category = categories[
+                            Random().randrange(0, len(categories))
+                        ]  # adds random category
+                        lore_page = LorePage(
+                            id=ObjectId(),
+                            creator_id=world.creator_id,
+                            world_id=world.id,
+                            title=fake.sentence(),
+                            description=fake.text(),
+                            image=fake.image_url(),
+                            private_notes=fake.text(),
+                            categories=[
+                                Category.get_by_name(random_category, str(world.id)).id
+                            ],
+                        )
+                        lore_page.save()
+                    categories = ["Uncategorised"]
+                session.clear()
                 categories = ["Uncategorised"]
-            session.clear()
-            categories = ["Uncategorised"]
-        user.password = last_password
-        user.login()
-        return (
-            jsonify(
-                {
-                    "success": f"Fake data successfully added, logged in as {user.username}"
-                }
-            ),
-            200,
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+            user.password = last_password
+            user.login()
+            return (
+                jsonify(
+                    {
+                        "success": f"Fake data successfully added, logged in as {user.username}"
+                    }
+                ),
+                200,
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+    elif request.method == "DELETE":
+        # Drop LoreDump Database
+        client.drop_database("LoreDump")
+        session.clear()
+        return jsonify({"success": "Fake data successfully deleted"}), 200
 
 
 if __name__ == "__main__":
