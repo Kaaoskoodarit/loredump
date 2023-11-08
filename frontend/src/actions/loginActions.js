@@ -7,32 +7,32 @@ export const register = (user) => {
 	return async (dispatch) => {
 		// Create request to be sent
 		let request = {
-			"method": "POST",
-			"headers": {
-				"Content-Type": "application/json"
+			"method":"POST",
+			"headers":{
+				"Content-Type":"application/json"
 			},
-			"body": JSON.stringify(user)
+			"body":JSON.stringify(user)
 		}
 		// Dispatch a "loading" action to change store state
 		dispatch(loading());
 		// Try to perform a register requet on the server, wait for answer
-		const response = await fetch("/register", request);
+		const response = await fetch("/register",request);
 		// Once get an answer, stop loading
 		dispatch(stopLoading());
 		// If we get no response, error message
-		if (!response) {
+		if(!response) {
 			dispatch(registerFailed("Register failed. Server never responded. Try again later"));
 			return
 		}
 		// If response is ok (status 2XX), dispatch registerSuccess
-		if (response.ok) {
+		if(response.ok) {
 			dispatch(registerSuccess());
-			// Else, dispatch an error message
+		// Else, dispatch an error message
 		} else {
-			if (response.status === 409) {
+			if(response.status === 409) {
 				dispatch(registerFailed("Username already in use"))
 			} else {
-				dispatch(registerFailed("Register failed. Server responded with a status " + response.status + " " + response.statusText))
+				dispatch(registerFailed("Register failed. Server responded with a status "+response.status+" "+response.statusText))
 			}
 		}
 	}
@@ -42,24 +42,24 @@ export const register = (user) => {
 export const login = (user) => {
 	return async (dispatch) => {
 		let request = {
-			"method": "POST",
-			"headers": {
-				"Content-Type": "application/json"
+			"method":"POST",
+			"headers":{
+				"Content-Type":"application/json"
 			},
-			"body": JSON.stringify(user)
+			"body":JSON.stringify(user)
 		}
 		dispatch(loading());
-		const response = await fetch("/login", request);
+		const response = await fetch("/login",request);
 		dispatch(stopLoading());
-		if (!response) {
+		if(!response) {
 			dispatch(loginFailed("Login failed. Server never responded. Try again later"));
 			return;
 		}
-		if (response.ok) {
+		if(response.ok) {
 			// takes response, and turns it from JSON string to JS object
 			// waits for parsing to be done!
 			const data = await response.json();
-			if (!data) {
+			if(!data) {
 				dispatch(loginFailed("Failed to parse login information. Try again later"))
 				return;
 			}
@@ -68,7 +68,7 @@ export const login = (user) => {
 			dispatch(loginSuccess());
 			dispatch(setUsername(user.username));
 		} else {
-			dispatch(loginFailed("Login failed. Server responded with a status " + response.status + " " + response.statusText))
+			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
 	}
 }
@@ -77,16 +77,16 @@ export const login = (user) => {
 export const logout = () => {
 	return async (dispatch) => {
 		let request = {
-			"method": "POST",
+			"method":"POST",
 		}
 		dispatch(loading());
-		const response = await fetch("/logout", request);
+		const response = await fetch("/logout",request);
 		dispatch(stopLoading());
-		if (!response) {
+		if(!response) {
 			dispatch(logoutFailed("Server never responded. Logging you out"))
 			return;
 		}
-		if (response.ok) {
+		if(response.ok) {
 			dispatch(logoutSuccess());
 		} else {
 			dispatch(logoutFailed("Server responded with an error. Logging you out"))
@@ -100,58 +100,58 @@ export const logout = () => {
 // a "type" parameter, and optionally others as well, as needed
 export const loading = () => {
 	return {
-		type: actionConstants.LOADING
+		type:actionConstants.LOADING
 	}
 }
 
 export const stopLoading = () => {
 	return {
-		type: actionConstants.STOP_LOADING
+		type:actionConstants.STOP_LOADING
 	}
 }
 
 const registerSuccess = () => {
 	return {
-		type: actionConstants.REGISTER_SUCCESS
+		type:actionConstants.REGISTER_SUCCESS
 	}
 }
 
 export const registerFailed = (error) => {
 	return {
-		type: actionConstants.REGISTER_FAILED,
-		error: error
+		type:actionConstants.REGISTER_FAILED,
+		error:error
 	}
 }
 
 const loginSuccess = () => {
 	return {
-		type: actionConstants.LOGIN_SUCCESS
+		type:actionConstants.LOGIN_SUCCESS
 	}
 }
 
 const loginFailed = (error) => {
 	return {
-		type: actionConstants.LOGIN_FAILED,
-		error: error
+		type:actionConstants.LOGIN_FAILED,
+		error:error
 	}
 }
 
 const logoutSuccess = () => {
 	return {
-		type: actionConstants.LOGOUT_SUCCESS
+		type:actionConstants.LOGOUT_SUCCESS
 	}
 }
 
 export const logoutFailed = (error) => {
 	return {
-		type: actionConstants.LOGOUT_FAILED,
-		error: error
+		type:actionConstants.LOGOUT_FAILED,
+		error:error
 	}
 }
 
 const setUsername = (user) => {
 	return {
-		type: actionConstants.SET_USERNAME,
-		user: user
+		type:actionConstants.SET_USERNAME,
+		user:user
 	}
 }

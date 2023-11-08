@@ -2,56 +2,56 @@ import * as actionConstants from '../actions/actionConstants';
 
 // Check if we have a state stored in sessionStorage
 const getInitialState = () => {
-	if (sessionStorage.getItem("pagestate")) {
+	if(sessionStorage.getItem("pagestate")) {
 		let state = JSON.parse(sessionStorage.getItem("pagestate"));
 		return state;
 	} else {
 		return {
-			list: [],
-			page: {},
-			error: ""
+			list:[],
+			page:{},
+			error:""
 		}
 	}
 }
 
 // Save to sessionStorage
 const saveToStorage = (state) => {
-	sessionStorage.setItem("pagestate", JSON.stringify(state));
+	sessionStorage.setItem("pagestate",JSON.stringify(state));
 }
 
 // Initialize state
 const initialState = getInitialState();
 
 // Reducer to handle shopping actions
-const pageReducer = (state = initialState, action) => {
-	console.log("pageReducer,action", action);
+const pageReducer = (state = initialState,action) => {
+	console.log("pageReducer,action",action);
 	let tempState = {
 		...state
 	}
-	switch (action.type) {
+	switch(action.type) {
 		case actionConstants.LOADING:
 			return {
 				...state,
-				error: ""
+				error:""
 			}
 		case actionConstants.FETCH_LIST_SUCCESS:
 			tempState = {
 				...state,
-				list: action.list
+				list:action.list
 			}
 			saveToStorage(tempState);
 			return tempState;
 		case actionConstants.FETCH_PAGE_SUCCESS:
 			tempState = {
 				...state,
-				page: action.page
+				page:action.page
 			}
 			saveToStorage(tempState);
 			return tempState;
 		case actionConstants.REMOVE_PAGE_SUCCESS:
 			tempState = {
 				...state,
-				page: {}
+				page:{}
 			}
 			saveToStorage(tempState);
 			return tempState;
@@ -65,31 +65,16 @@ const pageReducer = (state = initialState, action) => {
 		case actionConstants.EDIT_PAGE_FAILED:
 			tempState = {
 				...state,
-				page: action.page
-			}
-			saveToStorage(tempState);
-			return tempState;
-		case actionConstants.ADD_PAGE_SUCCESS:
-		case actionConstants.REMOVE_PAGE_SUCCESS:
-		case actionConstants.EDIT_PAGE_SUCCESS:
-			return state;
-		case actionConstants.FETCH_LIST_FAILED:
-		case actionConstants.FETCH_PAGE_FAILED:
-		case actionConstants.ADD_PAGE_FAILED:
-		case actionConstants.REMOVE_PAGE_FAILED:
-		case actionConstants.EDIT_PAGE_FAILED:
-			tempState = {
-				...state,
-				error: action.error
+				error:action.error
 			}
 			saveToStorage(tempState);
 			return tempState;
 		case actionConstants.LOGOUT_SUCCESS:
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {
-				list: [],
-				page: {},
-				error: ""
+				list:[],
+				page:{},
+				error:""
 			}
 			saveToStorage(tempState);
 			return tempState;
