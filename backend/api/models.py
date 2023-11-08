@@ -42,6 +42,13 @@ class User:
         self.password = password
 
     def serialize(self):
+        """
+        Serialize the user object into a dictionary.
+
+        Returns:
+            A dictionary containing the serialized user data.
+        """
+
         worlds = {}
         for world in World.get_all_by_creator(self.id):
             worlds[str(world.id)] = world.title
@@ -263,6 +270,9 @@ class World:
         self.lore_pages = lore_pages
 
     def serialize(self):
+        """
+        Serializes the model instance into a dictionary.
+        """
         return {
             "id": str(self.id),
             "creator_id": self.creator_id,
@@ -276,6 +286,12 @@ class World:
         }
 
     def save(self):
+        """
+        Saves the current world object to the database.
+
+        Returns:
+            The ID of the inserted document.
+        """
         worlds_collection = db["worlds"]
         self.creator_id = str(session["user_id"])
         if self.categories.count("Uncategorised") == 0:
@@ -296,7 +312,26 @@ class World:
         )
         return result.inserted_id
 
+    @staticmethod
+    def get_all_custom_urls_from_worlds():
+        """
+        Returns a list of all custom URLs from the 'worlds' collection in the database.
+        """
+        worlds_collection = db["worlds"]
+        results = worlds_collection.find({})
+        results_list = list(results)
+        custom_urls = []
+        for result in results_list:
+            custom_urls.append(result["custom_url"])
+        return custom_urls
+
     def add_private_note(self):
+        """
+        Adds a private note to the world document in the database.
+
+        Returns:
+            bool: True if the note was added successfully, False otherwise.
+        """
         worlds_collection = db["worlds"]
         try:
             result = worlds_collection.update_one(
@@ -309,6 +344,15 @@ class World:
             return False
 
     def add_category(self, category):
+        """
+        Adds a category to the world.
+
+        Args:
+            category (str): The category to be added.
+
+        Returns:
+            bool: True if the category was added successfully, False otherwise.
+        """
         worlds_collection = db["worlds"]
         try:
             # if there's no categories, add "Uncategorised" as default
@@ -326,6 +370,16 @@ class World:
             return False
 
     def add_lore_page(self, lore_page):
+        """
+        Adds a new lore page to the current world.
+
+        Args:
+            lore_page (str): The new lore page to add.
+
+        Returns:
+            bool: True if the lore page was successfully added, False otherwise.
+        """
+
         worlds_collection = db["worlds"]
         try:
             result = worlds_collection.update_one(
@@ -338,6 +392,18 @@ class World:
 
     @staticmethod
     def get_by_id(id):
+        """
+        Retrieve a world by its ID.
+
+        Args:
+            id (str): The ID of the world to retrieve.
+
+        Returns:
+            World: The retrieved world object.
+
+        Raises:
+            HTTPException: If the world with the specified ID is not found.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.find_one({"_id": ObjectId(id)})
         if result:
@@ -357,6 +423,15 @@ class World:
 
     @staticmethod
     def get_all_by_creator(creator_id):
+        """
+        Retrieves all worlds created by a given creator.
+
+        Args:
+            creator_id (str): The ID of the creator whose worlds to retrieve.
+
+        Returns:
+            list: A list of World objects representing the retrieved worlds.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.find({"creator_id": creator_id})
         results_list = list(results)
@@ -378,11 +453,26 @@ class World:
 
     @staticmethod
     def delete_all_by_creator(creator):
+        """
+        Deletes all worlds created by the given creator.
+
+        Args:
+            creator (str): The ID of the creator whose worlds should be deleted.
+
+        Returns:
+            int: The number of worlds deleted.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.delete_many({"creator_id": creator})
         return results.deleted_count
 
     def delete(self):
+        """
+        Deletes the current object from the database.
+
+        Returns:
+            bool: True if the object was successfully deleted, False otherwise.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.delete_one({"_id": ObjectId(self.id)})
         if result.deleted_count == 1:
@@ -391,11 +481,27 @@ class World:
             return False
 
     def delete_many(self, ids):
+        """
+        Deletes multiple documents from the 'worlds' collection in the database
+        based on the given list of ids.
+
+        Args:
+            ids (list): A list of ids of the documents to be deleted.
+
+        Returns:
+            int: The number of documents deleted.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.delete_many({"_id": {"$in": ids}})
         return results.deleted_count
 
     def update(self):
+        """
+        Updates the current world instance in the database with the current attribute values.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.update_one(
             {"_id": self.id},
@@ -535,11 +641,25 @@ class Category:
             print(e)
             return False
 
+    # Remove one lore page from one category
     def remove_lore_page(self, lore_page):
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
                 {"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    # Remove one lore page from all categories. Used when deleting a lore page.
+    @staticmethod
+    def remove_lore_page_from_all(lore_page):
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many(
+                {}, {"$pull": {"lore_pages": str(lore_page)}}
             )
             return result.modified_count == 1
         except Exception as e:
@@ -687,6 +807,7 @@ class LorePage:
         creator_id,
         title,
         world_id,
+        custom_url=None,
         categories=["Uncategorised"],
         image=None,
         description=None,
@@ -697,8 +818,8 @@ class LorePage:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title  # change to be set separately!!!!!!!!!!!
         self.world_id = world_id
+        self.custom_url = custom_url  # change to be set separately!!!!!!!!!!!
         self.categories = categories
         self.image = image
         self.description = description
