@@ -81,7 +81,7 @@ const Category = (props) => {
 
 	if (catpage.id !== id && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
-		dispatch(getCategory(token,id));
+		dispatch(getCategory(worldid,id));
 	} else if (catpage.id ===id &&loading!=="") {setLoading("")}
 	
 	// Function to change the state of the system, 
