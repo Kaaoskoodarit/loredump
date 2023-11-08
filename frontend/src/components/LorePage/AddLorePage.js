@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
 
+import {addLinkToCategory} from '../ManageLinks_func';
+import { Paper } from '@mui/material';
+
+
 const AddLorePage = (props) => {
 	// Set state for page
     //NIMEÄ UUDELLEEN STATE
@@ -29,6 +33,7 @@ const AddLorePage = (props) => {
     //const worldurl = useSelector(state => state.world.page.custom_url);  // when transitioning from ids to urls
     const pagestate = useSelector(state => state.lore.page);
     const categorylist = useSelector(state => state.category.list);
+    const store = useSelector(state => state);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -66,6 +71,7 @@ const AddLorePage = (props) => {
 
     //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
     const editACategory = (category,page_id) => {
+        console.log("AddLorePAge: Adding a category link!")
         const tempData = category.links.concat(page_id)
         const tempCat = {
             ...category,
@@ -101,7 +107,7 @@ const AddLorePage = (props) => {
         // Redirect to the new page
         dispatch(getPage(worldid,pagestate.id));
         navigate("/api/worlds/"+worldid+"/lore_pages/"+pagestate.id);
-        linkCategories(pagestate.id)
+        //linkCategories(pagestate.id)
         // Reset the state of the page and relationships
         setState({
             title:"",
@@ -119,8 +125,7 @@ const AddLorePage = (props) => {
     }
 
     return (
-        <>
-        <div style={{
+        <Paper style={{
 			margin:"auto",
 			width:"40%",
 			textAlign:"left"
@@ -183,8 +188,8 @@ const AddLorePage = (props) => {
                 <br/>
                 <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
             </form>
-        </div>
-         </>
+        </Paper>
+
     )
 	
 }

@@ -1,6 +1,7 @@
+import Navbar1 from './components/Navbar1';
 import Navbar2 from './components/Navbar2';
 import LoginPage from './components/LoginPage';
-import {Route,Routes,Navigate} from 'react-router-dom';
+import {Route,Routes,Navigate,useParams} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import { useEffect } from 'react';
 import AddLorePage from './components/LorePage/AddLorePage';
@@ -12,6 +13,7 @@ import {getList} from './actions/pageActions';
 import {getCategoryList} from './actions/categoryActions';
 import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
+import { Container } from '@mui/material';
 
 // Main App component
 function App() {
@@ -36,7 +38,9 @@ function App() {
 			worldlist:state.world.list
 		}
 	})
-	
+
+	let { id } = useParams();
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -70,7 +74,8 @@ function App() {
 	// depending on the URL accessed. Routes are available paths.
 	if(appState.isLogged) {
 		return (
-			<div className="App">
+			<Container>
+				<Navbar1/>
 				<Navbar2 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
@@ -79,18 +84,24 @@ function App() {
 					<Route path="/" element={<ListPages />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/category" element={<Category />}/>
-					<Route path="/category/*" element={<Category />}/>
+					<Route path="/category/:id" element={<Category id={id}/>}/>
+					{/* <Route path="/category/*" element={<Category />}/> */}
 					<Route path="/lorepage" element={<ListPages />}/>
-					<Route path="/lorepage/*" element={<LorePage />}/>
+					<Route path="/lorepage/:id" element={<LorePage id={id}/>}/>
+					{/* <Route path={"/lorepage/"+id} element={<LorePage id={id}/>}/> */}
+					{/* <Route path="/lorepage/*" element={<LorePage/>}/> */}
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
-			</div>
+			</Container>
+			// <div className="App" color='primary.dark'>
+				
+			// </div>
 		);
 	// Otherwise show Navbar, "message" and LoginPage
 	} else {
 		return (
-			<div className="App">
-				<Navbar2 />
+			<Container>
+				<Navbar1 />
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
 				</div>
@@ -98,7 +109,10 @@ function App() {
 					<Route path="/" element={<LoginPage />}/>
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
-			</div>
+			</Container>
+			// <div className="App">
+				
+			// </div>
 		);		
 		
 	}
