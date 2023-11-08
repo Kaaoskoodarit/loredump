@@ -1,10 +1,12 @@
 import {useState} from 'react';
 import Row from './Row';
+import Box from '@mui/material/Box';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
 import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
+import { Grid } from '@mui/material';
 
 
 
@@ -52,11 +54,11 @@ const ListPages = (props) => {
 		}
 	}
 
-	//Handler for the clickable link buttons in Row component
-	const handleNavigate = (id) => {
-		dispatch(getPage(appState.token,id));
-		navigate("/lorepage/"+id)
-	}
+	// //Handler for the clickable link buttons in Row component
+	// const handleNavigate = (id) => {
+	// 	dispatch(getPage(appState.token,id));
+	// 	navigate("/lorepage/"+id)
+	// }
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(appState.token,id));
@@ -69,10 +71,12 @@ const ListPages = (props) => {
 		changeMode("cancel");
 	}
 	
+	const Item = <></>;
+
 	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {
 			return(
-				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
+				<RemoveRow key={page.id} page={page} changeMode={changeMode} removePage={removeAPage}/>
 			)
 		}
 		if(index === state.editIndex) {
@@ -83,25 +87,18 @@ const ListPages = (props) => {
 			)
 		}
 		return(
-			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+			<Grid item xs={3}>
+			<Row key={page.id} page={page} index={index} changeMode={changeMode}/>
+			</Grid>
+
 		)
 	})
 	return(
-		<table className="table table-striped">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Image</th>
-					<th>Summary</th>
-					<th>Categories</th>
-					<th>Edit</th>
-					<th>Remove</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Grid container spacing={3}>
 			{pages}
-			</tbody>
-		</table>
+		</Grid>
+
+
 	)
 }
 

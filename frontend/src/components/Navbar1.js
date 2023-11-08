@@ -46,65 +46,56 @@ const Navbar1 = (props) => {
 		setAnchorEl(null);
 	};
 	
-	
-	if(state.isLogged) {
-		return(
-			<Box sx={{ flexGrow: 1 }}>
-			<AppBar position="static">
-			  <Toolbar color="primary" variant="dense">
+	return(
+		<Box sx={{ flexGrow: 1 }}>
+		<AppBar position="static"  color="secondary">
+			<Toolbar variant="dense">
 
-				<Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-					LoreDump
-				</Typography>
-				<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-				Treasure trove for all your Worldbuilding Lore
-				</Typography>
-				{isLogged && (
-				  <div>
-					<IconButton
-					  size="large"
-					  aria-label="account of current user"
-					  aria-controls="menu-appbar"
-					  aria-haspopup="true"
-					  onClick={(e)=>handleMenu(e,"E1")}
-					  color="inherit"
-					>
-					  <AccountCircle />
-					</IconButton>
-					<Menu
-					  id="menu-appbar"
-					  anchorEl={anchorEl}
-					  anchorOrigin={{
-						vertical: 'top',
-						horizontal: 'right',
-					  }}
-					  keepMounted
-					  transformOrigin={{
-						vertical: 'top',
-						horizontal: 'right',
-					  }}
-					  open={Boolean(anchorEl)}
-					  onClose={()=>handleClose("E1")}
-					>
-					  <MenuItem onClick={()=>handleClose("E1")}>Profile</MenuItem>
-					  <MenuItem onClick={()=>handleClose("E1")}>My account</MenuItem>
-					  <MenuItem onClick={()=>handleClose("E1")}>
-					  	<Link className="nav-link" to="/" onClick={() => dispatch(logout(state.token))}>Logout</Link>
-					  </MenuItem>
-					</Menu>
-				  </div>
-				)}
-			  </Toolbar>
-			</AppBar>
-		  </Box>
-		)
-	} else {
-		return(
-			<nav className="navbar navbar-expand-lg navbar-light bg-light">
-				<p className="navbar-brand" style={{marginLeft:10}}>LoreDump</p>
-			</nav>
-		)
-	}
+			<Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+				LoreDump
+			</Typography>
+			<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+			Treasure trove for all your Worldbuilding Lore
+			</Typography>
+			{isLogged && (
+				<div>
+				<IconButton
+					size="large"
+					aria-label="account of current user"
+					aria-controls="menu-appbar"
+					aria-haspopup="true"
+					onClick={(e)=>handleMenu(e,"E1")}
+					color="inherit"
+				>
+					<AccountCircle />
+				</IconButton>
+				<Menu
+					id="menu-appbar"
+					anchorEl={anchorEl}
+					anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+					}}
+					keepMounted
+					transformOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+					}}
+					open={Boolean(anchorEl)}
+					onClose={()=>handleClose("E1")}
+				>
+					<MenuItem onClick={()=>handleClose("E1")}>Profile</MenuItem>
+					<MenuItem onClick={()=>handleClose("E1")}>My account</MenuItem>
+					<MenuItem onClick={()=>handleClose("E1")}>
+					<Link className="nav-link" to="/" onClick={() => dispatch(logout(state.token))}>Logout</Link>
+					</MenuItem>
+				</Menu>
+				</div>
+			)}
+			</Toolbar>
+		</AppBar>
+		</Box>
+	)
 }
 
 export default Navbar1;

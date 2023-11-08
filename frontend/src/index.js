@@ -9,6 +9,9 @@ import loginReducer from './reducers/loginReducer';
 import pageReducer from './reducers/pageReducer';
 import categoryReducer from './reducers/categoryReducer';
 import CssBaseline from '@mui/material/CssBaseline';
+import {ThemeProvider} from '@mui/material/styles';
+import {themeLight, themeDark} from './theme';
+
 
 
 // Combine different reducers into one
@@ -32,8 +35,10 @@ root.render(
   <React.StrictMode>
   <BrowserRouter>
   <Provider store={store}>
+    <ThemeProvider theme={themeLight}>
     <CssBaseline enableColorScheme/>
     <App />
+    </ThemeProvider>
   </Provider>
   </BrowserRouter>
   </React.StrictMode>
