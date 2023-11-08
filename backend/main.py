@@ -367,13 +367,14 @@ def get_lore_pages(world_id):
                 id=None,
                 title=request.json["title"],
                 creator_id=session["user_id"],
+                world_id=world_id,
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
-                categories=request.json["category"],
+                categories=request.json["categories"],
             )
-            lore_page.save()
-            return jsonify({"success": "Lore page successfully created"}), 200
+            result = lore_page.save()
+            return jsonify({"success": "Lore page successfully created", "id": result}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 

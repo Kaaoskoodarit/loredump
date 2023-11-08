@@ -725,6 +725,7 @@ class LorePage:
 
         result = lorepages_collection.insert_one(lorepage_data)
         self.id = str(result.inserted_id)
+        return str(result.inserted_id)
 
     def add_private_note(self):
         lorepages_collection = db["lorepages"]

@@ -100,12 +100,12 @@ const AddLorePage = (props) => {
         event.preventDefault();
         let page = {
             ...state,
-            creator: props.user
+            world_id: worldid
         }
         // Add the new page to the database
         dispatch(addPage(worldid,page));
         // Redirect to the new page
-        dispatch(getPage(worldid,pagestate.id));
+        //dispatch(getPage(worldid,pagestate.id));
         navigate("/api/worlds/"+worldid+"/lore_pages/"+pagestate.id);
         //linkCategories(pagestate.id)
         // Reset the state of the page and relationships
@@ -146,7 +146,7 @@ const AddLorePage = (props) => {
                 <br/>
                 <label htmlFor="image" className="form-label">Add Image:</label>
                 <br/>
-                <UploadWidget state={state} setState={setState} />
+                {/* <UploadWidget state={state} setState={setState} /> */}
                 <br/>
                 <br/>
                 <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img>
@@ -178,10 +178,10 @@ const AddLorePage = (props) => {
                 <Connections state={state} setState={setState}/>
                 <br/>
                 <br/>
-                <label htmlFor="notes" className="form-label">Private Notes</label>
+                <label htmlFor="private_notes" className="form-label">Private Notes</label>
 				<input type="text"
-						name="notes"
-						id="notes"
+						name="private_notes"
+						id="private_notes"
 						className="form-control"
 						onChange={onChange}
 						value={state.private_notes}/>

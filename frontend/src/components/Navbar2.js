@@ -25,12 +25,13 @@ const Navbar2 = (props) => {
 	const state = useSelector((state) => {
 		return {
 			isLogged:state.login.isLogged,
-			token:state.login.token,
 			user:state.login.user,
-			title:state.page.page.title,
-			categorylist:state.category.list
+			title:state.lore.page.title,
+			categorylist:state.category.list,
+			worldid: state.world.page.id
 		}
 	})
+	const worldid = state.worldid
 	const isLogged = state.isLogged
 	const title = state.title
 	const categorylist = state.categorylist
@@ -59,18 +60,7 @@ const Navbar2 = (props) => {
 	if(state.isLogged) {
 		return(	
 			<Box sx={{ flexGrow: 1 }}>
-			{/* <FormGroup>
-			  <FormControlLabel
-				control={
-				  <Switch
-					checked={isLogged}
-					onChange={handleChange}
-					aria-label="login switch"
-				  />
-				}
-				label={isLogged ? 'Logout' : 'Login'}
-			  />
-			</FormGroup> */}
+			
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" separator="|">
