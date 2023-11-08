@@ -28,11 +28,6 @@ db = client['LoreDump']
 #         return json.JSONEncoder.default(self, o)
 """
 
-# Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client["LoreDump"]
-
-
 # Define User model
 class User:
     # User Schema:
@@ -290,7 +285,6 @@ class World:
         result = worlds_collection.insert_one({
             'creator_id': self.creator_id,
             'title': self.title,
-            'custom_url': self.custom_url,
             'image': self.image,
             'description': self.description,
             'private_notes': self.private_notes,
@@ -348,7 +342,6 @@ class World:
                 id=result['_id'],
                 creator_id=result['creator_id'],
                 title=result['title'],
-                custom_url=result['custom_url'],
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
@@ -369,7 +362,6 @@ class World:
                 id=result['_id'],
                 creator_id=result['creator_id'],
                 title=result['title'],
-                custom_url=result['custom_url'],
                 image=result['image'],
                 description=result['description'],
                 private_notes=result['private_notes'],
@@ -475,7 +467,6 @@ class Category:
         result = categories_collection.insert_one({
             'creator_id': str(self.creator_id),
             'title': self.title,
-            'custom_url': self.custom_url,
             'image': self.image,
             'description': self.description,
             'lore_pages': [str(page) for page in self.lore_pages],
@@ -497,7 +488,6 @@ class Category:
             {
                 "creator_id": session["user_id"],
                 "title": "Uncategorised",
-                'custom_url': 'Uncategorised',
                 "image": None,
                 "description": None,
                 "lore_pages": [],
@@ -592,7 +582,6 @@ class Category:
                 str(category['_id']),
                 category['creator_id'],
                 category['title'],
-                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -611,7 +600,6 @@ class Category:
                 str(category['_id']),
                 category['creator_id'],
                 category['title'],
-                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -629,7 +617,6 @@ class Category:
                 str(category['_id']),
                 category['creator_id'],
                 category['title'],
-                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -647,7 +634,6 @@ class Category:
                 str(category['_id']),
                 category['creator_id'],
                 category['title'],
-                category['custom_url'],
                 category['world_id'],
                 category['image'],
                 category['description'],
@@ -719,7 +705,6 @@ class LorePage:
             'creator_id': self.creator_id,
             'world_id': str(self.world_id),
             'title': self.title,
-            'custom_url': self.custom_url,
             'categories': self.categories,
             'image': self.image,
             'description': self.description,
@@ -793,12 +778,12 @@ class LorePage:
     def update(self):
         lorepages_collection = db["lorepages"]
         lorepage_data = {
-            "name": self.name,
+            "title": self.title,
             "creator_id": self.creator_id,
             "categories": self.categories,
             "image": self.image,
             "description": self.description,
-            "short_description": self.short_description,
+            "summary": self.summary,
             "connections": self.connections,
             "private_notes": self.private_notes,
         }
@@ -814,11 +799,11 @@ class LorePage:
             return LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -833,11 +818,11 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -852,12 +837,12 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["world_id"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )
@@ -872,11 +857,11 @@ class LorePage:
             LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator"],
-                lorepage["name"],
+                lorepage["title"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
-                lorepage["short_description"],
+                lorepage["summary"],
                 lorepage["connections"],
                 lorepage["private_notes"],
             )

@@ -242,7 +242,7 @@ def get_worlds():
         try:
             world = World(
                 id=None,
-                name=request.json["name"],
+                title=request.json["title"],
                 creator=session["username"],
                 description=request.json["description"],
                 image=request.json["image"],
@@ -269,7 +269,7 @@ def get_world(world_id):
             world = World.get_by_id(world_id)
             if not world:
                 return jsonify({"error": "World not found"}), 404
-            world.name = request.json["name"]
+            world.title = request.json["title"]
             world.description = request.json["description"]
             world.image = request.json["image"]
             world.private_notes = request.json["private_notes"]
@@ -303,8 +303,8 @@ def get_categories(world_id):
         try:
             category = Category(
                 id=None,
-                name=request.json["name"],
-                creator=session["username"],
+                title=request.json["title"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -332,7 +332,7 @@ def get_category(world_id, category_id):
             category = Category.get_by_id(category_id)
             if not category:
                 return jsonify({"error": "Category not found"}), 404
-            category.name = request.json["name"]
+            category.title = request.json["title"]
             category.world_id = world_id
             category.description = request.json["description"]
             category.image = request.json["image"]
@@ -365,8 +365,8 @@ def get_lore_pages(world_id):
         try:
             lore_page = LorePage(
                 id=None,
-                name=request.json["name"],
-                creator=session["username"],
+                title=request.json["title"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -396,7 +396,7 @@ def get_lore_page(world_id, lore_page_id):
                 return jsonify({"error": "Lore page not found"}), 404
             lore_page.creator_id = session["user_id"]
             lore_page.world_id = world_id
-            lore_page.name = request.json["name"]
+            lore_page.title = request.json["title"]
             lore_page.description = request.json["description"]
             lore_page.image = request.json["image"]
             lore_page.private_notes = request.json["private_notes"]
@@ -451,7 +451,7 @@ def add_fake_data():
                 world = World(
                     id=ObjectId(),
                     creator_id=session["user_id"],
-                    name=fake.word(),
+                    title=fake.word(),
                     image=fake.image_url(),
                     private_notes=fake.text(),
                     description=fake.text(),
@@ -465,13 +465,13 @@ def add_fake_data():
                         id=ObjectId(),
                         creator_id=session["user_id"],
                         world_id=world.id,
-                        name=fake.word(),
+                        title=fake.word(),
                         description=fake.text(),
                         image=fake.image_url(),
                         private_notes=fake.text(),
                     )
                     category.save()
-                    categories.append(category.name)
+                    categories.append(category.title)
 
                 for _ in range(num_lore_pages_per_world):
                     random_category = categories[
@@ -481,7 +481,7 @@ def add_fake_data():
                         id=ObjectId(),
                         creator_id=world.creator_id,
                         world_id=world.id,
-                        name=fake.sentence(),
+                        title=fake.sentence(),
                         description=fake.text(),
                         image=fake.image_url(),
                         private_notes=fake.text(),

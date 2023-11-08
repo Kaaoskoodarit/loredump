@@ -57,7 +57,7 @@ const Category = (props) => {
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
 		dispatch(getPage(worldid,id));
-		navigate("/lorepage/"+id)
+		navigate("/api/worlds/"+worldid+"/lore_pages/"+id)
 	}
 	
 	const removeAPage = (id) => {

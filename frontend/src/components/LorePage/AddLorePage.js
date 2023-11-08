@@ -100,7 +100,7 @@ const AddLorePage = (props) => {
         dispatch(addPage(worldid,page));
         // Redirect to the new page
         dispatch(getPage(worldid,pagestate.id));
-        navigate("/api/worlds/"+worldid+"/lore-pages/"+pagestate.id);
+        navigate("/api/worlds/"+worldid+"/lore_pages/"+pagestate.id);
         linkCategories(pagestate.id)
         // Reset the state of the page and relationships
         setState({

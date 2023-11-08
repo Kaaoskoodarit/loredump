@@ -14,7 +14,7 @@ export const getList = (worldurl) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page list from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages",request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages",request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -53,7 +53,7 @@ export const getPage = (worldurl,url) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages/"+url,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages/"+url,request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -93,7 +93,7 @@ export const addPage = (worldurl,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages",request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages",request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
@@ -125,7 +125,7 @@ export const removePage = (worldurl,url) => {
 			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages/"+url,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
@@ -157,7 +157,7 @@ export const editPage = (worldurl,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages/"+page.id,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages/"+page.id,request);
 		//const response = await fetch("/api/worlds/"+worldurl+"/lore-pages/"+page.custom_url,request); // when transitioning from ids
 		dispatch(stopLoading());
 		if(!response) {
@@ -190,7 +190,7 @@ export const updatePage = (worldurl,url,update) => {
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldurl+"/lore-pages/update/"+url,request);
+		const response = await fetch("/api/worlds/"+worldurl+"/lore_pages/update/"+url,request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))

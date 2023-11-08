@@ -10,7 +10,7 @@ import ListPages from './components/Category/ListPages';
 // Temp until we get user page!
 import {getList} from './actions/pageActions';
 import {getCategoryList} from './actions/categoryActions';
-import { getWorldList } from './actions/worldActions';
+import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
 
 // Main App component
@@ -47,6 +47,7 @@ function App() {
 			if (appState.worldlist.length > 0) {
 				console.log(appState.worldlist)
 				const worldid = appState.worldlist[0].id;
+				dispatch(getWorld(worldid));
 				dispatch(getList(worldid));			
 				dispatch(getCategoryList(worldid));
 			} else {

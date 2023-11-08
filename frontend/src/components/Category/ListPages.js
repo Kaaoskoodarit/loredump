@@ -24,6 +24,7 @@ const ListPages = (props) => {
 			list:state.lore.list
 		}
 	})
+	console.log(appState.worldid);
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
@@ -55,8 +56,9 @@ const ListPages = (props) => {
 
 	//Handler for the clickable link buttons in Row component
 	const handleNavigate = (id) => {
+		console.log(appState.worldid);
 		dispatch(getPage(appState.worldid,id));
-		navigate("/lorepage/"+id)
+		navigate("/api/worlds/"+appState.worldid+"/lore_pages/"+id)
 	}
 	
 	const removeAPage = (id) => {
