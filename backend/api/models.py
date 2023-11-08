@@ -541,6 +541,7 @@ class World:
                     "description": self.description,
                     "private_notes": self.private_notes,
                     "categories": self.categories,
+                    "lore_pages": self.lore_pages,
                 }
             },
         )
@@ -892,6 +893,10 @@ class LorePage:
             "connections": self.connections,
             "private_notes": self.private_notes,
         }
+
+        result = lorepages_collection.insert_one(lorepage_data)
+        self.id = str(result.inserted_id)
+
         # add LorePage to Category
         for category in self.categories:
             categories_collection = db["categories"]
@@ -903,8 +908,7 @@ class LorePage:
         addLore = World.get_by_id(ObjectId(self.world_id))
         addLore.add_lore_page(self.id)
 
-        result = lorepages_collection.insert_one(lorepage_data)
-        self.id = str(result.inserted_id)
+        return self.id
 
     def add_private_note(self):
         lorepages_collection = db["lorepages"]
@@ -960,6 +964,7 @@ class LorePage:
         lorepage_data = {
             "title": self.title,
             "creator_id": self.creator_id,
+            "custom_url": self.custom_url,
             "categories": self.categories,
             "image": self.image,
             "description": self.description,
@@ -980,6 +985,8 @@ class LorePage:
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -999,6 +1006,8 @@ class LorePage:
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -1019,6 +1028,7 @@ class LorePage:
                 lorepage["creator_id"],
                 lorepage["title"],
                 lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -1036,8 +1046,10 @@ class LorePage:
         return [
             LorePage(
                 str(lorepage["_id"]),
-                lorepage["creator"],
+                lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
