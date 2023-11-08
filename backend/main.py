@@ -167,6 +167,10 @@ def protected():
 
 @app.before_request
 def before_request():
+    """
+    This function is executed before each request to the server.
+    It checks if the user is logged in and if the session has expired.
+    """
     if (
         request.endpoint in ["register", "login", "add_fake_data"]
         or request.method != "POST"
@@ -239,10 +243,14 @@ def get_worlds():
             return jsonify({"error": "User hasn't created any worlds"}), 404
 
     elif request.method == "POST":
+        unavailable_urls = World.get_all_custom_urls_from_worlds()
+        if request.json["custom_url"] in unavailable_urls:
+            return jsonify({"error": "URL is already in use"}), 409
         try:
             world = World(
                 id=None,
                 title=request.json["title"],
+                custom_url=request.json["custom_url"],
                 creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
@@ -257,6 +265,8 @@ def get_worlds():
 
 @app.route("/api/worlds/<world_id>", methods=["GET", "PUT", "DELETE"])
 def get_world(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         world = World.get_by_id(world_id)
         if not world:
@@ -273,7 +283,7 @@ def get_world(world_id):
             world.description = request.json["description"]
             world.image = request.json["image"]
             world.private_notes = request.json["private_notes"]
-            world.save()
+            world.update()
             return jsonify({"success": "World successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -293,6 +303,8 @@ def get_world(world_id):
 # Routes for Category model
 @app.route("/api/worlds/<world_id>/categories", methods=["GET", "POST"])
 def get_categories(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         categories = Category.get_all_by_world(world_id)
         if categories:
@@ -321,6 +333,8 @@ def get_categories(world_id):
     "/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"]
 )
 def get_category(world_id, category_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         category = Category.get_by_id(category_id)
         if not category:
@@ -355,6 +369,8 @@ def get_category(world_id, category_id):
 # Routes for LorePage model
 @app.route("/api/worlds/<world_id>/lore_pages", methods=["GET", "POST"])
 def get_lore_pages(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         lore_pages = LorePage.get_all_by_world(world_id)
         if lore_pages:
@@ -383,6 +399,8 @@ def get_lore_pages(world_id):
     methods=["GET", "PUT", "DELETE", "PATCH"],
 )
 def get_lore_page(world_id, lore_page_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         lore_page = LorePage.get_by_id(lore_page_id)
         if not lore_page:
