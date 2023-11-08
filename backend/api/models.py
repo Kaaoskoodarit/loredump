@@ -974,6 +974,12 @@ class LorePage:
         self.private_notes = private_notes
 
     def serialize(self):
+        """
+        Serializes the model instance into a dictionary.
+
+        Returns:
+            dict: A dictionary containing the serialized data.
+        """
         return {
             "id": str(self.id),
             "creator_id": self.creator_id,
@@ -989,6 +995,12 @@ class LorePage:
         }
 
     def save(self):
+        """
+        Saves the LorePage object to the database.
+
+        Returns:
+            str: The ID of the newly created LorePage object.
+        """
         lorepages_collection = db["lorepages"]
         lorepage_data = {
             "creator_id": self.creator_id,
@@ -1020,6 +1032,12 @@ class LorePage:
         return self.id
 
     def add_private_note(self):
+        """
+        Adds a private note to the lorepage.
+
+        Returns:
+            bool: True if the note was added successfully, False otherwise.
+        """
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_one(
@@ -1033,6 +1051,16 @@ class LorePage:
 
     # Add connection to lorepage, it has two properties: the ID of the lore page it's connected to and the type of connection
     def add_connection(self, type, connection):
+        """
+        Adds a connection of the specified type to the current LorePage object.
+
+        Args:
+            type (str): The type of connection to add.
+            connection (str): The ID of the LorePage to connect to.
+
+        Returns:
+            bool: True if the connection was added successfully, False otherwise.
+        """
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_one(
@@ -1051,24 +1079,45 @@ class LorePage:
             print(e)
             return False
 
-    """TODO: if lorepage is deleted, delete it from all connections and add its name as a string
-    to all lorepages that had a connection with it"""
-
     def delete(self):
+        """
+        Deletes the current LorePage object from the database.
+        """
         lorepages_collection = db["lorepages"]
         lorepages_collection.delete_one({"_id": ObjectId(self.id)})
 
     @staticmethod
     def delete_all_by_creator(creator):
+        """
+        Deletes all lorepages created by a given creator.
+
+        Args:
+            creator (str): The ID of the creator whose lorepages will be deleted.
+
+        Returns:
+            None
+        """
         lorepages_collection = db["lorepages"]
         lorepages_collection.delete_many({"creator_id": creator})
 
     @staticmethod
     def delete_all_by_world(world_id):
+        """
+        Deletes all lorepages associated with a given world.
+
+        Args:
+            world_id (str): The ID of the world to delete lorepages for.
+        """
         lorepages_collection = db["lorepages"]
         lorepages_collection.delete_many({"world_id": world_id})
 
     def update(self):
+        """
+        Update the lorepage data in the database with the current instance's attributes.
+
+        Returns:
+            None
+        """
         lorepages_collection = db["lorepages"]
         lorepage_data = {
             "title": self.title,
@@ -1087,6 +1136,15 @@ class LorePage:
 
     @staticmethod
     def get_by_id(id):
+        """
+        Retrieve a LorePage object from the database by its ID.
+
+        Args:
+            id (str): The ID of the LorePage to retrieve.
+
+        Returns:
+            LorePage or None: The retrieved LorePage object, or None if no LorePage with the given ID was found.
+        """
         lorepages_collection = db["lorepages"]
         lorepage = lorepages_collection.find_one({"_id": ObjectId(id)})
         if lorepage:
@@ -1108,6 +1166,15 @@ class LorePage:
 
     @staticmethod
     def get_all_by_creator(creator_id):
+        """
+        Returns a list of all LorePages created by the specified creator.
+
+        Args:
+            creator_id (str): The ID of the creator.
+
+        Returns:
+            list: A list of LorePage objects.
+        """
         lorepages_collection = db["lorepages"]
         lorepages = lorepages_collection.find({"creator_id": creator_id})
         return [
@@ -1129,6 +1196,15 @@ class LorePage:
 
     @staticmethod
     def get_all_by_world(world_id):
+        """
+        Returns a list of all lore pages associated with a given world ID.
+
+        Args:
+            world_id (str): The ID of the world to retrieve lore pages for.
+
+        Returns:
+            list: A list of LorePage objects associated with the given world ID.
+        """
         lorepages_collection = db["lorepages"]
         lorepages = lorepages_collection.find({"world_id": world_id})
         return [
@@ -1150,6 +1226,15 @@ class LorePage:
 
     @staticmethod
     def get_all_by_category(category):
+        """
+        Returns a list of all LorePages that belong to the specified category.
+
+        Args:
+            category (str): The category to filter LorePages by.
+
+        Returns:
+            list: A list of LorePage objects.
+        """
         lorepages_collection = db["lorepages"]
         lorepages = lorepages_collection.find({"categories": category})
         return [
@@ -1168,112 +1253,3 @@ class LorePage:
             )
             for lorepage in lorepages
         ]
-
-
-""" OLD SESSION CLASS:
-class Session:
-    # Create random token of 64 bytes
-    user: str
-    ttl: datetime
-    token: str
-
-    def __init__(self, user):
-        self.user = user
-        self.ttl = datetime.utcnow() + timedelta(minutes=30)
-        self.token = Session.createToken()
-
-    @staticmethod
-    def createToken():
-        # This method creates a random token of 64 bytes and converts it to hex
-        token = secrets.token_hex(32)
-        return token
-    
-    def save(self):
-        # Save session to database
-        try:
-            sessions_collection = db['sessions']
-            # Check if session already exists
-            existing_session = sessions_collection.find_one({'user': self.user})
-            if existing_session:
-                # Update session
-                existing_session['ttl'] = self.ttl
-                #existing_session['token'] = existing_session['token']
-                sessions_collection.update_one({'user': self.user}, {'$set': existing_session})
-                return
-            session_data = {
-                'user': self.user,
-                'ttl': self.ttl,
-                'token': self.token
-            }
-            sessions_collection.insert_one(session_data)
-        except Exception as e:
-            print(e)
-            return jsonify({'error': f"Creation of token failed with error {str(e)}"})
-    
-    @staticmethod
-    def get_by_token(token):
-        # Get session by token
-        sessions_collection = db['sessions']
-        session_data = sessions_collection.find_one({'token': token})
-        if session_data:
-            return Session(session_data['user'])
-        else:
-            return None
-
-    def get_token_of_user(self):
-        sessions_collection = db['sessions']
-        session_data = sessions_collection.find_one({'user': self.user})
-        # Check if session exists and if it's still valid
-        if session_data and session_data['ttl'] > datetime.utcnow():
-            # Add more time to token if it's still valid
-            session_data['ttl'] = datetime.utcnow() + timedelta(minutes=30)
-            sessions_collection.update_one({'user': self.user}, {'$set': session_data})
-            return session_data['token']
-        else:
-            # Delete session
-            sessions_collection.delete_one({'user': self.user})
-            # Log user out
-            User.logout(self.user)
-            return None
-
-    def __init__(self, id, user_id, token):
-    #     self.id = id
-    #     self.user_id = user_id
-    #     self.token = token
-    
-    # @staticmethod
-    # def create_token(self, user, secret_key=os.environ.get('SECRET_KEY'), algorithm='HS256'):
-    #     # Create token
-    #     try:
-    #         token = encode({
-    #             'exp': datetime.utcnow() + timedelta(minutes=30),
-    #             'iat': datetime.utcnow(),
-    #             'user_id': user.id,
-    #             'username': self.username,
-    #             'password': self.password,
-    #             'algorithm': algorithm
-    #         }, secret_key)
-    #         return token
-    #     except Exception as e:
-    #         print(e)
-    #         return e
-    
-    # @staticmethod
-    # def decode_token(token, secret_key=os.environ.get('SECRET_KEY')):
-    #     # Decode token
-    #     try:
-    #         payload = jwt.decode(token, secret_key)
-    #         return payload['user_id']
-    #     except jwt.ExpiredSignatureError:
-    #         return 'Signature expired. Please log in again.'
-    #     except jwt.InvalidTokenError:
-    #         return 'Invalid token. Please log in again.'
-        
-    # # def save_token(self):
-    # #     tokens = db['tokens']
-    # #     token_data = {
-    # #         'session_id': self.id,
-    # #         'user_id': self.user_id,
-    # #         'token': self.token
-    # #     }
-    # #     tokens.insert_one(token_data) """
