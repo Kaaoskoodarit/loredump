@@ -71,6 +71,7 @@ const Navbar2 = (props) => {
 				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
 			  {catLinks}
 				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>
+				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-category"}>Create a new Category</Link>
 
 			  
 			  </Breadcrumbs>
