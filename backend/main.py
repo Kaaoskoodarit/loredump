@@ -152,9 +152,10 @@ def login():
             session['ttl'] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)"""
             return jsonify({"success": "User successfully logged in"}), 200
         except Exception as e:
-            return jsonify({'error': str(e)}), 401
-        
-@app.route('/protected')
+            return jsonify({"error": str(e)})
+
+
+@app.route("/protected")
 def protected():
     # Check if user is logged in
     if "user_id" not in session:
@@ -167,10 +168,11 @@ def protected():
 
 @app.before_request
 def before_request():
-    if (
-        request.endpoint in ["register", "login", "add_fake_data"]
-        or request.method != "POST"
-    ):
+    """
+    This function is executed before each request to the server.
+    It checks if the user is logged in and if the session has expired.
+    """
+    if request.endpoint in ["register", "login", "add_fake_data"]:
         return
     if "user_id" not in session:
         return jsonify({"error": "User not logged in"}), 401
@@ -185,25 +187,6 @@ def before_request():
         return jsonify({"error": "Session expired"}), 401
 
 
-""" TOKEN SÄÄTÖÄ
-@app.after_request
-def add_token_headers(response):
-    if 'Authorization' not in request.headers:
-        return response
-    token = request.headers['Authorization'].split()[1]
-    session = Session.get_by_token(token)
-    if not session:
-        return response
-    user = User.get_by_username(session.user)
-    new_headers = dict(response.headers)
-    new_headers['Authorization'] = f'Bearer {token}'
-    # new_headers['X-User-ID'] = str(user.id)
-    new_headers['X-Username'] = user.username
-    response.headers = new_headers
-    return response
-"""
-
-
 @app.route("/logout", methods=["POST"])
 def logout():
     # Clear session:
@@ -211,20 +194,6 @@ def logout():
         return jsonify({"error": "User not logged in"}), 400
     session.clear()
     return jsonify({"success": "User successfully logged out"}), 200
-    """ vanhaa koodia:
-    # Logout user:
-    if request.method == 'POST':
-        try:
-            # Get username from request body
-            username = request.json['username']
-            session = Session.get_token_of_user(username)
-            if not session:
-                return jsonify({'error': 'User not logged in'}), 404
-            session.delete()
-            return jsonify({'success': 'User successfully logged out'}), 200
-        except Exception as e:
-            return jsonify({'error': str(e)})
-    return jsonify({'success': 'User successfully logged out'}), 200"""
 
 
 # Routes for World model
@@ -239,11 +208,15 @@ def get_worlds():
             return jsonify({"error": "User hasn't created any worlds"}), 404
 
     elif request.method == "POST":
+        unavailable_urls = World.get_all_custom_urls_from_worlds()
+        if request.json["custom_url"] in unavailable_urls:
+            return jsonify({"error": "URL is already in use"}), 409
         try:
             world = World(
                 id=None,
                 title=request.json["title"],
-                creator=session["username"],
+                custom_url=request.json["custom_url"],
+                creator_id=session["user_id"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
@@ -255,36 +228,43 @@ def get_worlds():
             return jsonify({"error": str(e)}), 400
 
 
-@app.route("/api/worlds/<world_id>", methods=["GET", "PUT", "DELETE"])
+# TODO: FINISH THIS:
+# CHANGE ALL <WORLD_ID> TO <CUSTOM_URL>
+# CHANGE FROM PUT TO PATCH
+@app.route("/api/worlds/<world_id>", methods=["GET", "PATCH", "DELETE"])
 def get_world(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         world = World.get_by_id(world_id)
         if not world:
             return jsonify({"error": "World not found"}), 404
         else:
-            session["world_id"] = world_id
             return jsonify(world.serialize())
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         try:
             world = World.get_by_id(world_id)
             if not world:
                 return jsonify({"error": "World not found"}), 404
-            world.title = request.json["title"]
-            world.description = request.json["description"]
-            world.image = request.json["image"]
-            world.private_notes = request.json["private_notes"]
-            world.save()
+            for key, value in request.json.items():
+                if hasattr(world, key):
+                    setattr(world, key, value)
+            # world.title = request.json["title"]
+            # world.description = request.json["description"]
+            # world.image = request.json["image"]
+            # world.private_notes = request.json["private_notes"]
+            world.update()
             return jsonify({"success": "World successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
     elif request.method == "DELETE":
         try:
-            world = World.get_by_id(id)
+            world = World.get_by_id(world_id)
             if not world:
                 return jsonify({"error": "World not found"}), 404
             world.delete()
-            Category.delete_all_by_world(id)
-            LorePage.delete_all_by_world(id)
+            Category.delete_all_by_world(world.id)
+            LorePage.delete_all_by_world(world.id)
             return jsonify({"success": "World successfully deleted"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -293,6 +273,8 @@ def get_world(world_id):
 # Routes for Category model
 @app.route("/api/worlds/<world_id>/categories", methods=["GET", "POST"])
 def get_categories(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         categories = Category.get_all_by_world(world_id)
         if categories:
@@ -321,6 +303,8 @@ def get_categories(world_id):
     "/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"]
 )
 def get_category(world_id, category_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         category = Category.get_by_id(category_id)
         if not category:
@@ -355,6 +339,8 @@ def get_category(world_id, category_id):
 # Routes for LorePage model
 @app.route("/api/worlds/<world_id>/lore_pages", methods=["GET", "POST"])
 def get_lore_pages(world_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         lore_pages = LorePage.get_all_by_world(world_id)
         if lore_pages:
@@ -373,10 +359,13 @@ def get_lore_pages(world_id):
                 private_notes=request.json["private_notes"],
                 categories=request.json["categories"],
                 summary=request.json["summary"],
-                connections=request.json["connections"]
+                connections=request.json["connections"],
             )
             result = lore_page.save()
-            return jsonify({"success": "Lore page successfully created", "id": result}), 200
+            return (
+                jsonify({"success": "Lore page successfully created", "id": result}),
+                200,
+            )
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
@@ -386,11 +375,14 @@ def get_lore_pages(world_id):
     methods=["GET", "PUT", "DELETE", "PATCH"],
 )
 def get_lore_page(world_id, lore_page_id):
+    if session["user_id"] != World.get_by_id(world_id).creator_id:
+        return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
         lore_page = LorePage.get_by_id(lore_page_id)
         if not lore_page:
             return jsonify({"error": "Lore page not found"}), 404
         else:
+            # pprint(vars(lore_page))
             return jsonify(lore_page.serialize())
     elif request.method == "PATCH":
         try:
@@ -413,7 +405,7 @@ def get_lore_page(world_id, lore_page_id):
             if not lore_page:
                 return jsonify({"error": "Lore page not found"}), 404
             # Delete lore page from all categories
-            Category.delete_lore_page(lore_page_id)
+            Category.remove_lore_page_from_all(lore_page_id)
             lore_page.delete()
             return jsonify({"success": "Lore page successfully deleted"}), 200
         except Exception as e:
@@ -421,93 +413,99 @@ def get_lore_page(world_id, lore_page_id):
 
 
 # add fake data:
-@app.route("/api/fake-data", methods=["POST"])
+@app.route("/api/fake-data", methods=["POST", "DELETE"])
 def add_fake_data():
     if app.debug == False and client != MongoClient("mongodb://localhost:27017/"):
         return jsonify({"error": "Can't add fake data outside of debug mode"}), 400
-    try:
-        num_users = request.json.get("num_users", 5)
-        num_worlds_per_user = request.json.get("num_worlds_per_user", 2)
-        num_lore_pages_per_world = request.json.get("num_lore_pages_per_world", 5)
-        num_categories_per_world = request.json.get("num_categories_per_world", 5)
-        categories = ["Uncategorised"]
+    if request.method == "POST":
+        try:
+            num_users = request.json.get("num_users", 5)
+            num_worlds_per_user = request.json.get("num_worlds_per_user", 2)
+            num_lore_pages_per_world = request.json.get("num_lore_pages_per_world", 5)
+            num_categories_per_world = request.json.get("num_categories_per_world", 5)
+            categories = ["Uncategorised"]
 
-        for _ in range(num_users):
-            username = fake.unique.first_name()
-            # Make sure username is at least 4 characters long
-            while len(username) < 4:
+            for _ in range(num_users):
                 username = fake.unique.first_name()
-            password = fake.password()
-            last_password = password
-            user = User(id=None, username=username, password=password)
-            print(f"username: {username}, password: {password}")
-            user.register()
-            user = User.get_by_username(username)
-            session["user_id"] = user.id
-            session["username"] = user.username
-            session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
-                minutes=ttl
-            )
-            # print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
-
-            for _ in range(num_worlds_per_user):
-                world = World(
-                    id=ObjectId(),
-                    creator_id=session["user_id"],
-                    title=fake.word(),
-                    image=fake.image_url(),
-                    private_notes=fake.text(),
-                    description=fake.text(),
+                # Make sure username is at least 4 characters long
+                while len(username) < 4:
+                    username = fake.unique.first_name()
+                password = fake.password()
+                last_password = password
+                user = User(id=None, username=username, password=password)
+                print(f"username: {username}, password: {password}")
+                user.register()
+                user = User.get_by_username(username)
+                session["user_id"] = user.id
+                session["username"] = user.username
+                session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
+                    minutes=ttl
                 )
-                world.id = world.save()
-                world = World.get_by_id(world.id)
-                Category.add_uncategorised(str(world.id))
+                # print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
 
-                for _ in range(num_categories_per_world):
-                    category = Category(
+                for _ in range(num_worlds_per_user):
+                    world = World(
                         id=ObjectId(),
                         creator_id=session["user_id"],
-                        world_id=world.id,
                         title=fake.word(),
-                        description=fake.text(),
                         image=fake.image_url(),
                         private_notes=fake.text(),
+                        description=fake.text(),
                     )
-                    category.save()
-                    categories.append(category.title)
+                    world.id = world.save()
+                    world = World.get_by_id(world.id)
+                    Category.add_uncategorised(str(world.id))
 
-                for _ in range(num_lore_pages_per_world):
-                    random_category = categories[
-                        Random().randrange(0, len(categories))
-                    ]  # adds random category
-                    lore_page = LorePage(
-                        id=ObjectId(),
-                        creator_id=world.creator_id,
-                        world_id=world.id,
-                        title=fake.sentence(),
-                        description=fake.text(),
-                        image=fake.image_url(),
-                        private_notes=fake.text(),
-                        categories=[
-                            Category.get_by_name(random_category, str(world.id)).id
-                        ],
-                    )
-                    lore_page.save()
+                    for _ in range(num_categories_per_world):
+                        category = Category(
+                            id=ObjectId(),
+                            creator_id=session["user_id"],
+                            world_id=world.id,
+                            title=fake.word(),
+                            description=fake.text(),
+                            image=fake.image_url(),
+                            private_notes=fake.text(),
+                        )
+                        category.save()
+                        categories.append(category.title)
+
+                    for _ in range(num_lore_pages_per_world):
+                        random_category = categories[
+                            Random().randrange(0, len(categories))
+                        ]  # adds random category
+                        lore_page = LorePage(
+                            id=ObjectId(),
+                            creator_id=world.creator_id,
+                            world_id=world.id,
+                            title=fake.sentence(),
+                            description=fake.text(),
+                            image=fake.image_url(),
+                            private_notes=fake.text(),
+                            categories=[
+                                Category.get_by_name(random_category, str(world.id)).id
+                            ],
+                        )
+                        lore_page.save()
+                    categories = ["Uncategorised"]
+                session.clear()
                 categories = ["Uncategorised"]
-            session.clear()
-            categories = ["Uncategorised"]
-        user.password = last_password
-        user.login()
-        return (
-            jsonify(
-                {
-                    "success": f"Fake data successfully added, logged in as {user.username}"
-                }
-            ),
-            200,
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+            user.password = last_password
+            user.login()
+            return (
+                jsonify(
+                    {
+                        "success": f"Fake data successfully added, logged in as {user.username}"
+                    }
+                ),
+                200,
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+    elif request.method == "DELETE":
+        # Drop LoreDump Database
+        client.drop_database("LoreDump")
+        session.clear()
+        return jsonify({"success": "Fake data successfully deleted"}), 200
 
 
 if __name__ == "__main__":

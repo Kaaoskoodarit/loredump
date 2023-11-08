@@ -18,16 +18,6 @@ mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PAS
 client = MongoClient(mongourl)
 db = client['LoreDump']
 
-# import json
-
-"""
-# class JSONEncoder(json.JSONEncoder):
-#     def default(self, o):
-#         if isinstance(o, ObjectId):
-#             return str(o)
-#         return json.JSONEncoder.default(self, o)
-"""
-
 # Define User model
 class User:
     # User Schema:
@@ -45,15 +35,22 @@ class User:
         self.password = password
 
     def serialize(self):
+        """
+        Serialize the user object into a dictionary.
+
+        Returns:
+            A dictionary containing the serialized user data.
+        """
+
         worlds = {}
         for world in World.get_all_by_creator(self.id):
-            worlds[str(world.id)] = world.name
+            worlds[str(world.id)] = world.title
         categories = {}
         for category in Category.get_all_by_creator(self.id):
-            categories[str(category.id)] = category.name
+            categories[str(category.id)] = category.title
         lore_pages = {}
         for lore_page in LorePage.get_all_by_creator(self.id):
-            lore_pages[str(lore_page.id)] = lore_page.name
+            lore_pages[str(lore_page.id)] = lore_page.title
 
         return {
             "id": str(self.id),
@@ -233,21 +230,22 @@ class World:
     # World Schema:
     id: ObjectId
     creator_id: str
-    title: str                   # name -> title
+    title: str  # name -> title
     custom_url: str
     image: str
     description: str
     private_notes: str
     categories: list
     lore_pages: list
-    required_fields = ['creator_id', 'title']
-    unique_fields = ['id']
+    required_fields = ["creator_id", "title"]
+    unique_fields = ["id"]
 
     def __init__(
         self,
         id,
         creator_id,
         title,
+        custom_url=None,
         image=None,
         description=None,
         private_notes=None,
@@ -257,7 +255,7 @@ class World:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title         # Change to be set separately!!!!!!!!!!!!
+        self.custom_url = custom_url  # Change to be set separately!!!!!!!!!!!!
         self.image = image
         self.description = description
         self.private_notes = private_notes
@@ -265,35 +263,68 @@ class World:
         self.lore_pages = lore_pages
 
     def serialize(self):
+        """
+        Serializes the model instance into a dictionary.
+        """
         return {
-            'id': str(self.id),
-            'creator_id': self.creator_id,
-            'title': self.title,
-            'custom_url': self.custom_url,
-            'image': self.image,
-            'description': self.description,
-            'private_notes': self.private_notes,
-            'categories': self.categories,
-            'lore_pages': self.lore_pages
+            "id": str(self.id),
+            "creator_id": self.creator_id,
+            "title": self.title,
+            "custom_url": self.custom_url,
+            "image": self.image,
+            "description": self.description,
+            "private_notes": self.private_notes,
+            "categories": self.categories,
+            "lore_pages": self.lore_pages,
         }
 
     def save(self):
-        worlds_collection = db['worlds']
-        self.creator_id = str(session['user_id'])
-        if self.categories.count('Uncategorised') == 0:
-            self.categories.insert(0, 'Uncategorised') # Force "Uncategorised" to be first category
-        result = worlds_collection.insert_one({
-            'creator_id': self.creator_id,
-            'title': self.title,
-            'image': self.image,
-            'description': self.description,
-            'private_notes': self.private_notes,
-            'categories': self.categories,
-            'lore_pages': self.lore_pages
-        })
+        """
+        Saves the current world object to the database.
+
+        Returns:
+            The ID of the inserted document.
+        """
+        worlds_collection = db["worlds"]
+        self.creator_id = str(session["user_id"])
+        if self.categories.count("Uncategorised") == 0:
+            self.categories.insert(
+                0, "Uncategorised"
+            )  # Force "Uncategorised" to be first category
+        result = worlds_collection.insert_one(
+            {
+                "creator_id": self.creator_id,
+                "title": self.title,
+                "custom_url": self.custom_url,
+                "image": self.image,
+                "description": self.description,
+                "private_notes": self.private_notes,
+                "categories": self.categories,
+                "lore_pages": self.lore_pages,
+            }
+        )
         return result.inserted_id
 
+    @staticmethod
+    def get_all_custom_urls_from_worlds():
+        """
+        Returns a list of all custom URLs from the 'worlds' collection in the database.
+        """
+        worlds_collection = db["worlds"]
+        results = worlds_collection.find({})
+        results_list = list(results)
+        custom_urls = []
+        for result in results_list:
+            custom_urls.append(result["custom_url"])
+        return custom_urls
+
     def add_private_note(self):
+        """
+        Adds a private note to the world document in the database.
+
+        Returns:
+            bool: True if the note was added successfully, False otherwise.
+        """
         worlds_collection = db["worlds"]
         try:
             result = worlds_collection.update_one(
@@ -306,6 +337,15 @@ class World:
             return False
 
     def add_category(self, category):
+        """
+        Adds a category to the world.
+
+        Args:
+            category (str): The category to be added.
+
+        Returns:
+            bool: True if the category was added successfully, False otherwise.
+        """
         worlds_collection = db["worlds"]
         try:
             # if there's no categories, add "Uncategorised" as default
@@ -323,6 +363,16 @@ class World:
             return False
 
     def add_lore_page(self, lore_page):
+        """
+        Adds a new lore page to the current world.
+
+        Args:
+            lore_page (str): The new lore page to add.
+
+        Returns:
+            bool: True if the lore page was successfully added, False otherwise.
+        """
+
         worlds_collection = db["worlds"]
         try:
             result = worlds_collection.update_one(
@@ -335,49 +385,115 @@ class World:
 
     @staticmethod
     def get_by_id(id):
+        """
+        Retrieve a world by its ID.
+
+        Args:
+            id (str): The ID of the world to retrieve.
+
+        Returns:
+            World: The retrieved world object.
+
+        Raises:
+            HTTPException: If the world with the specified ID is not found.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.find_one({"_id": ObjectId(id)})
         if result:
             return World(
-                id=result['_id'],
-                creator_id=result['creator_id'],
-                title=result['title'],
-                image=result['image'],
-                description=result['description'],
-                private_notes=result['private_notes'],
-                categories=result['categories'],
-                lore_pages=result['lore_pages']
+                id=result["_id"],
+                creator_id=result["creator_id"],
+                title=result["title"],
+                custom_url=result["custom_url"],
+                image=result["image"],
+                description=result["description"],
+                private_notes=result["private_notes"],
+                categories=result["categories"],
+                lore_pages=result["lore_pages"],
             )
         else:
             return jsonify({"error": "World not found"}), 404
 
     @staticmethod
     def get_all_by_creator(creator_id):
+        """
+        Retrieves all worlds created by a given creator.
+
+        Args:
+            creator_id (str): The ID of the creator whose worlds to retrieve.
+
+        Returns:
+            list: A list of World objects representing the retrieved worlds.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.find({"creator_id": creator_id})
         results_list = list(results)
         worlds = []
         for result in results_list:
             world = World(
-                id=result['_id'],
-                creator_id=result['creator_id'],
-                title=result['title'],
-                image=result['image'],
-                description=result['description'],
-                private_notes=result['private_notes'],
-                categories=result['categories'],
-                lore_pages=result['lore_pages']
+                id=result["_id"],
+                creator_id=result["creator_id"],
+                title=result["title"],
+                custom_url=result["custom_url"],
+                image=result["image"],
+                description=result["description"],
+                private_notes=result["private_notes"],
+                categories=result["categories"],
+                lore_pages=result["lore_pages"],
             )
             worlds.append(world)
         return worlds
 
     @staticmethod
+    def get_world_by_custom_url(custom_url):
+        """
+        Retrieves a world by its custom URL.
+
+        Args:
+            custom_url (str): The custom URL of the world to retrieve.
+
+        Returns:
+            World: The retrieved world object.
+        """
+        worlds_collection = db["worlds"]
+        result = worlds_collection.find_one({"custom_url": custom_url})
+        if result:
+            return World(
+                id=result["_id"],
+                creator_id=result["creator_id"],
+                title=result["title"],
+                custom_url=result["custom_url"],
+                image=result["image"],
+                description=result["description"],
+                private_notes=result["private_notes"],
+                categories=result["categories"],
+                lore_pages=result["lore_pages"],
+            )
+        else:
+            return None
+
+    @staticmethod
     def delete_all_by_creator(creator):
+        """
+        Deletes all worlds created by the given creator.
+
+        Args:
+            creator (str): The ID of the creator whose worlds should be deleted.
+
+        Returns:
+            int: The number of worlds deleted.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.delete_many({"creator_id": creator})
         return results.deleted_count
 
     def delete(self):
+        """
+        Deletes the current object from the database.
+
+        Returns:
+            bool: True if the object was successfully deleted, False otherwise.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.delete_one({"_id": ObjectId(self.id)})
         if result.deleted_count == 1:
@@ -386,22 +502,40 @@ class World:
             return False
 
     def delete_many(self, ids):
+        """
+        Deletes multiple documents from the 'worlds' collection in the database
+        based on the given list of ids.
+
+        Args:
+            ids (list): A list of ids of the documents to be deleted.
+
+        Returns:
+            int: The number of documents deleted.
+        """
         worlds_collection = db["worlds"]
         results = worlds_collection.delete_many({"_id": {"$in": ids}})
         return results.deleted_count
 
     def update(self):
+        """
+        Updates the current world instance in the database with the current attribute values.
+
+        Returns:
+            bool: True if the update was successful, False otherwise.
+        """
         worlds_collection = db["worlds"]
         result = worlds_collection.update_one(
-            {'_id': self.id},
-            {'$set': {
-                'title': self.title,
-                'custom_url':self.custom_url,
-                'image': self.image,
-                'description': self.description,
-                'private_notes': self.private_notes,
-                'categories': self.categories
-            }}
+            {"_id": self.id},
+            {
+                "$set": {
+                    "title": self.title,
+                    "custom_url": self.custom_url,
+                    "image": self.image,
+                    "description": self.description,
+                    "private_notes": self.private_notes,
+                    "categories": self.categories,
+                }
+            },
         )
         if result.modified_count == 1:
             return True
@@ -414,14 +548,14 @@ class Category:
     # Category Schema:
     id: ObjectId
     creator_id: str
-    title: str                   # name -> title
+    title: str  # name -> title
     custom_url: str
     world_id: ObjectId
     image: str
     description: str
     lore_pages: list
     private_notes: str
-    required_fields = ["creator_id", "name"]
+    required_fields = ["creator_id", "title"]
     unique_fields = ["id"]
 
     def __init__(
@@ -429,6 +563,7 @@ class Category:
         id,
         creator_id,
         title,
+        custom_url=None,
         world_id=None,
         image=None,
         description=None,
@@ -438,7 +573,7 @@ class Category:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title             # Change to be set separately!!!!!!
+        self.custom_url = custom_url  # Change to be set separately!!!!!!
         self.world_id = world_id
         self.image = image
         self.description = description
@@ -446,14 +581,17 @@ class Category:
         self.private_notes = private_notes
 
     def serialize(self):
+        """
+        Serializes the model instance into a dictionary.
+        """
         return {
-            'id': str(self.id),
-            'creator_id': self.creator_id,
-            'title': self.title,
-            'custom_url': self.custom_url,
-            'world': {
-                'id': str(self.world_id),
-                'title': str(World.get_by_id(ObjectId(self.world_id)).title)
+            "id": str(self.id),
+            "creator_id": self.creator_id,
+            "title": self.title,
+            "custom_url": self.custom_url,
+            "world": {
+                "id": str(self.world_id),
+                "title": str(World.get_by_id(ObjectId(self.world_id)).title),
             },
             "image": self.image,
             "description": self.description,
@@ -462,23 +600,31 @@ class Category:
         }
 
     def save(self):
-        categories_collection = db['categories']
-        self.creator_id = session['user_id']
-        result = categories_collection.insert_one({
-            'creator_id': str(self.creator_id),
-            'title': self.title,
-            'image': self.image,
-            'description': self.description,
-            'lore_pages': [str(page) for page in self.lore_pages],
-            'private_notes': self.private_notes,
-            'world_id': str(self.world_id)
-        })
+        """
+        Saves the current instance of the class to the database.
+
+        Returns:
+        -------
+        str
+            The ID of the inserted document.
+        """
+        categories_collection = db["categories"]
+        self.creator_id = session["user_id"]
+        result = categories_collection.insert_one(
+            {
+                "creator_id": str(self.creator_id),
+                "title": self.title,
+                "custom_url": self.custom_url,
+                "image": self.image,
+                "description": self.description,
+                "lore_pages": [str(page) for page in self.lore_pages],
+                "private_notes": self.private_notes,
+                "world_id": str(self.world_id),
+            }
+        )
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.id)
-        if result.inserted_id:
-            return True
-        else:
-            return False
+        return result.inserted_id
 
     # Add Uncategorised to database
     @staticmethod
@@ -488,6 +634,7 @@ class Category:
             {
                 "creator_id": session["user_id"],
                 "title": "Uncategorised",
+                "custom_url": "Uncategorised",
                 "image": None,
                 "description": None,
                 "lore_pages": [],
@@ -523,11 +670,25 @@ class Category:
             print(e)
             return False
 
+    # Remove one lore page from one category
     def remove_lore_page(self, lore_page):
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
                 {"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    # Remove one lore page from all categories. Used when deleting a lore page.
+    @staticmethod
+    def remove_lore_page_from_all(lore_page):
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many(
+                {}, {"$pull": {"lore_pages": str(lore_page)}}
             )
             return result.modified_count == 1
         except Exception as e:
@@ -557,16 +718,18 @@ class Category:
     def update(self):
         categories_collection = db["categories"]
         result = categories_collection.update_one(
-            {'_id': ObjectId(self.id)},
-            {'$set': {
-                'creator_id': self.creator_id,
-                'title': self.title,
-                'custom_url': self.custom_url,
-                'image': self.image,
-                'description': self.description,
-                'lore_pages': self.lore_pages,
-                'private_notes': self.private_notes
-            }}
+            {"_id": ObjectId(self.id)},
+            {
+                "$set": {
+                    "creator_id": self.creator_id,
+                    "title": self.title,
+                    "custom_url": self.custom_url,
+                    "image": self.image,
+                    "description": self.description,
+                    "lore_pages": self.lore_pages,
+                    "private_notes": self.private_notes,
+                }
+            },
         )
         if result.modified_count == 1:
             return True
@@ -579,14 +742,15 @@ class Category:
         category = categories_collection.find_one({"_id": ObjectId(id)})
         if category:
             return Category(
-                str(category['_id']),
-                category['creator_id'],
-                category['title'],
-                category['world_id'],
-                category['image'],
-                category['description'],
-                category['lore_pages'],
-                category['private_notes']
+                str(category["_id"]),
+                category["creator_id"],
+                category["title"],
+                category["custom_url"],
+                category["world_id"],
+                category["image"],
+                category["description"],
+                category["lore_pages"],
+                category["private_notes"],
             )
         else:
             return None
@@ -597,15 +761,17 @@ class Category:
         categories = categories_collection.find({"creator_id": creator_id})
         return [
             Category(
-                str(category['_id']),
-                category['creator_id'],
-                category['title'],
-                category['world_id'],
-                category['image'],
-                category['description'],
-                category['lore_pages'],
-                category['private_notes']
-            ) for category in categories
+                str(category["_id"]),
+                category["creator_id"],
+                category["title"],
+                category["custom_url"],
+                category["world_id"],
+                category["image"],
+                category["description"],
+                category["lore_pages"],
+                category["private_notes"],
+            )
+            for category in categories
         ]
 
     @staticmethod
@@ -614,31 +780,36 @@ class Category:
         categories = categories_collection.find({"world_id": world_id})
         return [
             Category(
-                str(category['_id']),
-                category['creator_id'],
-                category['title'],
-                category['world_id'],
-                category['image'],
-                category['description'],
-                category['lore_pages'],
-                category['private_notes']
-            ) for category in categories
+                str(category["_id"]),
+                category["creator_id"],
+                category["title"],
+                category["custom_url"],
+                category["world_id"],
+                category["image"],
+                category["description"],
+                category["lore_pages"],
+                category["private_notes"],
+            )
+            for category in categories
         ]
 
     @staticmethod
     def get_by_name(title, world_id):
-        categories_collection = db['categories']
-        category = categories_collection.find_one({'title': title, 'world_id': world_id})
+        categories_collection = db["categories"]
+        category = categories_collection.find_one(
+            {"title": title, "world_id": world_id}
+        )
         if category:
             return Category(
-                str(category['_id']),
-                category['creator_id'],
-                category['title'],
-                category['world_id'],
-                category['image'],
-                category['description'],
-                category['lore_pages'],
-                category['private_notes']
+                str(category["_id"]),
+                category["creator_id"],
+                category["title"],
+                category["custom_url"],
+                category["world_id"],
+                category["image"],
+                category["description"],
+                category["lore_pages"],
+                category["private_notes"],
             )
         else:
             return None
@@ -649,14 +820,14 @@ class LorePage:
     id: ObjectId
     world_id: ObjectId
     creator_id: ObjectId
-    title: str              # name -> title
+    title: str  # name -> title
     custom_url: str
     world_id: ObjectId
     categories: list
     image: str
     description: str
-    summary: str            #short_description -> summary
-    connections: list         # ---> connections
+    summary: str  # short_description -> summary
+    connections: list  # ---> connections
     private_notes: str
 
     def __init__(
@@ -665,6 +836,7 @@ class LorePage:
         creator_id,
         title,
         world_id,
+        custom_url=None,
         categories=["Uncategorised"],
         image=None,
         description=None,
@@ -675,8 +847,8 @@ class LorePage:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = title                 # change to be set separately!!!!!!!!!!!
         self.world_id = world_id
+        self.custom_url = custom_url  # change to be set separately!!!!!!!!!!!
         self.categories = categories
         self.image = image
         self.description = description
@@ -686,33 +858,34 @@ class LorePage:
 
     def serialize(self):
         return {
-            'id': str(self.id),
-            'creator_id': self.creator_id,
-            'world_id': self.world_id,
-            'title': self.title,
-            'custom_url': self.custom_url,
-            'categories': self.categories,
-            'image': self.image,
-            'description': self.description,
-            'summary': self.summary,
-            'connections': self.connections,
-            'private_notes': self.private_notes
+            "id": str(self.id),
+            "creator_id": self.creator_id,
+            "world_id": self.world_id,
+            "title": self.title,
+            "custom_url": self.custom_url,
+            "categories": self.categories,
+            "image": self.image,
+            "description": self.description,
+            "summary": self.summary,
+            "connections": self.connections,
+            "private_notes": self.private_notes,
         }
 
     def save(self):
         lorepages_collection = db["lorepages"]
         lorepage_data = {
-            'creator_id': self.creator_id,
-            'world_id': str(self.world_id),
-            'title': self.title,
-            'categories': self.categories,
-            'image': self.image,
-            'description': self.description,
-            'summary': self.summary,
-            'connections': self.connections,
-            'private_notes': self.private_notes
+            "creator_id": self.creator_id,
+            "world_id": str(self.world_id),
+            "title": self.title,
+            "custom_url": self.custom_url,
+            "categories": self.categories,
+            "image": self.image,
+            "description": self.description,
+            "summary": self.summary,
+            "connections": self.connections,
+            "private_notes": self.private_notes,
         }
-       
+
         result = lorepages_collection.insert_one(lorepage_data)
         self.id = str(result.inserted_id)
 
@@ -727,7 +900,7 @@ class LorePage:
         addLore = World.get_by_id(ObjectId(self.world_id))
         addLore.add_lore_page(self.id)
 
-        return str(result.inserted_id)
+        return self.id
 
     def add_private_note(self):
         lorepages_collection = db["lorepages"]
@@ -799,10 +972,13 @@ class LorePage:
         lorepages_collection = db["lorepages"]
         lorepage = lorepages_collection.find_one({"_id": ObjectId(id)})
         if lorepage:
+            print(lorepage)
             return LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -822,6 +998,8 @@ class LorePage:
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -842,6 +1020,7 @@ class LorePage:
                 lorepage["creator_id"],
                 lorepage["title"],
                 lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
@@ -859,8 +1038,10 @@ class LorePage:
         return [
             LorePage(
                 str(lorepage["_id"]),
-                lorepage["creator"],
+                lorepage["creator_id"],
                 lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
                 lorepage["categories"],
                 lorepage["image"],
                 lorepage["description"],
