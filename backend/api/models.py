@@ -637,6 +637,15 @@ class Category:
     # Add Uncategorised to database
     @staticmethod
     def add_uncategorised(world_id):
+        """
+        Adds an 'Uncategorised' category to the specified world.
+
+        Args:
+            world_id (str): The ID of the world to add the category to.
+
+        Returns:
+            bool: True if the category was added successfully, False otherwise.
+        """
         categories_collection = db["categories"]
         result = categories_collection.insert_one(
             {
@@ -656,6 +665,12 @@ class Category:
             return False
 
     def add_private_note(self):
+        """
+        Adds a private note to the category.
+
+        Returns:
+            bool: True if the note was added successfully, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
@@ -668,6 +683,15 @@ class Category:
             return False
 
     def add_lore_page(self, lore_page):
+        """
+        Adds a lore page to the category's list of lore pages.
+
+        Args:
+            lore_page (str): The ID of the lore page to add.
+
+        Returns:
+            bool: True if the lore page was added successfully, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
@@ -680,6 +704,15 @@ class Category:
 
     # Remove one lore page from one category
     def remove_lore_page(self, lore_page):
+        """
+        Removes a lore page from the categories collection.
+
+        Args:
+            lore_page (str): The ID of the lore page to remove.
+
+        Returns:
+            bool: True if the lore page was successfully removed, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
@@ -693,6 +726,15 @@ class Category:
     # Remove one lore page from all categories. Used when deleting a lore page.
     @staticmethod
     def remove_lore_page_from_all(lore_page):
+        """
+        Removes the given lore page from all categories.
+
+        Args:
+            lore_page (str): The ID of the lore page to remove.
+
+        Returns:
+            bool: True if the lore page was successfully removed from at least one category, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_many(
@@ -704,6 +746,12 @@ class Category:
             return False
 
     def delete(self):
+        """
+        Deletes the current category from the database.
+
+        Returns:
+            bool: True if the category was successfully deleted, False otherwise.
+        """
         categories_collection = db["categories"]
         result = categories_collection.delete_one({"_id": ObjectId(self.id)})
         if result.deleted_count == 1:
@@ -713,17 +761,41 @@ class Category:
 
     @staticmethod
     def delete_all_by_creator(creator):
+        """
+        Deletes all categories created by a given creator.
+
+        Args:
+        - creator (str): The ID of the creator whose categories should be deleted.
+
+        Returns:
+        - int: The number of categories deleted.
+        """
         categories_collection = db["categories"]
         result = categories_collection.delete_many({"creator_id": creator})
         return result.deleted_count
 
     @staticmethod
     def delete_all_by_world(world_id):
+        """
+        Deletes all categories associated with a given world.
+
+        Args:
+            world_id (str): The ID of the world to delete categories for.
+
+        Returns:
+            int: The number of categories deleted.
+        """
         categories_collection = db["categories"]
         result = categories_collection.delete_many({"world_id": world_id})
         return result.deleted_count
 
     def update(self):
+        """
+        Update the category with the current instance's attributes.
+
+        Returns:
+            bool: True if the category was successfully updated, False otherwise.
+        """
         categories_collection = db["categories"]
         result = categories_collection.update_one(
             {"_id": ObjectId(self.id)},
@@ -746,6 +818,15 @@ class Category:
 
     @staticmethod
     def get_by_id(id):
+        """
+        Retrieve a category by its ID.
+
+        Args:
+            id (str): The ID of the category to retrieve.
+
+        Returns:
+            Category: The category object if found, otherwise None.
+        """
         categories_collection = db["categories"]
         category = categories_collection.find_one({"_id": ObjectId(id)})
         if category:
@@ -765,6 +846,15 @@ class Category:
 
     @staticmethod
     def get_all_by_creator(creator_id):
+        """
+        Returns a list of all categories created by the specified creator.
+
+        Args:
+            creator_id (str): The ID of the creator.
+
+        Returns:
+            list: A list of Category objects.
+        """
         categories_collection = db["categories"]
         categories = categories_collection.find({"creator_id": creator_id})
         return [
@@ -784,6 +874,15 @@ class Category:
 
     @staticmethod
     def get_all_by_world(world_id):
+        """
+        Returns a list of Category objects that belong to the specified world.
+
+        Args:
+            world_id (str): The ID of the world to retrieve categories for.
+
+        Returns:
+            List[Category]: A list of Category objects that belong to the specified world.
+        """
         categories_collection = db["categories"]
         categories = categories_collection.find({"world_id": world_id})
         return [
@@ -803,6 +902,16 @@ class Category:
 
     @staticmethod
     def get_by_name(title, world_id):
+        """
+        Retrieve a category by its title and world ID.
+
+        Args:
+            title (str): The title of the category to retrieve.
+            world_id (str): The ID of the world the category belongs to.
+
+        Returns:
+            Category or None: The Category object if found, otherwise None.
+        """
         categories_collection = db["categories"]
         category = categories_collection.find_one(
             {"title": title, "world_id": world_id}
