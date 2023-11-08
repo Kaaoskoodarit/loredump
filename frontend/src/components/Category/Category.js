@@ -7,7 +7,6 @@ import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
 import { useNavigate} from 'react-router-dom';
 //import ManageLinks from '../ManageLinks';
-import {addLinkToCategory, removeLinkFromCategory} from '../ManageLinks_func';
 import { getCategory, getCategoryList } from '../../actions/categoryActions';
 import { Grid, Typography, Paper, Divider } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';

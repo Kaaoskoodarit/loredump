@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button  from "@mui/material/Button";
 
 // Upload Widget component
 function UploadWidget({ state,setState }) {
@@ -40,9 +41,9 @@ function UploadWidget({ state,setState }) {
 
     return (
         <div>
-            <button id="upload_widget" className="cloudinary-button" onClick={onClick}>
+            <Button id="cloudinary-upload-widget" variant="contained" onClick={onClick}>
                 Upload
-            </button>
+            </Button>
         </div>
     );
 }

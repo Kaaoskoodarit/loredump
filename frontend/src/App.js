@@ -15,6 +15,7 @@ import {getCategoryList} from './actions/categoryActions';
 import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
 import { Container } from '@mui/material';
+import CreateCategory from './components/Category/CreateCategory';
 
 // Main App component
 function App() {
@@ -85,6 +86,7 @@ function App() {
 				<Routes>
 					<Route path="/" element={<World/>}/>
 					<Route path="/:worldurl" element={<ListPages />}/>
+					<Route path="/new-category" element={<CreateCategory user={appState.user}/>}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/:worldurl/category" element={<Category/>}/>
 					<Route path="/:worldurl/category/:id" element={<Category/>}/>
