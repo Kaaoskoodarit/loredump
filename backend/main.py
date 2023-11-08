@@ -58,7 +58,7 @@ def index():
 
 # Routes for User model
 # Get currently logged in user:
-@app.route("/api/user", methods=["GET", "PUT", "DELETE"])
+@app.route("/api/user", methods=["GET", "PATCH", "DELETE"])
 def user():
     """
     Returns the username of the logged in user, if any.
@@ -71,7 +71,7 @@ def user():
             return jsonify(user.serialize())
         except Exception as e:
             return jsonify({"error": str(e)}), 401
-    if request.method == "PUT":
+    if request.method == "PATCH":
         try:
             if "user_id" not in session:
                 return jsonify({"error": "User not logged in"}), 401
@@ -81,8 +81,8 @@ def user():
                 user.password = request.json["password"]
             else:
                 user.password = user.password
-            user.save()
-            return jsonify({"success": "User successfully updated"}), 200
+            user.update()
+            return jsonify({"success": "Password successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
     if request.method == "DELETE":

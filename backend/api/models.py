@@ -201,35 +201,25 @@ class User:
         user_data = {"username": self.username, "password": self.password}
         users_collection.update_one({"_id": ObjectId(self.id)}, {"$set": user_data})
 
+    def update(self):
+        """
+        Updates the user's password in the database.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        users_collection = db["users"]
+        # Hash the password before saving
+        self.password = generate_password_hash(self.password)
+        user_data = {"password": self.password}
+        users_collection.update_one({"_id": ObjectId(self.id)}, {"$set": user_data})
+
     def check_password(self, password):
         # check_password_hash returns True if the password matches the hash
         return check_password_hash(self.password, password)
-
-    """ Following functions are done in main.py
-    # TODO: Implement delete method so that user can only delete their own account.
-    def delete(self):
-        users_collection = db['users']
-        result = users_collection.delete_one({'_id': ObjectId(self.id), 'username': self.username})
-        return result.deleted_count == 1
-
-
-    # TODO: Implement login method.
-    # Pakollinen?
-    def login(self):
-        pass
-    
-    # TODO: Implement is_loggedin method. Should check if token is valid.
-    def is_loggedin(self):
-        pass
-
-    # TODO: Implement get_current_user method. Should return the current user.
-    def get_current_user(self):
-        pass
-
-    #TODO: Implement logout method. Delete token from database.
-    def logout(self):
-        pass
-    """
 
 
 # Define World model
