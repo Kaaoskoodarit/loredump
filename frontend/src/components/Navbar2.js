@@ -68,7 +68,7 @@ const Navbar2 = (props) => {
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" separator="|">
-				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"}>All Pages</Link>
+				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
 			  {catLinks}
 				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>
 

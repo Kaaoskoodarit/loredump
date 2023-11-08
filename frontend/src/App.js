@@ -8,6 +8,7 @@ import AddLorePage from './components/LorePage/AddLorePage';
 import Category from './components/Category/Category';
 import LorePage from './components/LorePage/LorePage';
 import ListPages from './components/Category/ListPages';
+import World from './components/World';
 // Temp until we get user page!
 import {getList} from './actions/pageActions';
 import {getCategoryList} from './actions/categoryActions';
@@ -82,7 +83,7 @@ function App() {
 					{message}
 				</div>
 				<Routes>
-					<Route path="/" element={<ListPages />}/>
+					<Route path="/" element={<World/>}/>
 					<Route path="/:worldurl" element={<ListPages />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/:worldurl/category" element={<Category/>}/>

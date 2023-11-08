@@ -49,8 +49,8 @@ const LorePage = (props) => {
 	};
 
 
-	//ID RECIEVED FROM ROUTER URL
-	//let { id } = useParams();
+	//ID RECIEVED FROM ROUTER URL	
+	let {worldurl, id}  = useParams();
 
 	const [loading,setLoading] = useState("");
 
@@ -61,10 +61,13 @@ const LorePage = (props) => {
 	const navigate = useNavigate();
 
 	
-	if (page.id !== props.id && loading===""){
+	if (page.id !== id && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
-		dispatch(getPage(appState.token,props.id));
-	} else if (page.id ===props.id &&loading!=="") {setLoading("")}
+
+		//TARKISTA MIKÄ WORLD ID VASTAA URIN WORLD URL
+
+		dispatch(getPage(appState.worldid,id));
+	} else if (page.id ===id &&loading!=="") {setLoading("")}
 
 	
 	const handleClickOpen = () => {
@@ -132,17 +135,17 @@ const LorePage = (props) => {
 	}
 
 	let categories_listed;
-	if(page.categories){
-		categories_listed = page.categories.map((id,index)=>{
-			let categoryTitle = getCategoryTitle(id)
-			return (
-				<Grid item>
-				<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
-				clickable />
-				</Grid>
-			)
-		})	
-	}
+	// if(page.categories){
+	// 	categories_listed = page.categories.map((id,index)=>{
+	// 		let categoryTitle = getCategoryTitle(id)
+	// 		return (
+	// 			<Grid item>
+	// 			<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
+	// 			clickable />
+	// 			</Grid>
+	// 		)
+	// 	})	
+	// }
 
 	const getConnectionTitle = (id) => {
 		for (const lore of pagelist){
@@ -185,6 +188,7 @@ const LorePage = (props) => {
 	{loading}
 	<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant="lore">{worldurl}</Typography>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>

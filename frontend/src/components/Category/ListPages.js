@@ -5,7 +5,7 @@ import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {getPage,removePage,editPage} from '../../actions/pageActions';
-import {Navigate,RedirectFunction, useNavigate} from 'react-router-dom';
+import {Navigate,RedirectFunction, useNavigate, useParams} from 'react-router-dom';
 import { Grid } from '@mui/material';
 
 
@@ -26,12 +26,15 @@ const ListPages = (props) => {
 			list:state.lore.list
 		}
 	})
-	console.log(appState.worldid);
+	console.log("Listpages: world ID",appState.worldid);
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
 	const navigate = useNavigate();
+
+	let {worldurl, id}  = useParams();
+
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode
@@ -91,7 +94,7 @@ const ListPages = (props) => {
 		}
 		return(
 			<Grid item xs={3}>
-			<Row key={page.id} page={page} index={index} changeMode={changeMode}/>
+			<Row key={page.id} page={page} index={index} changeMode={changeMode} worldurl={worldurl}/>
 			</Grid>
 
 		)
