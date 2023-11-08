@@ -101,10 +101,12 @@ const AddLorePage = (props) => {
     // Handle onSubmit event
     const onSubmit = (event) => {
         event.preventDefault();
+        
         let page = {
             ...state,
             world_id: worldid
         }
+        page.custom_url = page.custom_url=""? state.title.replace(/\s+/g, '') : page.custom_url
         // Add the new page to the database
         dispatch(addPage(worldid,page));
         // Redirect to the new page
@@ -177,6 +179,13 @@ const AddLorePage = (props) => {
 						className="form-control"
 						onChange={onChange}
 						value={state.private_notes}/>
+                <Typography variant="h6">Custom Url:</Typography>
+				<input type="text"
+						name="custom_url"
+						id="custom_url"
+						className="form-control"
+						onChange={onChange}
+						value={state.custom_url}/>
                 <br/>
                 <br/>
                 <br/>
