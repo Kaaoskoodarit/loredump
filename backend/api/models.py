@@ -632,7 +632,7 @@ class Category:
         )
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.id)
-        return result.inserted_id
+        return str(result.inserted_id)
 
     # Add Uncategorised to database
     @staticmethod

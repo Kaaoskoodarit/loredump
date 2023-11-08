@@ -220,16 +220,16 @@ def get_worlds():
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
             )
-            world.save()
+            result = world.save()
             Category.add_uncategorised(str(world.id))
-            return jsonify({"success": "World successfully created"}), 200
+            return (
+                jsonify({"success": "World successfully created", "id": str(result)}),
+                200,
+            )
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
 
-# TODO: FINISH THIS:
-# CHANGE ALL <WORLD_ID> TO <CUSTOM_URL>
-# CHANGE FROM PUT TO PATCH
 @app.route("/api/worlds/<world_id>", methods=["GET", "PATCH", "DELETE"])
 def get_world(world_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
@@ -291,9 +291,12 @@ def get_categories(world_id):
                 private_notes=request.json["private_notes"],
                 world=world_id,
             )
-            category.save()
+            result = category.save()
             # World.add_category(world_id, category.id)
-            return jsonify({"success": "Category successfully created"}), 200
+            return (
+                jsonify({"success": "Category successfully created", "id": result}),
+                200,
+            )
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
