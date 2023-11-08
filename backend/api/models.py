@@ -452,6 +452,34 @@ class World:
         return worlds
 
     @staticmethod
+    def get_world_by_custom_url(custom_url):
+        """
+        Retrieves a world by its custom URL.
+
+        Args:
+            custom_url (str): The custom URL of the world to retrieve.
+
+        Returns:
+            World: The retrieved world object.
+        """
+        worlds_collection = db["worlds"]
+        result = worlds_collection.find_one({"custom_url": custom_url})
+        if result:
+            return World(
+                id=result["_id"],
+                creator_id=result["creator_id"],
+                title=result["title"],
+                custom_url=result["custom_url"],
+                image=result["image"],
+                description=result["description"],
+                private_notes=result["private_notes"],
+                categories=result["categories"],
+                lore_pages=result["lore_pages"],
+            )
+        else:
+            return None
+
+    @staticmethod
     def delete_all_by_creator(creator):
         """
         Deletes all worlds created by the given creator.
@@ -560,6 +588,9 @@ class Category:
         self.private_notes = private_notes
 
     def serialize(self):
+        """
+        Serializes the model instance into a dictionary.
+        """
         return {
             "id": str(self.id),
             "creator_id": self.creator_id,
@@ -576,6 +607,14 @@ class Category:
         }
 
     def save(self):
+        """
+        Saves the current instance of the class to the database.
+
+        Returns:
+        -------
+        str
+            The ID of the inserted document.
+        """
         categories_collection = db["categories"]
         self.creator_id = session["user_id"]
         result = categories_collection.insert_one(
@@ -592,10 +631,7 @@ class Category:
         )
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.id)
-        if result.inserted_id:
-            return True
-        else:
-            return False
+        return result.inserted_id
 
     # Add Uncategorised to database
     @staticmethod
