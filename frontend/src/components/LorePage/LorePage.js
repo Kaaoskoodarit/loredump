@@ -4,17 +4,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, Paper, Container, CardActionArea } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
-import {Link as RouterLink} from 'react-router-dom'
-import Link from '@mui/material/Link';
-import Chip from '@mui/material/Chip';
+//import {Link as RouterLink} from 'react-router-dom'
+//import Link from '@mui/material/Link';
+//import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
+//import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import Tabs from '@mui/material/Tabs';
+//import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -58,7 +58,7 @@ const LorePage = (props) => {
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
-	const navigate = useNavigate();
+	//const navigate = useNavigate();
 
 	
 	if (page.id !== id && loading===""){
@@ -233,7 +233,7 @@ const LorePage = (props) => {
         aria-label="image-dialog"
       >
 		<DialogContent maxWidth="1000" maxHeight="1000" >
-			<img height='100%' width='100%' src={image}/>
+			<img height='100%' width='100%' src={image} alt={""}/>
 		</DialogContent>
 	  </Dialog>
 		<Typography variant="h6">Summary:</Typography>

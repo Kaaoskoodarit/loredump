@@ -1,18 +1,16 @@
-import { Card,CardMedia,CardContent, CardActions, Stack, Typography,Button, CardActionArea } from "@mui/material"
+import { Card,CardMedia,CardContent, CardActions, Typography,Button, CardActionArea } from "@mui/material"
 
-import { useState } from "react";
 import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
-import {useParams} from 'react-router-dom'
 import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
+//import Box from '@mui/material/Box';
 
 
 // Component that shows a normal list entry, with "remove" and "edit" buttons
 const Row = (props) => {
 	//console.log("Row: props.page",props.page)
 	// const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
-	const categories =<p>Categories</p>
+	//const categories =<p>Categories</p>
 	const default_img = 'https://media.discordapp.net/attachments/1161992163765256203/1169189304220782662/image.png?ex=65547f64&is=65420a64&hm=32e108ff3fe3bb4e9bb89feed07a87015edb99fcc6a8f1d1ecc6b2ae8d4f0017&='
 	const image = (props.page.image!=="")? props.page.image: default_img;
 	const worldurl = props.worldurl

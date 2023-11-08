@@ -6,11 +6,7 @@ import UploadWidget from '../Cloudinary/UploadWidget';
 
 //MUI IMPORTS
 import { Grid, Typography, Paper, Divider } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import { Card, CardMedia, CardActionArea } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import TextField from '@mui/material/TextField';
 
 

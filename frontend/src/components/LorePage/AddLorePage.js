@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {addPage,getPage} from '../../actions/pageActions';
-import {editCategory,getCategoryList} from '../../actions/categoryActions';
+import {addPage} from '../../actions/pageActions';
+//import {editCategory,getCategoryList} from '../../actions/categoryActions';
 import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
@@ -35,8 +35,7 @@ const AddLorePage = (props) => {
     const worldid = useSelector(state => state.world.page.id);
     //const worldurl = useSelector(state => state.world.page.custom_url);  // when transitioning from ids to urls
     const pagestate = useSelector(state => state.lore.page);
-    const categorylist = useSelector(state => state.category.list);
-    const store = useSelector(state => state);
+    //const categorylist = useSelector(state => state.category.list);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -71,7 +70,8 @@ const AddLorePage = (props) => {
             })
 
     }
-
+    // These are handled by backend now, right?
+    /*
     //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
     const editACategory = (category,page_id) => {
         console.log("AddLorePAge: Adding a category link!")
@@ -83,7 +83,8 @@ const AddLorePage = (props) => {
         console.log("Dispatching edit on category",tempCat)
         dispatch(editCategory(worldid,tempCat));
     }
-
+    */
+    /*
     //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
     const linkCategories = (page_id) =>{
 
@@ -96,7 +97,7 @@ const AddLorePage = (props) => {
                 editACategory(thiscategory,page_id)
             }
         }
-
+    */
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -149,7 +150,7 @@ const AddLorePage = (props) => {
                 <br/>
                 <Typography variant="h6">Add Image:</Typography>
                 <br/>
-                {/* <UploadWidget state={state} setState={setState} /> */}
+                <UploadWidget state={state} setState={setState} />
                 <br/>
                 <br/>
                 <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img>

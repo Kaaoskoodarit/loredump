@@ -1,11 +1,10 @@
 import {useState} from 'react';
 import Row from './Row';
-import Box from '@mui/material/Box';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {getPage,removePage,editPage} from '../../actions/pageActions';
-import {Navigate,RedirectFunction, useNavigate, useParams} from 'react-router-dom';
+import {removePage,editPage} from '../../actions/pageActions';
+import {useNavigate, useParams} from 'react-router-dom';
 import { Grid } from '@mui/material';
 
 
@@ -31,7 +30,7 @@ const ListPages = (props) => {
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
-	const navigate = useNavigate();
+	//const navigate = useNavigate();
 
 	let {worldurl, id}  = useParams();
 
@@ -60,11 +59,13 @@ const ListPages = (props) => {
 	}
 
 	//Handler for the clickable link buttons in Row component
+	/*
 	const handleNavigate = (id) => {
 		console.log(appState.worldid);
 		dispatch(getPage(appState.worldid,id));
 		navigate("/api/worlds/"+appState.worldid+"/lore_pages/"+id)
 	}
+	*/
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(appState.worldid,id));
@@ -76,8 +77,6 @@ const ListPages = (props) => {
 		dispatch(editPage(appState.worldid,page));
 		changeMode("cancel");
 	}
-	
-	const Item = <></>;
 
 	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {

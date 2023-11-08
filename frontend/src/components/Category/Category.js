@@ -1,13 +1,13 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import { useParams } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {getPage,removePage,editPage} from '../../actions/pageActions';
-import { useNavigate} from 'react-router-dom';
+import {removePage,editPage} from '../../actions/pageActions';
+//import { useNavigate} from 'react-router-dom';
 //import ManageLinks from '../ManageLinks';
-import { getCategory, getCategoryList } from '../../actions/categoryActions';
+import { getCategory} from '../../actions/categoryActions';
 import { Grid, Typography, Paper, Divider } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
@@ -43,7 +43,7 @@ const Category = (props) => {
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
-	const navigate = useNavigate();
+	//const navigate = useNavigate();
 
 	//VARIABLES FOR VIEWING IMAGES
 	const [open, setOpen] = useState(false);
@@ -66,7 +66,7 @@ const Category = (props) => {
 				</CardActionArea>
 				<Dialog open={open} onClose={handleClose} aria-label="image-dialog">
 			<DialogContent maxWidth="1000" maxHeight="1000" >
-				<img height='100%' width='100%' src={catpage.image}/>
+				<img height='100%' width='100%' src={catpage.image} alt={""}/>
 			</DialogContent>
 				</Dialog> </Card> </Grid> 
 		}
@@ -112,10 +112,12 @@ const Category = (props) => {
 
 
 	//Handler for the clickable link buttons in Row component
+	/*
 	const handleNavigate = (id) => {
 		dispatch(getPage(worldid,id));
 		navigate("/api/worlds/"+worldid+"/lore_pages/"+id)
 	}
+	*/
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(worldid,id));

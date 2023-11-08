@@ -1,7 +1,7 @@
 import Navbar1 from './components/Navbar1';
 import Navbar2 from './components/Navbar2';
 import LoginPage from './components/LoginPage';
-import {Route,Routes,Navigate,useParams} from 'react-router-dom';
+import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import { useEffect } from 'react';
 import AddLorePage from './components/LorePage/AddLorePage';
@@ -61,6 +61,7 @@ function App() {
 				console.log("No worlds created yet!")
 			}
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[appState.isLogged,appState.worldlist])
 
 	//RENDERING

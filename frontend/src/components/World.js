@@ -1,22 +1,11 @@
-import {Route,Routes,Navigate,useParams} from 'react-router-dom';
-import {useSelector,useDispatch} from 'react-redux';
-import Category from './Category/Category';
-import LorePage from './LorePage/LorePage';
-import ListPages from './Category/ListPages';
+import {useSelector} from 'react-redux';
 
 import {Link as RouterLink} from 'react-router-dom'
 
-
 //MUI
 import { Grid, Typography, Paper, Divider } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import { Card, CardMedia, CardActionArea } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import { Button } from '@mui/base';
 import Link from '@mui/material/Link';
-import { Breadcrumbs } from '@mui/material';
 
 const World = (props) => {
  
@@ -30,9 +19,7 @@ const World = (props) => {
 
         }
     })
-    const worldid = state.worldid
-    const isLogged = state.isLogged
-    const title = state.title
+
     const categorylist = state.categorylist
     const worldurl = state.worldurl
 
