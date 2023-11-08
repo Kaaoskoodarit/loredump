@@ -262,8 +262,8 @@ def get_world(world_id):
             if not world:
                 return jsonify({"error": "World not found"}), 404
             world.delete()
-            Category.delete_all_by_world(world.id)
-            LorePage.delete_all_by_world(world.id)
+            Category.delete_all_by_world(str(world.id))
+            LorePage.delete_all_by_world(str(world.id))
             return jsonify({"success": "World successfully deleted"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400

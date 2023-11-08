@@ -955,9 +955,9 @@ class LorePage:
         lorepages_collection.delete_many({"creator_id": creator})
 
     @staticmethod
-    def delete_all_by_world(world):
+    def delete_all_by_world(world_id):
         lorepages_collection = db["lorepages"]
-        lorepages_collection.delete_many({"world": world})
+        lorepages_collection.delete_many({"world_id": world_id})
 
     def update(self):
         lorepages_collection = db["lorepages"]
