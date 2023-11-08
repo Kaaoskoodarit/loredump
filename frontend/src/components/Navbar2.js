@@ -1,4 +1,5 @@
 import {Link as RouterLink} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import { useState } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {logout} from '../actions/loginActions';
@@ -28,13 +29,16 @@ const Navbar2 = (props) => {
 			user:state.login.user,
 			title:state.lore.page.title,
 			categorylist:state.category.list,
-			worldid: state.world.page.id
+			worldid: state.world.page.id,
+			worldurl: state.world.page.custom_url
 		}
 	})
 	const worldid = state.worldid
+	const worldurl = state.worldurl
 	const isLogged = state.isLogged
 	const title = state.title
 	const categorylist = state.categorylist
+
 
 	//const [auth, setAuth] = useState(true);
 	const [anchorE1, setAnchorE1] = useState(null);
@@ -52,7 +56,7 @@ const Navbar2 = (props) => {
 	
 	const catLinks = categorylist? categorylist.map((cat,index) => {
 		return(<Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
-		to={"/category/"+cat.id}>{cat.title}</Link>)
+		to={"/"+worldurl+"/category/"+cat.id}>{cat.title}</Link>)
 		}): "" ;
 	
 	

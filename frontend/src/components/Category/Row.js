@@ -3,6 +3,7 @@ import { Card,CardMedia,CardContent, CardActions, Stack, Typography,Button, Card
 import { useState } from "react";
 import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 
@@ -14,7 +15,7 @@ const Row = (props) => {
 	const categories =<p>Categories</p>
 	const default_img = 'https://media.discordapp.net/attachments/1161992163765256203/1169189304220782662/image.png?ex=65547f64&is=65420a64&hm=32e108ff3fe3bb4e9bb89feed07a87015edb99fcc6a8f1d1ecc6b2ae8d4f0017&='
 	const image = (props.page.image!=="")? props.page.image: default_img;
-
+	const worldurl = props.worldurl
 
 	const categorylist = useSelector(state => state.category.list);
 
@@ -31,7 +32,7 @@ const Row = (props) => {
 			let categoryTitle = getCategoryTitle(id)
 			return (
 			<Link key={index+id} color="alert" underline="hover" component={RouterLink}
-			to={"/category/"+id}>{categoryTitle}</Link>
+			to={"/"+worldurl+"/category/"+id}>{categoryTitle}</Link>
 			)
 		})
 	}
@@ -42,7 +43,7 @@ const Row = (props) => {
 
 
 	{/* <Box  sx={{ display: 'flex', flexDirection: 'column' }}> */}
-		<CardActionArea component={RouterLink} to={"/lorepage/"+props.page.id}>
+		<CardActionArea component={RouterLink} to={"/"+worldurl+"/lorepage/"+props.page.id}>
 		<CardMedia
 		sx={{ height:200, maxWidth:'100%' }}
 		image={image}

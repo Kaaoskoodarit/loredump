@@ -6,9 +6,12 @@ import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
+//MATERIAL UI IMPORTS
+import Typography from '@mui/material/Typography';
 
-import {addLinkToCategory} from '../ManageLinks_func';
-import { Paper } from '@mui/material';
+
+import { Button, Divider, Paper } from '@mui/material';
+import { Container } from '@mui/system';
 
 
 const AddLorePage = (props) => {
@@ -125,26 +128,24 @@ const AddLorePage = (props) => {
     }
 
     return (
-        <Paper style={{
-			margin:"auto",
-			width:"40%",
-			textAlign:"left"
-		}}>
+        <Paper sx={{p:2, alignItems:"center"}}>
+            <Container >
             <form className="mb-5" onSubmit={onSubmit}>
-				<label htmlFor="title" className="form-label">Title</label>
+            <Typography variant="loreSmall">ADD A NEW LORE PAGE</Typography>
+            <Divider/>
+            <Typography variant="h6">Title:</Typography>
 				<input type="text"
 						name="title"
 						id="title"
 						className="form-control"
 						onChange={onChange}
 						value={state.title}/>
-                    <div id="title-help" className="form-text">
-                    This will be the title of your Lore Page!
-                    </div>
+                <Typography variant="subtitle">This will be the title of your Lore Page!</Typography>
+
                 <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
                 <br/>
                 <br/>
-                <label htmlFor="image" className="form-label">Add Image:</label>
+                <Typography variant="h6">Add Image:</Typography>
                 <br/>
                 {/* <UploadWidget state={state} setState={setState} /> */}
                 <br/>
@@ -152,23 +153,14 @@ const AddLorePage = (props) => {
                 <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img>
                 <br/>
                 <br/>
-                {/*
-                <label htmlFor="image" className="form-label">Image link</label>
-				<input type="url"
-						name="image"
-						id="image"
-						className="form-control"
-						onChange={onChange}
-						value={state.image}/>
-                */}
-                <label htmlFor="summary" className="form-label">Summary</label>
+                <Typography variant="h6">Summary:</Typography>
 				<input type="text"
 						name="summary"
 						id="summary"
 						className="form-control"
 						onChange={onChange}
 						value={state.summary}/>
-                <label htmlFor="description" className="form-label">Description</label>
+                <Typography variant="h6">Description:</Typography>
 				<input type="text"
 						name="description"
 						id="description"
@@ -178,7 +170,7 @@ const AddLorePage = (props) => {
                 <Connections state={state} setState={setState}/>
                 <br/>
                 <br/>
-                <label htmlFor="private_notes" className="form-label">Private Notes</label>
+                <Typography variant="h6">Private Notes:</Typography>
 				<input type="text"
 						name="private_notes"
 						id="private_notes"
@@ -186,8 +178,12 @@ const AddLorePage = (props) => {
 						onChange={onChange}
 						value={state.private_notes}/>
                 <br/>
-                <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
+                <br/>
+                <br/>
+                <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
             </form>
+            </Container>
+            
         </Paper>
 
     )

@@ -1,4 +1,6 @@
 import {useSelector} from 'react-redux';
+import Typography from '@mui/material/Typography';
+
 
 const AssignCategories = (props) => {
 
@@ -117,7 +119,7 @@ const AssignCategories = (props) => {
 
     return(
         <>
-            <label htmlFor="categories" className="form-label">Add to Categories:</label>
+            <Typography variant="h6">Add to Categories:</Typography>
             <table name="categories">
                 <tbody>
                     {rows}

@@ -35,11 +35,12 @@ function App() {
 			error:error,
 			loading:state.login.loading,
 			user :state.login.user,
-			worldlist:state.world.list
+			worldlist:state.world.list,
+			worldurl: state.world.page.custom_url
 		}
 	})
 
-	let { id } = useParams();
+
 
 	const dispatch = useDispatch();
 
@@ -76,18 +77,19 @@ function App() {
 		return (
 			<Container>
 				<Navbar1/>
-				<Navbar2 />
+				<Navbar2 worldurl={appState.worldurl}/>
 				<div style={{height:35,textAlign:"center"}}>
 					{message}
 				</div>
 				<Routes>
 					<Route path="/" element={<ListPages />}/>
+					<Route path="/:worldurl" element={<ListPages />}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
-					<Route path="/category" element={<Category />}/>
-					<Route path="/category/:id" element={<Category id={id}/>}/>
+					<Route path="/:worldurl/category" element={<Category/>}/>
+					<Route path="/:worldurl/category/:id" element={<Category/>}/>
 					{/* <Route path="/category/*" element={<Category />}/> */}
-					<Route path="/lorepage" element={<ListPages />}/>
-					<Route path="/lorepage/:id" element={<LorePage id={id}/>}/>
+					<Route path="/:worldurl/lorepage" element={<ListPages />}/>
+					<Route path="/:worldurl/lorepage/:id" element={<LorePage/>}/>
 					{/* <Route path={"/lorepage/"+id} element={<LorePage id={id}/>}/> */}
 					{/* <Route path="/lorepage/*" element={<LorePage/>}/> */}
 					<Route path="*" element={<Navigate to="/"/>}/>

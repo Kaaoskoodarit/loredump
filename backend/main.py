@@ -372,6 +372,8 @@ def get_lore_pages(world_id):
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
                 categories=request.json["categories"],
+                summary=request.json["summary"],
+                connections=request.json["connections"]
             )
             result = lore_page.save()
             return jsonify({"success": "Lore page successfully created", "id": result}), 200

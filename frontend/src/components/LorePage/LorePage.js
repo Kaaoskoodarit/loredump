@@ -50,7 +50,8 @@ const LorePage = (props) => {
 
 
 	//ID RECIEVED FROM ROUTER URL
-	let { id } = useParams();
+	//let { id } = useParams();
+
 	const [loading,setLoading] = useState("");
 
 
@@ -60,10 +61,10 @@ const LorePage = (props) => {
 	const navigate = useNavigate();
 
 	
-	if (page.id !== id && loading===""){
+	if (page.id !== props.id && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
-		dispatch(getPage(appState.token,id));
-	} else if (page.id ===id &&loading!=="") {setLoading("")}
+		dispatch(getPage(appState.token,props.id));
+	} else if (page.id ===props.id &&loading!=="") {setLoading("")}
 
 	
 	const handleClickOpen = () => {
@@ -151,29 +152,29 @@ const LorePage = (props) => {
 	}
 
 	let connections_listed;
-	if(page.connections){
-		connections_listed = page.connections.map((connection)=>{
-			if(connection.target_id!==""&&connection.type!==""){
-				let connectionTitle = getConnectionTitle(connection.target_id)
-				return (
-					<Grid item >
-						<Stack direction='row' alignItems="center" spacing={0.5}>
-						<Typography variant='body2'>
-						{connection.type+":"}
-						</Typography>
-						<Chip color="primary" label={connectionTitle} component={RouterLink} to={"/lorepage/"+connection.target_id} 
-						clickable />
-						</Stack>
-					</Grid>
-				)
-			} else {return ("")}
-			
-		})	
-	}
-	// IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	if (connections_listed.length ===1 && connections_listed[0]===""){
-		connections_listed=<Grid item>None</Grid>
-	}
+	// if(page.connections){
+	// 	connections_listed = page.connections.map((connection)=>{
+	// 		if(connection.target_id!==""&&connection.type!==""){
+	// 			let connectionTitle = getConnectionTitle(connection.target_id)
+	// 			return (
+	// 				<Grid item >
+	// 					<Stack direction='row' alignItems="center" spacing={0.5}>
+	// 					<Typography variant='body2'>
+	// 					{connection.type+":"}
+	// 					</Typography>
+	// 					<Chip color="primary" label={connectionTitle} component={RouterLink} to={"/lorepage/"+connection.target_id} 
+	// 					clickable />
+	// 					</Stack>
+	// 				</Grid>
+	// 			)
+	// 		} else {return ("")}	
+	// 	})	
+	// }
+
+	// // IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
+	// if (connections_listed.length ===1 && connections_listed[0]===""){
+	// 	connections_listed=<Grid item>None</Grid>
+	// }
 
 	
 
@@ -235,7 +236,7 @@ const LorePage = (props) => {
 		<Typography color="secondary.dark" variant="body1">{page.summary}</Typography>
 		<Typography variant="h6">Connections:</Typography>
 		<Grid container spacing={1}>
-		{connections_listed}
+		{/* {connections_listed} */}
 		</Grid>
 		</Card>
 	</Grid>

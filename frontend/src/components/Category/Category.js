@@ -28,10 +28,7 @@ const Category = (props) => {
 		editIndex:-1
 	})
 
-	// const [managelinks,setManagelinks] = useState({
-	// 	mode:"",
-	// 	page:""
-	// })
+
 	
 	// Get token and links from "store" state with useSelector
 	const worldid = useSelector(state => state.world.page.id)
@@ -39,7 +36,8 @@ const Category = (props) => {
     const links = useSelector(state => state.category.page.lore_pages);
     const catpage = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.lore.list);
-	const store = useSelector(state => state)
+	
+
 
 	//mode:verbose
 	
@@ -76,11 +74,13 @@ const Category = (props) => {
 	 
 	
 	//ID RECIEVED FROM ROUTER URL
-	let { id } = useParams();
+	let {worldurl, id}  = useParams();
 	const [loading,setLoading] = useState("");
 
 	if (catpage.id !== id && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
+
+		//TARKISTA MIKÄ WORLD ID VASTAA URIN WORLD URL
 		dispatch(getCategory(worldid,id));
 	} else if (catpage.id ===id &&loading!=="") {setLoading("")}
 	
@@ -147,6 +147,8 @@ const Category = (props) => {
 
 	//if category has at least one link to a lore saved:
 	if (links &&links.length>0){
+
+		//THIS NEEDS TO BE MEMOISED, MAP MAKES RE-RENDERS EVERY CYCLE
 		pages = links.map((id,index) => {
 			//define an instance of lore page
 			let page = getLore(id)
@@ -163,23 +165,27 @@ const Category = (props) => {
 			}
 			return(
 				<Grid item xs={3}>
-				<Row key={index+page.id} page={page} index={index} changeMode={changeMode}/>
+				<Row key={index+page.id} page={page} index={index} changeMode={changeMode}
+				worldurl={worldurl}/>
 				</Grid>
 			)
 		})
-	
 	}
+
+	//Display the loading icon if state is loading
+	pages = loading!=="" ? loading : pages
+
 	// let managelinks_message = managelinks.mode!=="" ?
 	// 	<ManageLinks mode ={managelinks.mode} page={managelinks.page}/> : ""
 
 	return(
 		<Paper elevation={3} sx={{ p:2}}>
 		<Grid container spacing={2}>
-		{loading}
 		
 
 		<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant="lore">{worldurl}</Typography>
 		<Typography variant="lore">{catpage.title}</Typography>
 
 		<Typography variant="h6">Description:</Typography>
