@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import UploadWidget from '../Cloudinary/UploadWidget';
 
 //MUI IMPORTS
-import { Grid, Typography, Paper, Divider } from '@mui/material';
+import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 
@@ -28,6 +28,7 @@ const CreateCategory = (props) => {
     const worldid = useSelector(state => state.world.page.id);
     //const worldurl = useSelector(state => state.world.page.custom_url);
     const categorystate = useSelector(state => state.category.page);
+    const lorelist = useSelector(state => state.lore.list)
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -67,7 +68,7 @@ const CreateCategory = (props) => {
         // Add relationships to state
         let category = {
             ...state,
-            creator: props.user
+            world_id: worldid
         }
         // Add the new page to the database
         dispatch(addCategory(worldid,category));
@@ -85,6 +86,25 @@ const CreateCategory = (props) => {
         })
 
     }
+    const getLoreTitle = (id) => {
+		for (const lore of lorelist){
+			if (lore.id === id) return lore.title
+		}
+		return id;
+	}
+
+	let categories_listed;
+	// if(page.categories){
+	// 	categories_listed = page.categories.map((id,index)=>{
+	// 		let categoryTitle = getCategoryTitle(id)
+	// 		return (
+	// 			<Grid item>
+	// 			<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
+	// 			clickable />
+	// 			</Grid>
+	// 		)
+	// 	})	
+	// }
 
     return(
 		<Paper elevation={3} sx={{ p:2}}>
@@ -103,7 +123,9 @@ const CreateCategory = (props) => {
         <br/>
         <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
             value={state.private_notes} onChange={onChange}/>
-		
+		<br/>
+        <TextField id="category-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
+            value={state.custom_url} onChange={onChange}/>
 		</Container>
 		</Grid>
 		<UploadWidget state={state} setState={setState} />
@@ -121,7 +143,8 @@ const CreateCategory = (props) => {
 		<Grid container spacing={3}>
 			{/* add more pages */}
 		</Grid>
-			
+        <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+		
 
 	</Paper>
 

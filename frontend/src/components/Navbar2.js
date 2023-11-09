@@ -1,20 +1,19 @@
 import {Link as RouterLink} from 'react-router-dom'
-import {useParams} from 'react-router-dom'
 import { useState } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {logout} from '../actions/loginActions';
+// import {logout} from '../actions/loginActions';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+// import Typography from '@mui/material/Typography';
+// import IconButton from '@mui/material/IconButton';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import AccountCircle from '@mui/icons-material/AccountCircle';
+// import Switch from '@mui/material/Switch';
+// import FormControlLabel from '@mui/material/FormControlLabel';
+// import FormGroup from '@mui/material/FormGroup';
+// import MenuItem from '@mui/material/MenuItem';
+// import Menu from '@mui/material/Menu';
 import Link from '@mui/material/Link';
 import { Breadcrumbs } from '@mui/material';
 
@@ -22,18 +21,17 @@ import { Breadcrumbs } from '@mui/material';
 
 const Navbar2 = (props) => {
 	
-	const dispatch = useDispatch();
 	const state = useSelector((state) => {
 		return {
 			isLogged:state.login.isLogged,
 			user:state.login.user,
 			title:state.lore.page.title,
 			categorylist:state.category.list,
-			worldid: state.world.page.id,
+			worldTitle: state.world.page.title,
 			worldurl: state.world.page.custom_url
 		}
 	})
-	const worldid = state.worldid
+	const worldTitle = state.worldTitle
 	const worldurl = state.worldurl
 	const isLogged = state.isLogged
 	const title = state.title
@@ -68,6 +66,8 @@ const Navbar2 = (props) => {
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" separator="|">
+
+				<Link variant="h4" color="inherit" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
 				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
 			  {catLinks}
 				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>

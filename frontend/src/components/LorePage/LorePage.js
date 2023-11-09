@@ -4,9 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Card, Paper, Container, CardActionArea } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
-//import {Link as RouterLink} from 'react-router-dom'
+import {Link as RouterLink} from 'react-router-dom'
 //import Link from '@mui/material/Link';
-//import Chip from '@mui/material/Chip';
+import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import CardMedia from '@mui/material/CardMedia';
@@ -136,53 +136,56 @@ const LorePage = (props) => {
 		for (const category of categorylist){
 			if (category.id === id) return category.title
 		}
-		return id;
+		//MATCH WAS NOT FOUND
+		return "Lost Link";
 	}
 
 	let categories_listed;
-	// if(page.categories){
-	// 	categories_listed = page.categories.map((id,index)=>{
-	// 		let categoryTitle = getCategoryTitle(id)
-	// 		return (
-	// 			<Grid item>
-	// 			<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
-	// 			clickable />
-	// 			</Grid>
-	// 		)
-	// 	})	
-	// }
+	if(page.categories){
+		categories_listed = page.categories.map((id,index)=>{
+			
+			let categoryTitle = getCategoryTitle(id)
+			return (
+				<Grid item>
+				<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
+				clickable />
+				</Grid>
+			)
+		})	
+	}
 
-	const getConnectionTitle = (id) => {
+	const getConnection = (id) => {
 		for (const lore of pagelist){
-			if (lore.id === id) return lore.title
+			if (lore.id === id) return {title:lore.title,custom_url:lore.custom_url}
 		}
-		return id;
+		//MATCH WAS NOT FOUND
+		return "Lost Link";
 	}
 
 	let connections_listed;
-	// if(page.connections){
-	// 	connections_listed = page.connections.map((connection)=>{
-	// 		if(connection.target_id!==""&&connection.type!==""){
-	// 			let connectionTitle = getConnectionTitle(connection.target_id)
-	// 			return (
-	// 				<Grid item >
-	// 					<Stack direction='row' alignItems="center" spacing={0.5}>
-	// 					<Typography variant='body2'>
-	// 					{connection.type+":"}
-	// 					</Typography>
-	// 					<Chip color="primary" label={connectionTitle} component={RouterLink} to={"/lorepage/"+connection.target_id} 
-	// 					clickable />
-	// 					</Stack>
-	// 				</Grid>
-	// 			)
-	// 		} else {return ("")}	
-	// 	})	
-	// }
+	if(page.connections){
+		connections_listed = page.connections.map((connection)=>{
+			if(connection.target_id!==""&&connection.type!==""){
+				let {title,custom_url} = getConnection(connection.target_id)
+				return (
+					<Grid item >
+						<Stack direction='row' alignItems="center" spacing={0.5}>
+						<Typography variant='body2'>
+						{connection.type+":"}
+						</Typography>
+						<Chip color="primary" label={title} component={RouterLink} to={"/"+worldurl+"/lorepage/"+custom_url} 
+						clickable />
+						</Stack>
+					</Grid>
+				)
+			} else {return ("")}	
+		})	
+	}
 
 	// // IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	// if (connections_listed.length ===1 && connections_listed[0]===""){
-	// 	connections_listed=<Grid item>None</Grid>
-	// }
+	if (connections_listed.length ===1 && connections_listed[0]===""){
+		connections_listed=<Grid item>None</Grid>
+	}
 
 	
 
@@ -245,7 +248,7 @@ const LorePage = (props) => {
 		<Typography color="secondary.dark" variant="body1">{page.summary}</Typography>
 		<Typography variant="h6">Connections:</Typography>
 		<Grid container spacing={1}>
-		{/* {connections_listed} */}
+		{connections_listed}
 		</Grid>
 		</Card>
 	</Grid>
