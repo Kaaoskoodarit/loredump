@@ -47,22 +47,27 @@ function App() {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		console.log(appState.worldlist);
 		if (appState.isLogged && appState.worldlist.length < 1) {
 			dispatch(getWorldList());
 		} else if (appState.isLogged && appState.worldlist) {
 			if (appState.worldlist.length > 0) {
-				console.log(appState.worldlist)
-				const worldid = appState.worldlist[0].id;
-				dispatch(getWorld(worldid));
-				dispatch(getList(worldid));			
-				dispatch(getCategoryList(worldid));
+				for (let index in appState.worldlist) {
+					let world = appState.worldlist[index];
+					if (world.creator_id === appState.user) {
+						const worldid = appState.worldlist[0].id;
+						dispatch(getWorld(worldid));
+						dispatch(getList(worldid));			
+						dispatch(getCategoryList(worldid));
+						return;
+					}
+				}
+				console.log("No worlds created yet!")
 			} else {
 				console.log("No worlds created yet!")
 			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[appState.isLogged,appState.worldlist])
+	},[appState.isLogged,appState.worldlist,appState.user])
 
 	//RENDERING
 	

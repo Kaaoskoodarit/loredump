@@ -33,7 +33,7 @@ const AddLorePage = (props) => {
 
     // Get token and pagestate from the store
     const worldid = useSelector(state => state.world.page.id);
-    //const worldurl = useSelector(state => state.world.page.custom_url);  // when transitioning from ids to urls
+    const worldurl = useSelector(state => state.world.page.custom_url); 
     const pagestate = useSelector(state => state.lore.page);
     //const categorylist = useSelector(state => state.category.list);
 
@@ -112,7 +112,8 @@ const AddLorePage = (props) => {
         dispatch(addPage(worldid,page));
         // Redirect to the new page
         //dispatch(getPage(worldid,pagestate.id));
-        navigate("/api/worlds/"+worldid+"/lore_pages/"+pagestate.id);
+        console.log(pagestate.custom_url);
+        navigate("/"+worldurl+"/lorepage/"+pagestate.custom_url);
         //linkCategories(pagestate.id)
         // Reset the state of the page and relationships
         setState({

@@ -360,6 +360,7 @@ def get_lore_pages(world_id):
                 categories=request.json["categories"],
                 summary=request.json["summary"],
                 connections=request.json["connections"],
+                custom_url=request.json["custom_url"]
             )
             result = lore_page.save()
             return (
