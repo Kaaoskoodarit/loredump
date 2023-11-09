@@ -46,9 +46,7 @@ def index():
     if request.method == "GET":
         if session["ttl"] < datetime.datetime.utcnow():
             # Reset session Time-To-Live
-            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(
-                minutes=ttl
-            )
+            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=ttl)
         else:
             # Delete session
             session.clear()
@@ -177,9 +175,7 @@ def before_request():
         return jsonify({"error": "User not logged in"}), 401
     if session["ttl"] > datetime.datetime.now(pytz.utc):
         # Reset session Time-To-Live
-        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
-            minutes=ttl
-        )
+        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
     else:
         # Delete session
         session.clear()
@@ -220,6 +216,8 @@ def get_worlds():
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
             )
+            if " " in world.custom_url:
+                return jsonify({"error": "URL can't contain spaces"}), 400
             result = world.save()
             Category.add_uncategorised(str(world.id))
             return (
@@ -250,16 +248,15 @@ def get_world(world_id):
                     setattr(world, key, value)
             # Check if URL is in use:
             if "custom_url" in request.json:
+                if " " in request.json["custom_url"]:
+                    return jsonify({"error": "URL can't contain spaces"}), 400
                 unavailable_urls = World.get_all_custom_urls_from_worlds()
                 if request.json["custom_url"] in unavailable_urls:
                     return (
-                        jsonify(
-                            {
-                                "error": "URL is already in use, it must be unique inside the world"
-                            }
-                        ),
+                        jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                         409,
                     )
+
             world.update()
             return jsonify({"success": "World successfully updated"}), 200
         except Exception as e:
@@ -285,7 +282,7 @@ def get_categories(world_id):
     if request.method == "GET":
         categories = Category.get_all_by_world(world_id)
         if categories:
-            return jsonify([category.serialize() for category in categories])
+            return jsonify([category.serialize() for category in categories]), 200
         else:
             return jsonify({"error": "World doesn't have any categories"}), 404
     elif request.method == "POST":
@@ -300,18 +297,12 @@ def get_categories(world_id):
                 world=world_id,
                 custom_url=request.json["custom_url"],
             )
+            if " " in category.custom_url:
+                return jsonify({"error": "URL can't contain spaces"}), 400
             # Check if URL is in use:
-            if (
-                category.custom_url
-                in Category.get_all_custom_urls_from_categories(world_id)
-                and category.custom_url != None
-            ):
+            if category.custom_url in Category.get_all_category_urls_from_world(world_id) and category.custom_url != None:
                 return (
-                    jsonify(
-                        {
-                            "error": "URL is already in use, it must be unique inside the world"
-                        }
-                    ),
+                    jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                     409,
                 )
             result = category.save()
@@ -347,14 +338,12 @@ def get_category(world_id, category_id):
                     setattr(category, key, value)
             # Check if URL is in use:
             if "custom_url" in request.json:
+                if " " in request.json["custom_url"]:
+                    return jsonify({"error": "URL can't contain spaces"}), 400
                 unavailable_urls = Category.get_all_category_urls_from_world(world_id)
                 if request.json["custom_url"] in unavailable_urls:
                     return (
-                        jsonify(
-                            {
-                                "error": "URL is already in use, it must be unique inside the world"
-                            }
-                        ),
+                        jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                         409,
                     )
             category.update()
@@ -398,18 +387,12 @@ def get_lore_pages(world_id):
                 summary=request.json["summary"],
                 connections=request.json["connections"],
             )
+            if " " in lore_page.custom_url:
+                return jsonify({"error": "URL can't contain spaces"}), 400
             # Check if URL is in use:
-            if (
-                lore_page.custom_url
-                in LorePage.get_all_custom_urls_from_lore_pages(world_id)
-                and lore_page.custom_url != None
-            ):
+            if lore_page.custom_url in LorePage.get_all_lore_page_urls_from_world(world_id):
                 return (
-                    jsonify(
-                        {
-                            "error": "URL is already in use, it must be unique inside the world"
-                        }
-                    ),
+                    jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                     409,
                 )
             result = lore_page.save()
@@ -445,14 +428,12 @@ def get_lore_page(world_id, lore_page_id):
                     setattr(lore_page, key, value)
             # Check if URL is in use:
             if "custom_url" in request.json:
+                if " " in request.json["custom_url"]:
+                    return jsonify({"error": "URL can't contain spaces"}), 400
                 unavailable_urls = LorePage.get_all_lore_page_urls_from_world(world_id)
                 if request.json["custom_url"] in unavailable_urls:
                     return (
-                        jsonify(
-                            {
-                                "error": "URL is already in use, it must be unique inside the world"
-                            }
-                        ),
+                        jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                         409,
                     )
             lore_page.update()
@@ -498,9 +479,7 @@ def add_fake_data():
                 user = User.get_by_username(username)
                 session["user_id"] = user.id
                 session["username"] = user.username
-                session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
-                    minutes=ttl
-                )
+                session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
                 # print(f'user.id = {user.id}, session.id = {session["user_id"]}, database id = {User.get_by_username(username).id})')
 
                 for _ in range(num_worlds_per_user):
@@ -532,9 +511,7 @@ def add_fake_data():
                         categories.append(category.title)
 
                     for _ in range(num_lore_pages_per_world):
-                        random_category = categories[
-                            Random().randrange(0, len(categories))
-                        ]  # adds random category
+                        random_category = categories[Random().randrange(0, len(categories))]  # adds random category
                         lore_page = LorePage(
                             id=ObjectId(),
                             creator_id=world.creator_id,
@@ -544,9 +521,7 @@ def add_fake_data():
                             description=fake.text(),
                             image=fake.image_url(),
                             private_notes=fake.text(),
-                            categories=[
-                                Category.get_by_name(random_category, str(world.id)).id
-                            ],
+                            categories=[Category.get_by_name(random_category, str(world.id)).id],
                         )
                         lore_page.save()
                     categories = ["Uncategorised"]
@@ -555,11 +530,7 @@ def add_fake_data():
             user.password = last_password
             user.login()
             return (
-                jsonify(
-                    {
-                        "success": f"Fake data successfully added, logged in as {user.username}"
-                    }
-                ),
+                jsonify({"success": f"Fake data successfully added, logged in as {user.username}"}),
                 200,
             )
         except Exception as e:
