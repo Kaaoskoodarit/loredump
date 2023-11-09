@@ -1,67 +1,52 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {addCategory,getCategory} from '../../actions/categoryActions';
+import {addWorld,getWorld} from './../actions/worldActions';
 import { useNavigate, useParams } from 'react-router-dom';
-import {Link as RouterLink} from 'react-router-dom'
-import UploadWidget from '../Cloudinary/UploadWidget';
+import UploadWidget from './Cloudinary/UploadWidget';
 
 //MUI IMPORTS
-import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
+import { Button, Grid, Typography, Paper } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
 
 
 
 
 
-const CreateCategory = (props) => {
+const CreateWorld = (props) => {
 	// Set state for page
     //NIMEÄ UUDELLEEN STATE
-	const [state,setState] = useState({
+	const [worldstate,setWorldstate] = useState({
 		title:"",
         custom_url:"",         // custom_url = title
 		image:"",
         description:"",
         private_notes:"",
+		categories:["Uncategorised"],            
 		lore_pages:[]            
 	})
 
     // Get token and categorystate from the store
-    const worldid = useSelector(state => state.world.page.id);
+    //const worldid = useSelector(state => state.world.page.id);
     //const worldurl = useSelector(state => state.world.page.custom_url);
-    const categorystate = useSelector(state => state.category.page);
-    const lorelist = useSelector(state => state.lore.list)
+    //const categorystate = useSelector(state => state.category.page);
+    //const lorelist = useSelector(state => state.lore.list)
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
-    let {worldurl, id}  = useParams();
 
     // Handle normal onChange events    
     const onChange = (event) => {
-        setState((state) => {
+        setWorldstate((worldstate) => {
             return {
-                ...state,
+                ...worldstate,
                 [event.target.name]:event.target.value
             }
         })
-    }
-
-    //OnChange function specifically for Categories
-    const onCatChange = (event) => {
-
-        let tempArr =state.categories
-        //event target = Select html element, ID HAS to be the index of the row
-        tempArr[event.target.id] = event.target.value
-        setState(() => {
-            return{ 
-                ...state,
-                [event.target.name]:tempArr
-               }
-            })
-
     }
 
     
@@ -69,85 +54,61 @@ const CreateCategory = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         // Add relationships to state
-        let category = {
-            ...state,
-            world_id: worldid
-        }
+        
         // Add the new page to the database
-        dispatch(addCategory(worldid,category));
-        // Redirect to the new Category (getCategory maybe redundant? test after merge!)
-        dispatch(getCategory(worldid,categorystate.id));
-        navigate("/"+worldid+"/category/"+categorystate.id);
+        dispatch(addWorld(worldstate));
+        // Redirect to the new World?
+
         // Reset the state of the page and relationships
-        setState({
+        setWorldstate({
             title:"",
-            custom_url:"",
+            custom_url:"",         // custom_url = title
             image:"",
             description:"",
             private_notes:"",
-            lore_pages:[]
+            categories:["Uncategorised"],            
+            lore_pages:[]          
         })
 
     }
-    const getLoreTitle = (id) => {
-		for (const lore of lorelist){
-			if (lore.id === id) return lore.title
-		}
-		return id;
-	}
-
-	let lore_listed;
-	if(state.lore_pages){
-		lore_listed = state.lore_pages.map((id,index)=>{
-			let loreTitle = getLoreTitle(id)
-			return (
-				<Grid item>
-				<Chip color="primary" label={loreTitle} component={RouterLink} to={"/category/"+id} 
-				clickable />
-				</Grid>
-			)
-		})	
-	}
+    
     return(
 		<Paper elevation={3} sx={{ p:2}}>
+            <form onSubmit={onSubmit}>
+            
+        <Typography variant='lore'>Create a new World</Typography>
 		<Grid container spacing={2}>
 		
 
 		<Grid item xs={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
-		<Typography variant="lore">{worldurl}</Typography>
-		<Typography variant="lore">{state.title}</Typography>
-
+		<Container sx={{ p:0, display: 'flex', flexDirection: 'column' }}>
+        <TextField id="world-title" name="title" label="Title" required multiline maxRows={10}
+            value={worldstate.title} onChange={onChange}/>
+            <br/>
 		{/* <Typography variant="h6">Description:</Typography> */}
-        <TextField id="category-description" name="description" label="Description" multiline maxRows={10}
-            value={state.description} onChange={onChange}/>
+        <TextField id="world-description" name="description" label="Description" multiline maxRows={10}
+            value={worldstate.description} onChange={onChange}/>
 		{/* <Typography variant="h6">Private Notes:</Typography> */}
         <br/>
-        <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
-            value={state.private_notes} onChange={onChange}/>
+        <TextField id="world-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
+            value={worldstate.private_notes} onChange={onChange}/>
 		<br/>
-        <TextField id="category-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
-            value={state.custom_url} onChange={onChange}/>
+        <TextField id="world-custom_url" name="custom_url" required label="Display URL as:"
+            value={worldstate.custom_url} onChange={onChange}/>
 		</Container>
 		</Grid>
-		<UploadWidget state={state} setState={setState} />
+		<Grid item xs={4}>
+        <Card elevation={3} sx={{p:2}}>
+        <CardMedia image={worldstate.image} sx={{ height:200}} title={"Image for your world!"}	/>
+		<UploadWidget state={worldstate} setState={setWorldstate} />
+        </Card>
 		
 		</Grid>
-		<Container>
-		<br/>
-		<br/>
-		<Divider/>
-		<Typography variant='loreSmall' >Add Lore to this Category:</Typography>
-		<br/>
-		<br/>
-		</Container>
-		
-		<Grid container spacing={3}>
-			{/* add more pages */}
 		</Grid>
-        <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+		<br/>
+        <Button type='submit' variant='contained' color='alert' size='large'>Create the World</Button>
 		
-
+        </form>
 	</Paper>
 
 	)
@@ -215,4 +176,4 @@ const CreateCategory = (props) => {
 	
 }
 
-export default CreateCategory;
+export default CreateWorld;

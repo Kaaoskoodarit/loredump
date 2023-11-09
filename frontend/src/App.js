@@ -16,6 +16,7 @@ import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
 import { Container } from '@mui/material';
 import CreateCategory from './components/Category/CreateCategory';
+import CreateWorld from './components/CreateWorld';
 
 // Main App component
 function App() {
@@ -78,9 +79,9 @@ function App() {
 	if(appState.error) {
 		message = <h4>{appState.error}</h4>
 	}
-	// If user is logged in, show Navbar, "message" and ShoppingList/ShoppingForm,
+	// If user is logged in, show Navbar, "message" and content
 	// depending on the URL accessed. Routes are available paths.
-	if(appState.isLogged) {
+	if(appState.isLogged&&appState.worldlist&&appState.worldlist.length>0) {
 		return (
 			<Container>
 				<Navbar1/>
@@ -107,8 +108,24 @@ function App() {
 				
 			// </div>
 		);
-	// Otherwise show Navbar, "message" and LoginPage
-	} else {
+		//OTHERWISE, IF THERE IS NO WORLDS YET, SHOW CREATE WORLD PAGE
+	} else if (appState.isLogged&&appState.worldlist.length===0) {
+		return (
+			<Container>
+				<Navbar1/>
+				<p>No worlds yet.</p>
+				<div style={{height:35,textAlign:"center"}}>
+					{message}
+				<Routes>
+					<Route path="/" element={<CreateWorld/>}/>
+					<Route path="/*" element={<Navigate to="/"/>}/>
+					<Route path="*" element={<Navigate to="/"/>}/>
+				</Routes>
+				</div>
+			</Container>
+			);
+		} {
+		// Otherwise show Navbar, "message" and LoginPage
 		return (
 			<Container>
 				<Navbar1 />
