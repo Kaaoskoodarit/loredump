@@ -20,6 +20,8 @@ import secrets
 #         return json.JSONEncoder.default(self, o)
 """
 
+# TODO: Kysy Sagalta Uncategorised hommeliini
+
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 db = client["LoreDump"]
@@ -732,6 +734,7 @@ class Category:
         """
         categories_collection = db["categories"]
         result = categories_collection.delete_one({"_id": ObjectId(self.id)})
+        # TODO: Remove category from world and lore pages
         if result.deleted_count == 1:
             return True
         else:
@@ -1099,6 +1102,8 @@ class LorePage:
         """
         lorepages_collection = db["lorepages"]
         lorepages_collection.delete_one({"_id": ObjectId(self.id)})
+        # Remove lore page from all categories
+        Category.remove_lore_page_from_all(self.id)
 
     @staticmethod
     def delete_all_by_creator(creator):
@@ -1329,6 +1334,25 @@ class LorePage:
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_many({}, {"$pull": {"connections": {"target_id": lore_page_id}}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    @staticmethod
+    def remove_from_all_categories(lore_page_id):
+        """
+        Removes the specified LorePage from all categories.
+
+        Args:
+            lore_page_id (str): The ID of the LorePage to remove from all categories.
+
+        Returns:
+            bool: True if the LorePage was successfully removed from all categories, False otherwise.
+        """
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": lore_page_id}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
