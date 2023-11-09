@@ -717,7 +717,7 @@ class Category:
     @staticmethod
     def remove_lore_page_from_all(lore_page):
         """
-        Removes the given lore page from all categories.
+        Removes the given lore page from all categories. Used when deleting a lore page
 
         Args:
             lore_page (str): The ID of the lore page to remove.
@@ -920,6 +920,25 @@ class Category:
             )
         else:
             return None
+
+    @staticmethod
+    def get_all_category_urls_from_world(world_id):
+        """
+        Returns a list of all custom URLs from the 'categories' collection in the database. The custom URL must be unique to the world.
+
+        Args:
+            world_id (str): The ID of the world to retrieve categories for.
+
+        Returns:
+            list: A list of custom URLs.
+        """
+        categories_collection = db["categories"]
+        results = categories_collection.find({"world_id": world_id})
+        results_list = list(results)
+        custom_urls = []
+        for result in results_list:
+            custom_urls.append(result["custom_url"])
+        return custom_urls
 
 
 class LorePage:
@@ -1243,3 +1262,22 @@ class LorePage:
             )
             for lorepage in lorepages
         ]
+
+    @staticmethod
+    def get_all_lore_page_urls_from_world(world_id):
+        """
+        Returns a list of all custom URLs from the 'lorepages' collection in the database. The custom URL must be unique to the world.
+
+        Args:
+            world_id (str): The ID of the world to retrieve lore pages for.
+
+        Returns:
+            list: A list of custom URLs.
+        """
+        lorepages_collection = db["lorepages"]
+        results = lorepages_collection.find({"world_id": world_id})
+        results_list = list(results)
+        custom_urls = []
+        for result in results_list:
+            custom_urls.append(result["custom_url"])
+        return custom_urls

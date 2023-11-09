@@ -248,10 +248,18 @@ def get_world(world_id):
             for key, value in request.json.items():
                 if hasattr(world, key):
                     setattr(world, key, value)
-            # world.title = request.json["title"]
-            # world.description = request.json["description"]
-            # world.image = request.json["image"]
-            # world.private_notes = request.json["private_notes"]
+            # Check if URL is in use:
+            if "custom_url" in request.json:
+                unavailable_urls = World.get_all_custom_urls_from_worlds()
+                if request.json["custom_url"] in unavailable_urls:
+                    return (
+                        jsonify(
+                            {
+                                "error": "URL is already in use, it must be unique inside the world"
+                            }
+                        ),
+                        409,
+                    )
             world.update()
             return jsonify({"success": "World successfully updated"}), 200
         except Exception as e:
@@ -290,7 +298,22 @@ def get_categories(world_id):
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
                 world=world_id,
+                custom_url=request.json["custom_url"],
             )
+            # Check if URL is in use:
+            if (
+                category.custom_url
+                in Category.get_all_custom_urls_from_categories(world_id)
+                and category.custom_url != None
+            ):
+                return (
+                    jsonify(
+                        {
+                            "error": "URL is already in use, it must be unique inside the world"
+                        }
+                    ),
+                    409,
+                )
             result = category.save()
             # World.add_category(world_id, category.id)
             return (
@@ -322,11 +345,18 @@ def get_category(world_id, category_id):
             for key, value in request.json.items():
                 if hasattr(category, key):
                     setattr(category, key, value)
-            # category.title = request.json["title"]
-            # category.world_id = world_id
-            # category.description = request.json["description"]
-            # category.image = request.json["image"]
-            # category.private_notes = request.json["private_notes"]
+            # Check if URL is in use:
+            if "custom_url" in request.json:
+                unavailable_urls = Category.get_all_category_urls_from_world(world_id)
+                if request.json["custom_url"] in unavailable_urls:
+                    return (
+                        jsonify(
+                            {
+                                "error": "URL is already in use, it must be unique inside the world"
+                            }
+                        ),
+                        409,
+                    )
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200
         except Exception as e:
@@ -368,6 +398,20 @@ def get_lore_pages(world_id):
                 summary=request.json["summary"],
                 connections=request.json["connections"],
             )
+            # Check if URL is in use:
+            if (
+                lore_page.custom_url
+                in LorePage.get_all_custom_urls_from_lore_pages(world_id)
+                and lore_page.custom_url != None
+            ):
+                return (
+                    jsonify(
+                        {
+                            "error": "URL is already in use, it must be unique inside the world"
+                        }
+                    ),
+                    409,
+                )
             result = lore_page.save()
             return (
                 jsonify({"success": "Lore page successfully created", "id": result}),
@@ -399,12 +443,18 @@ def get_lore_page(world_id, lore_page_id):
             for key, value in request.json.items():
                 if hasattr(lore_page, key):
                     setattr(lore_page, key, value)
-            # lore_page.creator_id = session["user_id"]
-            # lore_page.world_id = world_id
-            # lore_page.title = request.json["title"]
-            # lore_page.description = request.json["description"]
-            # lore_page.image = request.json["image"]
-            # lore_page.private_notes = request.json["private_notes"]
+            # Check if URL is in use:
+            if "custom_url" in request.json:
+                unavailable_urls = LorePage.get_all_lore_page_urls_from_world(world_id)
+                if request.json["custom_url"] in unavailable_urls:
+                    return (
+                        jsonify(
+                            {
+                                "error": "URL is already in use, it must be unique inside the world"
+                            }
+                        ),
+                        409,
+                    )
             lore_page.update()
             return jsonify({"success": "Lore page successfully updated"}), 200
         except Exception as e:
