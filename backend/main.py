@@ -360,6 +360,7 @@ def get_lore_pages(world_id):
                 title=request.json["title"],
                 creator_id=session["user_id"],
                 world_id=world_id,
+                custom_url=request.json["custom_url"],
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
