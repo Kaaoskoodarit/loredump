@@ -285,9 +285,7 @@ class World:
         worlds_collection = db["worlds"]
         self.creator_id = str(session["user_id"])
         if self.categories.count("Uncategorised") == 0:
-            self.categories.insert(
-                0, "Uncategorised"
-            )  # Force "Uncategorised" to be first category
+            self.categories.insert(0, "Uncategorised")  # Force "Uncategorised" to be first category
         result = worlds_collection.insert_one(
             {
                 "creator_id": self.creator_id,
@@ -351,9 +349,7 @@ class World:
             #         {'_id': ObjectId(self.id)},
             #         {'$push': {'categories': 'Uncategorised'}}
             #     )
-            result = worlds_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"categories": str(category)}}
-            )
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"categories": str(category)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -372,9 +368,7 @@ class World:
 
         worlds_collection = db["worlds"]
         try:
-            result = worlds_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}}
-            )
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -684,9 +678,7 @@ class Category:
         """
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -705,9 +697,7 @@ class Category:
         """
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -727,9 +717,7 @@ class Category:
         """
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_many(
-                {}, {"$pull": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -903,9 +891,7 @@ class Category:
             Category or None: The Category object if found, otherwise None.
         """
         categories_collection = db["categories"]
-        category = categories_collection.find_one(
-            {"title": title, "world_id": world_id}
-        )
+        category = categories_collection.find_one({"title": title, "world_id": world_id})
         if category:
             return Category(
                 str(category["_id"]),
@@ -1030,9 +1016,7 @@ class LorePage:
         # add LorePage to Category
         for category in self.categories:
             categories_collection = db["categories"]
-            result = categories_collection.update_one(
-                {"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
 
         # add LorePage to World
         addLore = World.get_by_id(ObjectId(self.world_id))
@@ -1082,6 +1066,27 @@ class LorePage:
                         }
                     }
                 },
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    def remove_connection(self, connection):
+        """
+        Removes a connection from the current LorePage object.
+
+        Args:
+            connection (str): The ID of the LorePage to disconnect from.
+
+        Returns:
+            bool: True if the connection was removed successfully, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        try:
+            result = lorepages_collection.update_one(
+                {"_id": ObjectId(self.id)},
+                {"$pull": {"connections": {"target_id": self.get_by_id(connection).id}}},
             )
             return result.modified_count == 1
         except Exception as e:
@@ -1139,9 +1144,7 @@ class LorePage:
             "connections": self.connections,
             "private_notes": self.private_notes,
         }
-        lorepages_collection.update_one(
-            {"_id": ObjectId(self.id)}, {"$set": lorepage_data}
-        )
+        lorepages_collection.update_one({"_id": ObjectId(self.id)}, {"$set": lorepage_data})
 
     @staticmethod
     def get_by_id(id):
@@ -1281,3 +1284,52 @@ class LorePage:
         for result in results_list:
             custom_urls.append(result["custom_url"])
         return custom_urls
+
+    @staticmethod
+    def get_by_connections(connections):
+        """
+        Returns a list of LorePage objects that are connected to the specified LorePage.
+
+        Args:
+            connections (list): A list of connections to filter by.
+
+        Returns:
+            list: A list of LorePage objects.
+        """
+        lorepages_collection = db["lorepages"]
+        lorepages = lorepages_collection.find({"connections": {"$elemMatch": {"target_id": {"$in": connections}}}})
+        return [
+            LorePage(
+                str(lorepage["_id"]),
+                lorepage["creator_id"],
+                lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
+                lorepage["categories"],
+                lorepage["image"],
+                lorepage["description"],
+                lorepage["summary"],
+                lorepage["connections"],
+                lorepage["private_notes"],
+            )
+            for lorepage in lorepages
+        ]
+
+    @staticmethod
+    def remove_from_all_connections(lore_page_id):
+        """
+        Removes the specified LorePage from all connections.
+
+        Args:
+            lore_page_id (str): The ID of the LorePage to remove from all connections.
+
+        Returns:
+            bool: True if the LorePage was successfully removed from all connections, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        try:
+            result = lorepages_collection.update_many({}, {"$pull": {"connections": {"target_id": lore_page_id}}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
