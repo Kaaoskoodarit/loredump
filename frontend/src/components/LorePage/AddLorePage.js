@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {addPage} from '../../actions/pageActions';
 //import {editCategory,getCategoryList} from '../../actions/categoryActions';
@@ -30,6 +30,9 @@ const AddLorePage = (props) => {
         }],
         private_notes:""            // notes -> private_notes
 	})    
+
+    // Add a state to show if a page has been added
+    const [addCount,setAddCount] = useState(0);
 
     // Get token and pagestate from the store
     const worldid = useSelector(state => state.world.page.id);
@@ -107,13 +110,11 @@ const AddLorePage = (props) => {
             ...state,
             world_id: worldid
         }
-        page.custom_url = page.custom_url=""? state.title.replace(/\s+/g, '') : page.custom_url
+        page.custom_url = page.custom_url === ""? state.title.replace(/\s+/g, '_') : page.custom_url
         // Add the new page to the database
         dispatch(addPage(worldid,page));
         // Redirect to the new page
         //dispatch(getPage(worldid,pagestate.id));
-        console.log(pagestate.custom_url);
-        navigate("/"+worldurl+"/lorepage/"+pagestate.custom_url);
         //linkCategories(pagestate.id)
         // Reset the state of the page and relationships
         setState({
@@ -129,7 +130,15 @@ const AddLorePage = (props) => {
             }],
             private_notes:""
         })
+        setAddCount(1);
     }
+
+    useEffect(() => {
+        if (addCount > 0) {
+            console.log(pagestate.custom_url);
+            navigate("/"+worldurl+"/lorepage/"+pagestate.custom_url);
+        }  
+    },[pagestate]);
 
     return (
         <Paper sx={{p:2, alignItems:"center"}}>

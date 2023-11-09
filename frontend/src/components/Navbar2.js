@@ -56,7 +56,7 @@ const Navbar2 = (props) => {
 	
 	const catLinks = categorylist? categorylist.map((cat,index) => {
 		return(<Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
-		to={"/"+worldurl+"/category/"+cat.id}>{cat.title}</Link>)
+		to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.title}</Link>)
 		}): "" ;
 	
 	

@@ -23,7 +23,6 @@ const Navbar1 = (props) => {
 	const state = useSelector((state) => {
 		return {
 			isLogged:state.login.isLogged,
-			token:state.login.token,
 			user:state.login.user,
 			//world:state.world.title
 		}
@@ -87,7 +86,7 @@ const Navbar1 = (props) => {
 					<MenuItem onClick={()=>handleClose("E1")}>Profile</MenuItem>
 					<MenuItem onClick={()=>handleClose("E1")}>My account</MenuItem>
 					<MenuItem onClick={()=>handleClose("E1")}>
-					<Link className="nav-link" to="/" onClick={() => dispatch(logout(state.token))}>Logout</Link>
+					<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
 					</MenuItem>
 				</Menu>
 				</div>

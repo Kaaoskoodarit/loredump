@@ -30,7 +30,6 @@ const LorePage = (props) => {
 	const appState = useSelector((state) => {
 		return {
 			worldid:state.world.page.id,
-			//worldurl:state.world.page.custom_url,  // when transitioning from ids to urls
             page:state.lore.page,
             pagelist:state.lore.list,
 			categorylist: state.category.list
@@ -50,7 +49,7 @@ const LorePage = (props) => {
 
 
 	//ID RECIEVED FROM ROUTER URL	
-	let {worldurl, id}  = useParams();
+	let {worldurl, url}  = useParams();
 
 	const [loading,setLoading] = useState("");
 
@@ -61,13 +60,19 @@ const LorePage = (props) => {
 	//const navigate = useNavigate();
 
 	
-	if (page.id !== id && loading===""){
+	if (page.custom_url !== url && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
-
-		//TARKISTA MIKÄ WORLD ID VASTAA URIN WORLD URL
-
-		dispatch(getPage(appState.worldid,id));
-	} else if (page.id ===id &&loading!=="") {setLoading("")}
+		// Get page id based on url:
+		if (pagelist) {
+			for (let page of pagelist) {
+					if (page.custom_url === url) {
+					// If find a match, dispatch getPage to update page state
+					dispatch(getPage(appState.worldid,page.id));
+					break;
+				}
+			}
+		}
+	} else if (page.custom_url === url && loading!=="") {setLoading("")}
 
 	
 	const handleClickOpen = () => {

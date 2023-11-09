@@ -34,6 +34,7 @@ const Category = (props) => {
 	//const worldurl = useSelector(state => state.world.page.custom_url) // when transitioning from ids to urls
     const links = useSelector(state => state.category.page.lore_pages);
     const catpage = useSelector(state => state.category.page);
+    const catlist = useSelector(state => state.category.list);
     const lorelist = useSelector(state => state.lore.list);
 	
 
@@ -73,15 +74,22 @@ const Category = (props) => {
 	 
 	
 	//ID RECIEVED FROM ROUTER URL
-	let {worldurl, id}  = useParams();
+	let {worldurl, url}  = useParams();
 	const [loading,setLoading] = useState("");
 
-	if (catpage.id !== id && loading===""){
+	if (catpage.custom_url !== url && loading===""){
 		setLoading (<CircularProgress color="inherit" />);
-
-		//TARKISTA MIKÄ WORLD ID VASTAA URIN WORLD URL
-		dispatch(getCategory(worldid,id));
-	} else if (catpage.id ===id &&loading!=="") {setLoading("")}
+		// Get page id based on url:
+		if (catlist) {
+			for (let cat of catlist) {
+				if (cat.custom_url === url) {
+					// If find a match, dispatch getPage to update page state
+					dispatch(getCategory(worldid,cat.id));
+					break;
+				}
+			}
+		}
+	} else if (catpage.custom_url === url && loading !== "") {setLoading("")}
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode

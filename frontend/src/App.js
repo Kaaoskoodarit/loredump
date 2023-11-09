@@ -51,10 +51,9 @@ function App() {
 			dispatch(getWorldList());
 		} else if (appState.isLogged && appState.worldlist) {
 			if (appState.worldlist.length > 0) {
-				for (let index in appState.worldlist) {
-					let world = appState.worldlist[index];
+				for (let world of appState.worldlist) {
 					if (world.creator_id === appState.user) {
-						const worldid = appState.worldlist[0].id;
+						const worldid = world.id;
 						dispatch(getWorld(worldid));
 						dispatch(getList(worldid));			
 						dispatch(getCategoryList(worldid));
@@ -95,10 +94,10 @@ function App() {
 					<Route path="/new-category" element={<CreateCategory user={appState.user}/>}/>
 					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
 					<Route path="/:worldurl/category" element={<Category/>}/>
-					<Route path="/:worldurl/category/:id" element={<Category/>}/>
+					<Route path="/:worldurl/category/:url" element={<Category/>}/>
 					{/* <Route path="/category/*" element={<Category />}/> */}
 					<Route path="/:worldurl/lorepage" element={<ListPages />}/>
-					<Route path="/:worldurl/lorepage/:id" element={<LorePage/>}/>
+					<Route path="/:worldurl/lorepage/:url" element={<LorePage/>}/>
 					{/* <Route path={"/lorepage/"+id} element={<LorePage id={id}/>}/> */}
 					{/* <Route path="/lorepage/*" element={<LorePage/>}/> */}
 					<Route path="*" element={<Navigate to="/"/>}/>

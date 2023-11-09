@@ -24,13 +24,21 @@ const Row = (props) => {
 		return id;
 	}
 
+	const getCategoryUrl = (id) => {
+		for (const category of categorylist){
+			if (category.id === id) return category.custom_url
+		}
+		return id;
+	}
+
 	let categories_listed;
 	if(props.page.categories){
 		categories_listed = props.page.categories.map((id,index)=>{
 			let categoryTitle = getCategoryTitle(id)
+			let categoryUrl = getCategoryUrl(id)
 			return (
 			<Link key={index+id} color="alert" underline="hover" component={RouterLink}
-			to={"/"+worldurl+"/category/"+id}>{categoryTitle}</Link>
+			to={"/"+worldurl+"/category/"+categoryUrl}>{categoryTitle}</Link>
 			)
 		})
 	}
@@ -41,7 +49,7 @@ const Row = (props) => {
 
 
 	{/* <Box  sx={{ display: 'flex', flexDirection: 'column' }}> */}
-		<CardActionArea component={RouterLink} to={"/"+worldurl+"/lorepage/"+props.page.id}>
+		<CardActionArea component={RouterLink} to={"/"+worldurl+"/lorepage/"+props.page.custom_url}>
 		<CardMedia
 		sx={{ height:200, maxWidth:'100%' }}
 		image={image}
