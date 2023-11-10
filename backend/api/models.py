@@ -287,10 +287,8 @@ class World:
         """
         worlds_collection = db["worlds"]
         self.creator_id = str(session["user_id"])
-        if self.categories.count("Uncategorised") == 0:
-            self.categories.insert(
-                0, "Uncategorised"
-            )  # Force "Uncategorised" to be first category
+        # if self.categories.count("Uncategorised") == 0:
+        #     self.categories.insert(0, "Uncategorised")  # Force "Uncategorised" to be first category
         result = worlds_collection.insert_one(
             {
                 "creator_id": self.creator_id,
@@ -534,6 +532,7 @@ class World:
                     "description": self.description,
                     "private_notes": self.private_notes,
                     "categories": self.categories,
+                    "lore_pages": self.lore_pages,
                 }
             },
         )
@@ -624,7 +623,7 @@ class Category:
         )
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(self.id)
-        return result.inserted_id
+        return str(result.inserted_id)
 
     # Add Uncategorised to database
     @staticmethod
@@ -795,10 +794,18 @@ class Category:
 
     @staticmethod
     def get_by_name(title, world_id):
+        """
+        Retrieve a category by its title and world ID.
+
+        Args:
+            title (str): The title of the category to retrieve.
+            world_id (str): The ID of the world the category belongs to.
+
+        Returns:
+            Category or None: The Category object if found, otherwise None.
+        """
         categories_collection = db["categories"]
-        category = categories_collection.find_one(
-            {"title": title, "world_id": world_id}
-        )
+        category = categories_collection.find_one({"title": title, "world_id": world_id})
         if category:
             return Category(
                 str(category["_id"]),
@@ -1094,69 +1101,20 @@ class Session:
             return jsonify({'error': f"Creation of token failed with error {str(e)}"})
     
     @staticmethod
-    def get_by_token(token):
-        # Get session by token
-        sessions_collection = db['sessions']
-        session_data = sessions_collection.find_one({'token': token})
-        if session_data:
-            return Session(session_data['user'])
-        else:
-            return None
+    def remove_from_all_categories(lore_page_id):
+        """
+        Removes the specified LorePage from all categories.
 
-    def get_token_of_user(self):
-        sessions_collection = db['sessions']
-        session_data = sessions_collection.find_one({'user': self.user})
-        # Check if session exists and if it's still valid
-        if session_data and session_data['ttl'] > datetime.utcnow():
-            # Add more time to token if it's still valid
-            session_data['ttl'] = datetime.utcnow() + timedelta(minutes=30)
-            sessions_collection.update_one({'user': self.user}, {'$set': session_data})
-            return session_data['token']
-        else:
-            # Delete session
-            sessions_collection.delete_one({'user': self.user})
-            # Log user out
-            User.logout(self.user)
-            return None
+        Args:
+            lore_page_id (str): The ID of the LorePage to remove from all categories.
 
-    def __init__(self, id, user_id, token):
-    #     self.id = id
-    #     self.user_id = user_id
-    #     self.token = token
-    
-    # @staticmethod
-    # def create_token(self, user, secret_key=os.environ.get('SECRET_KEY'), algorithm='HS256'):
-    #     # Create token
-    #     try:
-    #         token = encode({
-    #             'exp': datetime.utcnow() + timedelta(minutes=30),
-    #             'iat': datetime.utcnow(),
-    #             'user_id': user.id,
-    #             'username': self.username,
-    #             'password': self.password,
-    #             'algorithm': algorithm
-    #         }, secret_key)
-    #         return token
-    #     except Exception as e:
-    #         print(e)
-    #         return e
-    
-    # @staticmethod
-    # def decode_token(token, secret_key=os.environ.get('SECRET_KEY')):
-    #     # Decode token
-    #     try:
-    #         payload = jwt.decode(token, secret_key)
-    #         return payload['user_id']
-    #     except jwt.ExpiredSignatureError:
-    #         return 'Signature expired. Please log in again.'
-    #     except jwt.InvalidTokenError:
-    #         return 'Invalid token. Please log in again.'
-        
-    # # def save_token(self):
-    # #     tokens = db['tokens']
-    # #     token_data = {
-    # #         'session_id': self.id,
-    # #         'user_id': self.user_id,
-    # #         'token': self.token
-    # #     }
-    # #     tokens.insert_one(token_data) """
+        Returns:
+            bool: True if the LorePage was successfully removed from all categories, False otherwise.
+        """
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": lore_page_id}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
