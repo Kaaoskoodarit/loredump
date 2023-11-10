@@ -110,7 +110,7 @@ const AddLorePage = (props) => {
             ...state,
             world_id: worldid
         }
-        page.custom_url = page.custom_url === ""? state.title.replace(/\s+/g, '_') : page.custom_url
+        page.custom_url = page.custom_url === ""? state.title.replace(/\s+/g, '_') : page.custom_url.replace(/\s+/g, '_')
         // Add the new page to the database
         dispatch(addPage(worldid,page));
         // Redirect to the new page
