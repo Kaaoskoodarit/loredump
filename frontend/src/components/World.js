@@ -1,32 +1,51 @@
 import {useSelector} from 'react-redux';
 
 import {Link as RouterLink} from 'react-router-dom'
+import ImageCard from './common/ImageCard';
 
 //MUI
-import { Grid, Typography, Paper, Divider } from '@mui/material';
+import { Grid, Typography, Paper, Divider, Stack } from '@mui/material';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
+            
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
 
 const World = (props) => {
  
-    const state = useSelector((state) => {
+    const appState = useSelector((state) => {
         return {
             isLogged:state.login.isLogged,
             user:state.login.user,
             categorylist:state.category.list,
-            worldid: state.world.page.id,			
-            worldurl: state.world.page.custom_url
+            world: state.world.page
 
         }
     })
 
-    const categorylist = state.categorylist
-    const worldurl = state.worldurl
+    const categorylist = appState.categorylist
+    const worldurl = appState.world.custom_url
+    const world = appState.world
 
 
     const catLinks = categorylist? categorylist.map((cat,index) => {
-		return(<Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
-		to={"/"+worldurl+"/category/"+cat.id}>{cat.title}</Link>)
+		return(
+            <TableRow>
+            <TableCell>
+                <Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
+                to={"/"+worldurl+"/category/"+cat.id}>{cat.title}</Link>
+            </TableCell>
+            <TableCell>
+                <Typography variant="body1" align='right'>{cat.lore_pages.length} Pages</Typography>
+            </TableCell>
+            </TableRow>
+        
+        )
 		}): "" ;
 
 return(
@@ -36,34 +55,38 @@ return(
 
     <Grid item xs={8}>
     <Container sx={{ display: 'flex', flexDirection: 'column' }}>
-    <Typography variant="lore">{worldurl}</Typography>
+    <Typography variant="lore">{world.title}</Typography>
     
     <Typography variant="h6">Description:</Typography>
-    <Typography variant="body1">hi</Typography>
+    <Typography variant="body1">{world.description}</Typography>
     <Typography variant="h6">Notes:</Typography>
-    <Typography variant="body1">notes</Typography>
+    <Typography variant="body1">{world.notes}</Typography>
     
     </Container>
     </Grid>
     
-    {/* {image} */}
+    <Grid item xs={4}>
+    <ImageCard page={world}/>
+    </Grid>
     
     </Grid>
-    <Container>
     <br/>
     <br/>
-    <Divider/>
-    <Typography variant='loreSmall' >Lore in this World:</Typography>
-    <br/>
-    <br/>
-    </Container>
+    <Table sx={{ minWidth: 650 }} size='small' aria-label="table of categories">
+    <TableHead>
+        <TableRow>
+            <TableCell ><Typography variant='loreSmall'>Categories in this world:</Typography></TableCell>
+            <TableCell align='right'><Typography variant='h6'>Lore in the Category:</Typography> </TableCell>
+        </TableRow>
+    </TableHead>
+    <TableBody>
+        {catLinks}
+    </TableBody>
+    </Table>
     
-    
-    <Grid container spacing={5}>
-    <Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
-			  <br/>
-              {catLinks}
-    </Grid>
+    <br/>
+
+    <Link sx={{p:2}} variant="subtitle" color="link" underline="hover" component={RouterLink} to={"/"+worldurl}>View All Pages</Link>
         
 
 </Paper>

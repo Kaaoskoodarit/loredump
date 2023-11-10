@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 
 
 // Component that shows a normal list entry, with "remove" and "edit" buttons
-const Row = (props) => {
+const LoreSummaryCard = (props) => {
 	//console.log("Row: props.page",props.page)
 	// const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
 	//const categories =<p>Categories</p>
@@ -77,4 +77,4 @@ const Row = (props) => {
 	)
 }
 
-export default Row;
+export default LoreSummaryCard;

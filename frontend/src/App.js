@@ -4,7 +4,7 @@ import LoginPage from './components/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import { useEffect } from 'react';
-import AddLorePage from './components/LorePage/AddLorePage';
+import CreateLorePage from './components/LorePage/CreateLorePage';
 import Category from './components/Category/Category';
 import LorePage from './components/LorePage/LorePage';
 import ListPages from './components/Category/ListPages';
@@ -92,8 +92,8 @@ function App() {
 				<Routes>
 					<Route path="/" element={<World/>}/>
 					<Route path="/:worldurl" element={<ListPages />}/>
-					<Route path="/new-category" element={<CreateCategory user={appState.user}/>}/>
-					<Route path="/new-page" element={<AddLorePage user={appState.user}/>}/>
+					<Route path="/:worldurl/new-category" element={<CreateCategory user={appState.user}/>}/>
+					<Route path="/:worldurl/new-page" element={<CreateLorePage user={appState.user}/>}/>
 					<Route path="/:worldurl/category" element={<Category/>}/>
 					<Route path="/:worldurl/category/:url" element={<Category/>}/>
 					{/* <Route path="/category/*" element={<Category />}/> */}
