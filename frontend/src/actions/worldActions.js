@@ -94,7 +94,7 @@ export const addWorld = (world) => {
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds",request);
-		dispatch(stopLoading());
+		dispatch(stopLoading()); 
 		if(!response) {
 			dispatch(fetchWorldFailed(actionConstants.ADD_WORLD_FAILED,"Failed to add new world. Server never responded. Try again later"))
 			return;
