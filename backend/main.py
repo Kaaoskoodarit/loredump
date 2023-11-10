@@ -220,7 +220,7 @@ def get_worlds():
             if " " in world.custom_url:
                 return jsonify({"error": "URL can't contain spaces"}), 400
             result = world.save()
-            Category.add_uncategorised(str(world.id))
+            Category.add_uncategorised(str(result))
             return (
                 jsonify({"success": "World successfully created", "id": str(result)}),
                 200,
