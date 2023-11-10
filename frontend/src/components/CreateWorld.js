@@ -24,7 +24,7 @@ const CreateWorld = (props) => {
 		image:"",
         description:"",
         private_notes:"",
-		categories:["Uncategorised"],            
+		categories:[],            
 		lore_pages:[]            
 	})
 
@@ -66,7 +66,7 @@ const CreateWorld = (props) => {
             image:"",
             description:"",
             private_notes:"",
-            categories:["Uncategorised"],            
+            categories:[],            
             lore_pages:[]          
         })
 
