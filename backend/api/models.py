@@ -14,8 +14,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connect to MongoDB
-#mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
-client = MongoClient("mongodb://localhost:27017/")
+if os.getenv("LOCAL") == "True":
+    client = MongoClient("mongodb://localhost:27017/")
+else:
+    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
 db = client['LoreDump']
 
 # Define User model
@@ -634,10 +636,10 @@ class Category:
                 "creator_id": session["user_id"],
                 "title": "Uncategorised",
                 "custom_url": "Uncategorised",
-                "image": None,
-                "description": None,
+                "image": "",
+                "description": "",
                 "lore_pages": [],
-                "private_notes": None,
+                "private_notes": "",
                 "world_id": world_id,
             }
         )

@@ -19,6 +19,11 @@ uri = os.getenv("DOMAIN")
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+if os.getenv("LOCAL") == "True":
+    client = MongoClient("mongodb://localhost:27017/")
+else:
+    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
 app.json.sort_keys = False  # Stop jsonify from sorting keys alphabetically
 
 # # Create a new client and connect to the server
@@ -35,7 +40,10 @@ ttl = 60  # minutes
 # Send a ping to confirm a successful connection
 try:
     client.admin.command("ping")
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    if os.getenv("LOCAL") == "True":
+        print("Pinged your local MongoDB instance. You successfully connected to MongoDB!")
+    else:
+        print("Pinged your deployment. You successfully connected to the real remote MongoDB!")
 except Exception as e:
     print(e)
 
@@ -59,6 +67,9 @@ def index():
 # Get currently logged in user's ID:
 @app.route("/api/id", methods=["GET"])
 def get_id():
+    if not session:
+        session.clear()
+        return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
         return jsonify({"id": session['user_id']}), 200
 
@@ -330,6 +341,8 @@ def get_category(world_id, category_id):
             for key, value in request.json.items():
                 if hasattr(category, key):
                     setattr(category, key, value)
+            if "title" in request.json and category.title == "Uncategorised":
+                return jsonify({"error": "Can't rename uncategorised category"}), 400
             # Check if URL is in use:
             if "custom_url" in request.json:
                 if " " in request.json["custom_url"]:
@@ -349,6 +362,8 @@ def get_category(world_id, category_id):
             category = Category.get_by_id(category_id)
             if not category:
                 return jsonify({"error": "Category not found"}), 404
+            if category.title == "Uncategorised":
+                return jsonify({"error": "Can't delete uncategorised category"}), 400
             category.delete()
             return jsonify({"success": "Category successfully deleted"}), 200
         except Exception as e:
