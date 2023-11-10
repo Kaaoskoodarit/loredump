@@ -629,10 +629,10 @@ class Category:
                 "creator_id": session["user_id"],
                 "title": "Uncategorised",
                 "custom_url": "Uncategorised",
-                "image": None,
-                "description": None,
+                "image": "",
+                "description": "",
                 "lore_pages": [],
-                "private_notes": None,
+                "private_notes": "",
                 "world_id": world_id,
             }
         )
