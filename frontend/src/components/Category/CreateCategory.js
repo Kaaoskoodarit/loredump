@@ -5,11 +5,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {Link as RouterLink} from 'react-router-dom'
 import UploadWidget from '../Cloudinary/UploadWidget';
 
+
 //MUI IMPORTS
 import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
+import Connections from '../LorePage/Relationships';
+import MultipleSelectChip from './MultipleSelectChip';
 
 
 
@@ -64,6 +67,14 @@ const CreateCategory = (props) => {
 
     }
 
+    const getLore = (id) => {
+		for (const lore of lorelist){
+			if (lore.id === id) return lore
+		}
+		return id;
+	}
+
+
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -110,18 +121,19 @@ const CreateCategory = (props) => {
 	}
     return(
 		<Paper elevation={3} sx={{ p:2}}>
+             <form onSubmit={onSubmit}>
+            
+            <Typography variant='lore'>Create a new Category</Typography>
 		<Grid container spacing={2}>
 		
 
 		<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
-		<Typography variant="lore">{worldurl}</Typography>
-		<Typography variant="lore">{state.title}</Typography>
-
-		{/* <Typography variant="h6">Description:</Typography> */}
+        <TextField id="category-title" name="title" label="Title" required multiline maxRows={2}
+            value={state.title} onChange={onChange}/>
+            <br/>
         <TextField id="category-description" name="description" label="Description" multiline maxRows={10}
             value={state.description} onChange={onChange}/>
-		{/* <Typography variant="h6">Private Notes:</Typography> */}
         <br/>
         <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
             value={state.private_notes} onChange={onChange}/>
@@ -143,10 +155,11 @@ const CreateCategory = (props) => {
 		</Container>
 		
 		<Grid container spacing={3}>
+            <MultipleSelectChip list={lorelist} state={state} setState={setState}/>
 			{/* add more pages */}
 		</Grid>
-        <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
-		
+        <Button type='submit' color="success" variant='contained' size='xl'>Create Category</Button>
+		</form>
 
 	</Paper>
 

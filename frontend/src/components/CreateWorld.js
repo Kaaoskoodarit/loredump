@@ -82,7 +82,7 @@ const CreateWorld = (props) => {
 
 		<Grid item xs={8}>
 		<Container sx={{ p:0, display: 'flex', flexDirection: 'column' }}>
-        <TextField id="world-title" name="title" label="Title" required multiline maxRows={10}
+        <TextField id="world-title" name="title" label="Title" required multiline maxRows={2}
             value={worldstate.title} onChange={onChange}/>
             <br/>
 		{/* <Typography variant="h6">Description:</Typography> */}
