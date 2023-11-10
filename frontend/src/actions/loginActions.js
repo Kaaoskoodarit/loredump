@@ -45,10 +45,10 @@ const getUser = (user) => {
 			"method":"GET"
 		}
 		dispatch(loading());
-		const response = await fetch("/api/user",request);
+		const response = await fetch("/api/id",request);
 		dispatch(stopLoading());
 		if(!response) {
-			dispatch(loginFailed("Fetching user failed. Server never responded. Try again later"));
+			dispatch(loginFailed("Fetching user id. Server never responded. Try again later"));
 			return;
 		}
 		if(response.ok) {
