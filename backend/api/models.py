@@ -286,8 +286,8 @@ class World:
         """
         worlds_collection = db["worlds"]
         self.creator_id = str(session["user_id"])
-        if self.categories.count("Uncategorised") == 0:
-            self.categories.insert(0, "Uncategorised")  # Force "Uncategorised" to be first category
+        # if self.categories.count("Uncategorised") == 0:
+        #     self.categories.insert(0, "Uncategorised")  # Force "Uncategorised" to be first category
         result = worlds_collection.insert_one(
             {
                 "creator_id": self.creator_id,
