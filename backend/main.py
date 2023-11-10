@@ -56,6 +56,11 @@ def index():
             return jsonify({"error": "Session expired"}), 401
         return jsonify({"message": "Welcome to LoreDump!"})
 
+# Get currently logged in user's ID:
+@app.route("/api/id", methods=["GET"])
+def get_id():
+    if request.method == "GET":
+        return jsonify({"id": session['user_id']}), 200
 
 # Routes for User model
 # Get currently logged in user:
@@ -104,7 +109,8 @@ def user():
 @app.route("/register", methods=["POST"])
 def register():
     if session:
-        return jsonify({"error": "User already logged in"}), 403
+        session.clear()
+        return jsonify({"error": "User already logged in, logging you out"}), 403
     # Register new user:
     if request.method == "POST":
         try:
@@ -129,7 +135,8 @@ def login():
         try:
             # Get username and password from request body
             if session:
-                return jsonify({"error": "User already logged in"}), 403
+                session.clear()
+                return jsonify({"error": "User already logged in, logging you out"}), 403
             username = request.json["username"]
             password = request.json["password"]
             user = User(None, username, password)

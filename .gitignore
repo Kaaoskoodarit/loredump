@@ -145,3 +145,5 @@ pyvenv.cfg
 db/
 
 .vscode/
+backend/lib64
+backend/include

@@ -14,8 +14,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Connect to MongoDB
-mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
-client = MongoClient(mongourl)
+#mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
+client = MongoClient("mongodb://localhost:27017/")
 db = client['LoreDump']
 
 # Define User model
@@ -641,6 +641,8 @@ class Category:
                 "world_id": world_id,
             }
         )
+        addCat = World.get_by_id(ObjectId(world_id))
+        addCat.add_category(result.inserted_id)
         if result.inserted_id:
             return True
         else:
