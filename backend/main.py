@@ -54,6 +54,11 @@ def index():
             return jsonify({"error": "Session expired"}), 401
         return jsonify({"message": "Welcome to LoreDump!"})
 
+# Get currently logged in user's ID:
+@app.route("/api/id", methods=["GET"])
+def get_id():
+    if request.method == "GET":
+        return jsonify({"id": session['user_id']}), 200
 
 # Routes for User model
 # Get currently logged in user:
