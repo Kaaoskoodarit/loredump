@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import Button  from "@mui/material/Button";
 
 // Upload Widget component
 function UploadWidget({ state,setState }) {
@@ -14,7 +15,7 @@ function UploadWidget({ state,setState }) {
     })
 
     // Create the widget
-    const myWidget = window.cloudinary.createUploadWidget(
+    const myWidget = useMemo(() => window.cloudinary.createUploadWidget(
         uwConfig,
         (error, result) => {
             // No error handling....yet?
@@ -30,7 +31,8 @@ function UploadWidget({ state,setState }) {
                 })
             }
         }
-    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ),[]);
 
     // onClick event handler, opens Widget
     const onClick = (event) => {
@@ -40,9 +42,9 @@ function UploadWidget({ state,setState }) {
 
     return (
         <div>
-            <button id="upload_widget" className="cloudinary-button" onClick={onClick}>
+            <Button id="cloudinary-upload-widget" variant="contained" onClick={onClick}>
                 Upload
-            </button>
+            </Button>
         </div>
     );
 }

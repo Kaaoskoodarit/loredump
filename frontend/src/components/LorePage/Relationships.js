@@ -1,4 +1,6 @@
 import {useSelector} from 'react-redux';
+import Typography from '@mui/material/Typography';
+
 
 //THE COMPONENT THAT GENERATES EACH ROW OF CATEGORIES
 const ConRow = (props) => {
@@ -21,7 +23,7 @@ const ConRow = (props) => {
     //console.log(relTitle);
 
     //ADDING DEFAULT TEXT TO RELATIONSHIP ROWS IF NEWLY ADDED ("")
-    let selectedText = state.connections[index].target_id !== "" ? conTitle : "Select a Category"
+    let selectedText = state.connections[index].target_id !== "" ? conTitle : "Select a Lore"
 
     
     //ONLY ADD REMOVE BUTTONS TO ROWS AFTER THE INITAL ONE
@@ -148,7 +150,8 @@ const Connections = (props) => {
 
     return(
         <>
-            <label htmlFor="connections" className="form-label">Add to Connections:</label>
+        <Typography variant="h6">Add to Connections:</Typography>
+            <label htmlFor="connections" className="form-label"></label>
             <table name="connections">
                 <tbody>
                     {rows}

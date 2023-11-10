@@ -3,8 +3,9 @@ import Row from './Row';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
-import {getPage,removePage,editPage} from '../../actions/pageActions';
-import {useNavigate} from 'react-router-dom';
+import {removePage,editPage} from '../../actions/pageActions';
+import {useNavigate, useParams} from 'react-router-dom';
+import { Grid } from '@mui/material';
 
 
 
@@ -24,11 +25,15 @@ const ListPages = (props) => {
 			list:state.lore.list
 		}
 	})
+	console.log("Listpages: world ID",appState.worldid);
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
-	const navigate = useNavigate();
+	//const navigate = useNavigate();
+
+	let {worldurl, id}  = useParams();
+
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode
@@ -54,10 +59,13 @@ const ListPages = (props) => {
 	}
 
 	//Handler for the clickable link buttons in Row component
+	/*
 	const handleNavigate = (id) => {
+		console.log(appState.worldid);
 		dispatch(getPage(appState.worldid,id));
-		navigate("/lorepage/"+id)
+		navigate("/api/worlds/"+appState.worldid+"/lore_pages/"+id)
 	}
+	*/
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(appState.worldid,id));
@@ -69,11 +77,11 @@ const ListPages = (props) => {
 		dispatch(editPage(appState.worldid,page));
 		changeMode("cancel");
 	}
-	
+
 	const pages = appState.list.map((page,index) => {
 		if(index === state.removeIndex) {
 			return(
-				<RemoveRow key={page.id} page={page} handleNavigate={handleNavigate} changeMode={changeMode} removePage={removeAPage}/>
+				<RemoveRow key={page.id} page={page} changeMode={changeMode} removePage={removeAPage}/>
 			)
 		}
 		if(index === state.editIndex) {
@@ -84,25 +92,18 @@ const ListPages = (props) => {
 			)
 		}
 		return(
-			<Row key={page.id} page={page} index={index} handleNavigate={handleNavigate} changeMode={changeMode}/>
+			<Grid item xs={3}>
+			<Row key={page.id} page={page} index={index} changeMode={changeMode} worldurl={worldurl}/>
+			</Grid>
+
 		)
 	})
 	return(
-		<table className="table table-striped">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Image</th>
-					<th>Summary</th>
-					<th>Categories</th>
-					<th>Edit</th>
-					<th>Remove</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Grid container spacing={3}>
 			{pages}
-			</tbody>
-		</table>
+		</Grid>
+
+
 	)
 }
 

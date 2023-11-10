@@ -39,6 +39,35 @@ export const register = (user) => {
 }
 
 // (async) function that dispatches a login action to the reducer
+const getUser = (user) => {
+	return async (dispatch) => {
+		let request = {
+			"method":"GET"
+		}
+		dispatch(loading());
+		const response = await fetch("/api/user",request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(loginFailed("Fetching user failed. Server never responded. Try again later"));
+			return;
+		}
+		if(response.ok) {
+			// takes response, and turns it from JSON string to JS object
+			// waits for parsing to be done!
+			const data = await response.json();
+			if(!data) {
+				dispatch(loginFailed("Failed to parse user information. Try again later"))
+				return;
+			}
+			// If data parsed, set current user
+			dispatch(setUser(data.id));
+		} else {
+			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
+}
+
+// (async) function that dispatches a login action to the reducer
 export const login = (user) => {
 	return async (dispatch) => {
 		let request = {
@@ -63,10 +92,9 @@ export const login = (user) => {
 				dispatch(loginFailed("Failed to parse login information. Try again later"))
 				return;
 			}
-			// If data parsed, set current user, assign them a token, and 
-			// display the user's shopping list
+			// If data parsed, set current user
 			dispatch(loginSuccess());
-			dispatch(setUsername(user.username));
+			dispatch(getUser());
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
@@ -149,7 +177,7 @@ export const logoutFailed = (error) => {
 	}
 }
 
-const setUsername = (user) => {
+const setUser = (user) => {
 	return {
 		type:actionConstants.SET_USERNAME,
 		user:user

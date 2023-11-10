@@ -10,22 +10,13 @@ import jwt
 from jwt import encode
 import secrets
 
-# import json
-
-"""
-# class JSONEncoder(json.JSONEncoder):
-#     def default(self, o):
-#         if isinstance(o, ObjectId):
-#             return str(o)
-#         return json.JSONEncoder.default(self, o)
-"""
-
-# TODO: Kysy Sagalta Uncategorised hommeliini
+from dotenv import load_dotenv
+load_dotenv()
 
 # Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client["LoreDump"]
-
+mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
+client = MongoClient(mongourl)
+db = client['LoreDump']
 
 # Define User model
 class User:
@@ -725,6 +716,19 @@ class Category:
             print(e)
             return False
 
+    # Remove one lore page from all categories. Used when deleting a lore page.
+    @staticmethod
+    def remove_lore_page_from_all(lore_page):
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many(
+                {}, {"$pull": {"lore_pages": str(lore_page)}}
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
     def delete(self):
         """
         Deletes the current category from the database.
@@ -1165,6 +1169,7 @@ class LorePage:
         lorepages_collection = db["lorepages"]
         lorepage = lorepages_collection.find_one({"_id": ObjectId(id)})
         if lorepage:
+            print(lorepage)
             return LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],
