@@ -347,6 +347,8 @@ def get_category(world_id, category_id):
             for key, value in request.json.items():
                 if hasattr(category, key):
                     setattr(category, key, value)
+            if "title" in request.json and category.title == "Uncategorised":
+                return jsonify({"error": "Can't rename uncategorised category"}), 400
             # Check if URL is in use:
             if "custom_url" in request.json:
                 if " " in request.json["custom_url"]:
@@ -366,6 +368,8 @@ def get_category(world_id, category_id):
             category = Category.get_by_id(category_id)
             if not category:
                 return jsonify({"error": "Category not found"}), 404
+            if category.title == "Uncategorised":
+                return jsonify({"error": "Can't delete uncategorised category"}), 400
             category.delete()
             return jsonify({"success": "Category successfully deleted"}), 200
         except Exception as e:
