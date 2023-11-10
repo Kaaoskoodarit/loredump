@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Row from './Row';
+import LoreSummaryCard from './../common/LoreSummaryCard';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
@@ -93,7 +93,7 @@ const ListPages = (props) => {
 		}
 		return(
 			<Grid item xs={3}>
-			<Row key={page.id} page={page} index={index} changeMode={changeMode} worldurl={worldurl}/>
+			<LoreSummaryCard key={page.id} page={page} index={index} changeMode={changeMode} worldurl={worldurl}/>
 			</Grid>
 
 		)

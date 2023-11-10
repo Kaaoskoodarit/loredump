@@ -27,6 +27,7 @@ const Navbar2 = (props) => {
 			user:state.login.user,
 			title:state.lore.page.title,
 			categorylist:state.category.list,
+			lorecount:state.lore.list.length,
 			worldTitle: state.world.page.title,
 			worldurl: state.world.page.custom_url
 		}
@@ -57,7 +58,10 @@ const Navbar2 = (props) => {
 		to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.title}</Link>)
 		}): "" ;
 	
-	
+	const allPages = state.lorecount&&state.lorecount.length>0 ?
+		<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
+	 	: ""
+		
 	
 	if(state.isLogged) {
 		return(	
@@ -66,12 +70,11 @@ const Navbar2 = (props) => {
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" separator="|">
-
 				<Link variant="h4" color="inherit" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
-				<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
-			  {catLinks}
-				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-page"}>Create a new Lore Page</Link>
-				<Link variant="h6" color="alert" underline="hover" component={RouterLink} to={"/new-category"}>Create a new Category</Link>
+				{allPages}
+			  	{catLinks}
+				<Link variant="h6" color="success" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
+				<Link variant="h6" color="success" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
 
 			  
 			  </Breadcrumbs>
