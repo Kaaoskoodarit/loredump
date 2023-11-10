@@ -54,6 +54,9 @@ const CreateWorld = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         // Add relationships to state
+
+        //REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        page.custom_url = page.custom_url === ""? state.title.replace(/\s+/g, '_') : page.custom_url.replace(/\s+/g, '_')
         
         // Add the new page to the database
         dispatch(addWorld(worldstate));
