@@ -57,6 +57,9 @@ def index():
 # Get currently logged in user's ID:
 @app.route("/api/id", methods=["GET"])
 def get_id():
+    if not session:
+        session.clear()
+        return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
         return jsonify({"id": session['user_id']}), 200
 
