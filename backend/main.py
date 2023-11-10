@@ -1,8 +1,9 @@
 from collections import OrderedDict
-import datetime, os, jwt
+import datetime, os #, jwt
 from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import pymongo
 from flask import Flask, Response, jsonify, request, session
 import pytz
 from api.models import User, World, Category, LorePage
@@ -149,7 +150,7 @@ def login():
             session['ttl'] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)"""
             return jsonify({"success": "User successfully logged in"}), 200
         except Exception as e:
-            return jsonify({"error": str(e)})
+            return jsonify({"error": str(e)}), 401
 
 
 @app.route("/protected")
@@ -219,7 +220,7 @@ def get_worlds():
             if " " in world.custom_url:
                 return jsonify({"error": "URL can't contain spaces"}), 400
             result = world.save()
-            Category.add_uncategorised(str(world.id))
+            Category.add_uncategorised(str(result))
             return (
                 jsonify({"success": "World successfully created", "id": str(result)}),
                 200,
