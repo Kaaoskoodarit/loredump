@@ -11,14 +11,16 @@ from jwt import encode
 import secrets
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Connect to MongoDB
 if os.getenv("LOCAL") == "True":
     client = MongoClient("mongodb://localhost:27017/")
 else:
-    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
-db = client['LoreDump']
+    client = MongoClient("mongodb+srv://" + os.getenv("MONGODB_USER") + ":" + os.getenv("MONGODB_PASSWORD") + "@" + os.getenv("MONGODB_URL") + "/?retryWrites=true&w=majority")
+db = client["LoreDump"]
+
 
 # Define User model
 class User:
@@ -349,7 +351,7 @@ class World:
         except Exception as e:
             print(e)
             return False
-        
+
     def remove_category(self, category):
         """
         Removes a category from the world.
@@ -743,9 +745,7 @@ class Category:
     def remove_lore_page_from_all(lore_page):
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_many(
-                {}, {"$pull": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -1062,7 +1062,7 @@ class LorePage:
         addLore.add_lore_page(self.id)
 
         return self.id
-    
+
     def add_category(self, category):
         """
         Adds a category to the lorepage.
@@ -1083,7 +1083,7 @@ class LorePage:
         except Exception as e:
             print(e)
             return False
-        
+
     def remove_category(self, category):
         """
         Removes a category from the lorepage.
