@@ -1,4 +1,4 @@
-import {loading,stopLoading,logoutFailed} from './loginActions';
+import { loading, stopLoading, logoutFailed } from './loginActions';
 import * as actionConstants from './actionConstants';
 
 //ASYNC THUNKS
@@ -9,7 +9,7 @@ export const getList = (worldid) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
-			"method":"GET",
+			"method": "GET",
 		}
 		// Start loading
 		dispatch(loading());
@@ -18,27 +18,27 @@ export const getList = (worldid) => {
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
-		if(!response) {
+		if (!response) {
 			dispatch(fetchListFailed("Failed to fetch page information. Server never responded. Try again later"));
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// Try to parse response from JSON, wait for result
 			const list = await response.json();
 			// If no list, error
-			if(!list) {
+			if (!list) {
 				dispatch(fetchListFailed("Failed to parse page information. Try again later."))
 				return;
 			}
 			// If list found, show it!
 			dispatch(fetchListSuccess(list));
-		// If response not ok, error
+			// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchListFailed("Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchListFailed("Failed to fetch page information. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -48,7 +48,7 @@ export const getPage = (worldid,id) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
-			"method":"GET"
+			"method": "GET"
 		}
 		// Start loading
 		dispatch(loading());
@@ -57,27 +57,27 @@ export const getPage = (worldid,id) => {
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to fetch page information. Server never responded. Try again later"));
+		if (!response) {
+			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED, "Failed to fetch page information. Server never responded. Try again later"));
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// Try to parse response from JSON, wait for result
 			const page = await response.json();
 			// If no page, error
-			if(!page) {
-				dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to parse page information. Try again later."))
+			if (!page) {
+				dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED, "Failed to parse page information. Try again later."))
 				return;
 			}
 			// If page found, show it!
-			dispatch(fetchPageSuccess(actionConstants.FETCH_PAGE_SUCCESS,page));
-		// If response not ok, error
+			dispatch(fetchPageSuccess(actionConstants.FETCH_PAGE_SUCCESS, page));
+			// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED,"Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.FETCH_PAGE_FAILED, "Failed to fetch page information. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -86,20 +86,20 @@ export const getPage = (worldid,id) => {
 export const addPage = (worldid,page) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"POST",
-			"headers":{
-				"Content-type":"application/json"
+			"method": "POST",
+			"headers": {
+				"Content-type": "application/json"
 			},
-			"body":JSON.stringify(page)
+			"body": JSON.stringify(page)
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds/"+worldid+"/lore_pages",request);
 		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
+		if (!response) {
+			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED, "Failed to add new page. Server never responded. Try again later"))
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// If fetch successful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.ADD_PAGE_SUCCESS));
 			// Get updated list
@@ -108,11 +108,11 @@ export const addPage = (worldid,page) => {
 			const newpage = await response.json();
 			dispatch(getPage(worldid,newpage.id))
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED, "Failed to add new page. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -121,26 +121,26 @@ export const addPage = (worldid,page) => {
 export const removePage = (worldid,id) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"DELETE"
+			"method": "DELETE"
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/"+id,request);
 		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
+		if (!response) {
+			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED, "Failed to remove page. Server never responded. Try again later"))
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// If fetch succesful, show new list!
 			dispatch(fetchPageSuccess(actionConstants.REMOVE_PAGE_SUCCESS));
 			// Get updated list
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED, "Failed to remove page. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -149,29 +149,29 @@ export const removePage = (worldid,id) => {
 export const editPage = (worldid,page) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"PUT",
-			"headers":{
-				"Content-type":"application/json"
+			"method": "PUT",
+			"headers": {
+				"Content-type": "application/json"
 			},
-			"body":JSON.stringify(page)
+			"body": JSON.stringify(page)
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/"+page.id,request);
 		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
+		if (!response) {
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED, "Failed to edit page. Server never responded. Try again later"))
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED, "Failed to edit page. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -179,31 +179,31 @@ export const editPage = (worldid,page) => {
 // (async) function that dispatches a "update page" action to the reducer
 export const updatePage = (worldid,id,update) => {
 	return async (dispatch) => {
-		let tempbody = {"update":update}
+		let tempbody = { "update": update }
 		let request = {
-			"method":"PUT",
-			"headers":{
-				"Content-type":"application/json"
+			"method": "PUT",
+			"headers": {
+				"Content-type": "application/json"
 			},
-			"body":	JSON.stringify(tempbody)
+			"body": JSON.stringify(tempbody)
 		}
 		dispatch(loading());
 		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/update/"+id,request);
 		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
+		if (!response) {
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED, "Failed to edit page. Server never responded. Try again later"))
 			return;
 		}
-		if(response.ok) {
+		if (response.ok) {
 			// If fetch succesful, show new list
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if (response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
+			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED, "Failed to edit page. Server responded with a status " + response.status + " " + response.statusText))
 		}
 	}
 }
@@ -214,28 +214,28 @@ export const updatePage = (worldid,id,update) => {
 // a "type" parameter, and optionally others as well, as needed
 export const fetchListSuccess = (list) => {
 	return {
-		type:actionConstants.FETCH_LIST_SUCCESS,
-		list:list
+		type: actionConstants.FETCH_LIST_SUCCESS,
+		list: list
 	}
 }
 
 export const fetchListFailed = (error) => {
 	return {
-		type:actionConstants.FETCH_LIST_FAILED,
-		error:error
+		type: actionConstants.FETCH_LIST_FAILED,
+		error: error
 	}
 }
 
-export const fetchPageSuccess = (type,page) => {
+export const fetchPageSuccess = (type, page) => {
 	return {
-		type:type,
-		page:page
+		type: type,
+		page: page
 	}
 }
 
-export const fetchPageFailed = (type,error) => {
+export const fetchPageFailed = (type, error) => {
 	return {
-		type:type,
-		error:error
+		type: type,
+		error: error
 	}
 }
