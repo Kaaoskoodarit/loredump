@@ -20,13 +20,16 @@ uri = os.getenv("DOMAIN")
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+if os.getenv("LOCAL") == "True":
+    client = MongoClient("mongodb://localhost:27017/")
+else:
+    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
 app.json.sort_keys = False  # Stop jsonify from sorting keys alphabetically
 
 # # Create a new client and connect to the server
 # client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
 db = client["LoreDump"]
 
 # Session Time-To-Alive, until user has to log in again
@@ -35,7 +38,10 @@ ttl = 60  # minutes
 # Send a ping to confirm a successful connection
 try:
     client.admin.command("ping")
-    print("Pinged your deployment. You successfully connected to MongoDB!")
+    if os.getenv("LOCAL") == "True":
+        print("Pinged your local MongoDB instance. You successfully connected to MongoDB!")
+    else:
+        print("Pinged your deployment. You successfully connected to the real remote MongoDB!")
 except Exception as e:
     print(e)
 
