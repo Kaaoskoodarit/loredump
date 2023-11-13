@@ -24,7 +24,7 @@ const CreateWorld = (props) => {
 		image:"",
         description:"",
         private_notes:"",
-		categories:["Uncategorised"],            
+		categories:[],            
 		lore_pages:[]            
 	})
 
@@ -41,6 +41,11 @@ const CreateWorld = (props) => {
 
     // Handle normal onChange events    
     const onChange = (event) => {
+
+        //custom url can be max 50 characters!
+        if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+            return
+        }
         setWorldstate((worldstate) => {
             return {
                 ...worldstate,
@@ -54,7 +59,11 @@ const CreateWorld = (props) => {
     const onSubmit = (event) => {
         event.preventDefault();
         // Add relationships to state
-        
+
+        //REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        worldstate.custom_url = worldstate.custom_url === ""? worldstate.title.slice(0,49).replace(/\s+/g, '_') : worldstate.custom_url.replace(/\s+/g, '_')
+
         // Add the new page to the database
         dispatch(addWorld(worldstate));
         // Redirect to the new World?
@@ -66,7 +75,7 @@ const CreateWorld = (props) => {
             image:"",
             description:"",
             private_notes:"",
-            categories:["Uncategorised"],            
+            categories:[],            
             lore_pages:[]          
         })
 
@@ -112,68 +121,6 @@ const CreateWorld = (props) => {
 	</Paper>
 
 	)
-    // return (
-    //     <>
-    //     <div style={{
-	// 		margin:"auto",
-	// 		width:"40%",
-	// 		textAlign:"left"
-	// 	}}>
-    //         <form className="mb-5" onSubmit={onSubmit}>
-	// 			<label htmlFor="title" className="form-label">Title</label>
-	// 			<input type="text"
-	// 					name="title"
-	// 					id="title"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.title}/>
-    //                 <div id="title-help" className="form-text">
-    //                 This will be the title of your Category!
-    //                 </div>
-    //             <br/>
-    //             <br/>
-    //             <label htmlFor="image" className="form-label">Image link</label>
-	// 			<input type="url"
-	// 					name="image"
-	// 					id="image"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.image}/>
-    //             <label htmlFor="summary" className="form-label">Summary</label>
-	// 			<input type="text"
-	// 					name="summary"
-	// 					id="summary"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.summary}/>
-    //             <label htmlFor="description" className="form-label">Description</label>
-	// 			<input type="text"
-	// 					name="description"
-	// 					id="description"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.description}/>
-    //             <label htmlFor="notes" className="form-label">Private Notes</label>
-	// 			<input type="text"
-	// 					name="notes"
-	// 					id="notes"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.private_notes}/>
-    //             <select name={"categories"}
-    //                         id={index}
-    //                         className="form-select"
-    //                         aria-label="Select Categories"
-    //                         onChange={onCatChange}>
-    //                     <option key={"selected"} value={state.categories[index]}>{selectedText}</option>
-    //             </select>
-    //             <br/>
-    //             <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
-    //         </form>
-    //     </div>
-    //      </>
-    // )
-	
 }
 
 export default CreateWorld;

@@ -90,13 +90,7 @@ const LorePage = (props) => {
 
 
 	
-	// //This kinda infiniloops oops
-    // const loadCategory = (id) => {
-	// 	console.log("got catpaged")
-    //     dispatch(getCategory(appState.token,id));
-    // }
 	
-
     // const removeAPage = (id) => {
 	// 	dispatch(removePage(appState.token,id));
 	// }
@@ -106,26 +100,6 @@ const LorePage = (props) => {
 	// }
 
 
-	// //Handler for the clickable link buttons in Row component
-	// const handleNavigate = (id) => {
-	// 	console.log("Handlenavigate ",errorState )
-
-	// 	if (!id){
-	// 		console.log("No Category found. Navigating to Home")
-	// 		navigate("/")
-	// 	} else {
-	// 		setErrorState(errorState+1)
-	// 		if(errorState<10){
-
-	// 			//The actual code:::
-	// 			console.log("Navigating to category id",id)
-	// 			dispatch(getCategory(appState.token,id));
-	// 			navigate("/category/"+id)
-
-
-	// 		} else console.log("Over 10 Get category attempts!")
-	// 	}
-	// }
 
 	//INSERT CODE FOR REMOVING A CATEGORY
 	const handleDelete = () => {

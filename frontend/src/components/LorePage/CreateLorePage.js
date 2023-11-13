@@ -14,7 +14,7 @@ import { Button, Divider, Paper } from '@mui/material';
 import { Container } from '@mui/system';
 
 
-const AddLorePage = (props) => {
+const CreateLorePage = (props) => {
 	// Set state for page
     //NIMEÄ UUDELLEEN STATE
 	const [state,setState] = useState({
@@ -51,6 +51,11 @@ const AddLorePage = (props) => {
    
     // Handle normal onChange events    
     const onChange = (event) => {
+
+        //custom url can be max 50 characters!
+        if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+            return
+        }
         setState((state) => {
             return {
                 ...state,
@@ -73,34 +78,7 @@ const AddLorePage = (props) => {
             })
 
     }
-    // These are handled by backend now, right?
-    /*
-    //FUNCTION FOR ADDING ONE LINK TO ONE CATEGORY
-    const editACategory = (category,page_id) => {
-        console.log("AddLorePAge: Adding a category link!")
-        const tempData = category.links.concat(page_id)
-        const tempCat = {
-            ...category,
-            links:tempData
-        }
-        console.log("Dispatching edit on category",tempCat)
-        dispatch(editCategory(worldid,tempCat));
-    }
-    */
-    /*
-    //get list of all categories with all their data so I can take the category.links:[] from each at onSubmit
-    const linkCategories = (page_id) =>{
-
-        //get full list of categories
-        dispatch(getCategoryList(worldid))
-        
-        // iterate through categories in the list
-        for (let thiscategory of categorylist)
-            if (state.categories.includes(thiscategory.id)) {
-                editACategory(thiscategory,page_id)
-            }
-        }
-    */
+    
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -110,12 +88,16 @@ const AddLorePage = (props) => {
             ...state,
             world_id: worldid
         }
-        page.custom_url = page.custom_url === ""? state.title.replace(/\s+/g, '_') : page.custom_url.replace(/\s+/g, '_')
+
+        //REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        page.custom_url = page.custom_url === ""? state.title.slice(0,49).replace(/\s+/g, '_') : page.custom_url.replace(/\s+/g, '_')
         // Add the new page to the database
         dispatch(addPage(worldid,page));
+
         // Redirect to the new page
         //dispatch(getPage(worldid,pagestate.id));
-        //linkCategories(pagestate.id)
+
         // Reset the state of the page and relationships
         setState({
             title:"",
@@ -210,4 +192,4 @@ const AddLorePage = (props) => {
 	
 }
 
-export default AddLorePage;
+export default CreateLorePage;

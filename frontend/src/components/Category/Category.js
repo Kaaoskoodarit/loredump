@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import Row from './Row';
+import LoreSummaryCard from './../common/LoreSummaryCard';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import { useParams } from 'react-router-dom';
@@ -8,12 +8,12 @@ import {removePage,editPage} from '../../actions/pageActions';
 //import { useNavigate} from 'react-router-dom';
 //import ManageLinks from '../ManageLinks';
 import { getCategory} from '../../actions/categoryActions';
+import ImageCard from '../common/ImageCard';
+
 import { Grid, Typography, Paper, Divider } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import { Card, CardMedia, CardActionArea } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
+
 
 
 
@@ -46,32 +46,7 @@ const Category = (props) => {
 	// use navigate from react-router-dom
 	//const navigate = useNavigate();
 
-	//VARIABLES FOR VIEWING IMAGES
-	const [open, setOpen] = useState(false);
-
-	const handleClickOpen = () => {
-		setOpen(true);
-	  };
 	
-	  const handleClose = () => {
-		setOpen(false);
-	  };
-
-	let image;
-	if( catpage.image){
-		image = 
-			<Grid item xs={4}>
-			<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
-				<CardActionArea onClick={handleClickOpen}>
-				<CardMedia sx={{ height:200}} image={catpage.image} title={"Image for "+catpage.title}/>
-				</CardActionArea>
-				<Dialog open={open} onClose={handleClose} aria-label="image-dialog">
-			<DialogContent maxWidth="1000" maxHeight="1000" >
-				<img height='100%' width='100%' src={catpage.image} alt={""}/>
-			</DialogContent>
-				</Dialog> </Card> </Grid> 
-		}
-	 
 	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();
@@ -152,7 +127,7 @@ const Category = (props) => {
 		return id;
 	}
 
-	let pages = <tr><td>No Lore pages linked yet.</td></tr>
+	let pages = <Typography sx={{p:2}} variant="body1">No Lore pages linked yet.</Typography>
 
 	//if category has at least one link to a lore saved:
 	if (links &&links.length>0){
@@ -174,7 +149,7 @@ const Category = (props) => {
 			}
 			return(
 				<Grid item xs={3}>
-				<Row key={index+page.id} page={page} index={index} changeMode={changeMode}
+				<LoreSummaryCard key={index+page.id} page={page} index={index} changeMode={changeMode}
 				worldurl={worldurl}/>
 				</Grid>
 			)
@@ -194,7 +169,6 @@ const Category = (props) => {
 
 		<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
-		<Typography variant="lore">{worldurl}</Typography>
 		<Typography variant="lore">{catpage.title}</Typography>
 
 		<Typography variant="h6">Description:</Typography>
@@ -205,7 +179,9 @@ const Category = (props) => {
 		</Container>
 		</Grid>
 		
-		{image}
+		<Grid item xs={4}>
+		<ImageCard page={catpage}/>
+		</Grid>
 		
 		</Grid>
 		<Container>
@@ -215,11 +191,11 @@ const Category = (props) => {
 		<Typography variant='loreSmall' >Lore in this Category:</Typography>
 		<br/>
 		<br/>
-		</Container>
 		
-		<Grid container spacing={3}>
+		<Grid container spacing={3} >
 			{pages}
 		</Grid>
+		</Container>
 			
 
 	</Paper>

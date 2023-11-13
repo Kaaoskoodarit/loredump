@@ -12,7 +12,7 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Connections from '../LorePage/Relationships';
-import MultipleSelectChip from './MultipleSelectChip';
+import MultipleSelectChip from './../common/MultipleSelectChip';
 
 
 
@@ -44,6 +44,11 @@ const CreateCategory = (props) => {
 
     // Handle normal onChange events    
     const onChange = (event) => {
+
+        //custom url can be max 50 characters!
+        if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+            return
+        }
         setState((state) => {
             return {
                 ...state,
