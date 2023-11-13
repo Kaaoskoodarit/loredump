@@ -92,8 +92,8 @@ const CreateCategory = (props) => {
         // Add the new page to the database
         dispatch(addCategory(worldid,category));
         // Redirect to the new Category (getCategory maybe redundant? test after merge!)
-        dispatch(getCategory(worldid,categorystate.id));
-        navigate("/"+worldid+"/category/"+categorystate.id);
+        // dispatch(getCategory(worldid,categorystate.id));
+        // navigate("/"+worldid+"/category/"+categorystate.id);
         // Reset the state of the page and relationships
         setState({
             title:"",
