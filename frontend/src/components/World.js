@@ -33,15 +33,18 @@ const World = (props) => {
     const world = appState.world
 
 
-    const catLinks = categorylist? categorylist.map((cat,index) => {
+    const catLinks = categorylist? categorylist.map((cat) => {
 		return(
             <TableRow>
             <TableCell>
                 <Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
-                to={"/"+worldurl+"/category/"+cat.id}>{cat.title}</Link>
+                to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.title}</Link>
             </TableCell>
             <TableCell>
-                <Typography variant="body1" align='right'>{cat.lore_pages.length} Pages</Typography>
+                <Typography align='right'>
+                <Link key={cat.id} variant="body1" align='right' color="inherit" underline="hover" component={RouterLink} 
+                    to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.lore_pages.length} Pages</Link>
+                    </Typography>
             </TableCell>
             </TableRow>
         

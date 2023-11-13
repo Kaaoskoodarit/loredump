@@ -17,6 +17,7 @@ import {useDispatch} from 'react-redux';
 import { Container } from '@mui/material';
 import CreateCategory from './components/Category/CreateCategory';
 import CreateWorld from './components/CreateWorld';
+import LoadingIndicator from './components/common/LoadingIndicator';
 
 // Main App component
 function App() {
@@ -42,7 +43,6 @@ function App() {
 			worldurl: state.world.page.custom_url
 		}
 	})
-
 
 
 	const dispatch = useDispatch();
@@ -71,10 +71,13 @@ function App() {
 
 	//RENDERING
 	
-	// Set message to be shown on top of page
+	// Set message to announce state of the app
+
+
+	
 	let message = <></>
 	if(appState.loading) {
-		message = <h4>Loading...</h4>
+		message = <LoadingIndicator open={appState.loading}/>
 	}
 	if(appState.error) {
 		message = <h4>{appState.error}</h4>
@@ -137,9 +140,7 @@ function App() {
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</Container>
-			// <div className="App">
-				
-			// </div>
+			
 		);		
 		
 	}

@@ -45,7 +45,7 @@ const CreateLorePage = (props) => {
     const navigate = useNavigate();
 
     // Create preview image:
-    const default_img = '../../shepherd-dog-defaultimg.jpg'
+    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
 	const image = (state.image !== 'error.jpg' && state.image !== "") ? state.image : default_img
 
    
@@ -145,7 +145,7 @@ const CreateLorePage = (props) => {
                 <UploadWidget state={state} setState={setState} />
                 <br/>
                 <br/>
-                <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img>
+                {/* <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img> */}
                 <br/>
                 <br/>
                 <Typography variant="h6">Summary:</Typography>
