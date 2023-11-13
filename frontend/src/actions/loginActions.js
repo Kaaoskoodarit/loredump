@@ -39,7 +39,7 @@ export const register = (user) => {
 }
 
 // (async) function that dispatches a login action to the reducer
-const getUser = (user) => {
+export const getUser = () => {
 	return async (dispatch) => {
 		let request = {
 			"method":"GET"
