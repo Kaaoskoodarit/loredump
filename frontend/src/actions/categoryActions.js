@@ -36,7 +36,7 @@ export const getCategoryList = (worldid) => {
 			dispatch(fetchCategoryListSuccess(list));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
@@ -79,7 +79,7 @@ export const getCategory = (worldid,id) => {
 			dispatch(fetchCategorySuccess(actionConstants.FETCH_CATEGORY_SUCCESS,category));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -114,7 +114,7 @@ export const addCategory = (worldid,category) => {
 			const newcategory = await response.json();
 			dispatch(getCategory(worldid,newcategory.id))
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -142,7 +142,7 @@ export const removeCategory = (worldid,id) => {
 			// Get updated list
 			dispatch(getCategoryList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -173,7 +173,7 @@ export const editCategory = (worldid,category) => {
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
 			dispatch(getCategoryList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -205,7 +205,7 @@ export const updateCategory = (worldid,id,update) => {
 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
 			dispatch(getCategoryList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}

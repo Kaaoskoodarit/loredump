@@ -34,7 +34,7 @@ export const getWorldList = () => {
 			dispatch(fetchWorldListSuccess(list));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
@@ -76,7 +76,7 @@ export const getWorld = (id) => {
 			dispatch(fetchWorldSuccess(actionConstants.FETCH_WORLD_SUCCESS,world));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -111,7 +111,7 @@ export const addWorld = (world) => {
 			const newworld = await response.json();
 			dispatch(getWorld(newworld.id));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -139,7 +139,7 @@ export const removeWorld = (id) => {
 			// Get updated list
 			dispatch(getWorldList());
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -170,7 +170,7 @@ export const editWorld = (world) => {
 			dispatch(fetchWorldSuccess(actionConstants.EDIT_WORLD_SUCCESS));
 			dispatch(getWorldList());
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -202,7 +202,7 @@ export const updateWorld = (id,update) => {
 			dispatch(fetchWorldSuccess(actionConstants.EDIT_WORLD_SUCCESS));
 			dispatch(getWorldList());
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}

@@ -34,7 +34,7 @@ export const getList = (worldid) => {
 			dispatch(fetchListSuccess(list));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
@@ -76,7 +76,7 @@ export const getPage = (worldid,id) => {
 			dispatch(fetchPageSuccess(actionConstants.FETCH_PAGE_SUCCESS,page));
 		// If response not ok, error
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -111,7 +111,7 @@ export const addPage = (worldid,page) => {
 			const newpage = await response.json();
 			dispatch(getPage(worldid,newpage.id))
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -139,7 +139,7 @@ export const removePage = (worldid,id) => {
 			// Get updated list
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -170,7 +170,7 @@ export const editPage = (worldid,page) => {
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
@@ -202,7 +202,7 @@ export const updatePage = (worldid,id,update) => {
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(worldid));
 		} else {
-			if(response.status === 403) {
+			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			}
