@@ -349,6 +349,24 @@ class World:
         except Exception as e:
             print(e)
             return False
+        
+    def remove_category(self, category):
+        """
+        Removes a category from the world.
+
+        Args:
+            category (str): The category to be removed.
+
+        Returns:
+            bool: True if the category was removed successfully, False otherwise.
+        """
+        worlds_collection = db["worlds"]
+        try:
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"categories": str(category)}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
 
     def add_lore_page(self, lore_page):
         """
@@ -743,6 +761,16 @@ class Category:
         categories_collection = db["categories"]
         result = categories_collection.delete_one({"_id": ObjectId(self.id)})
         # TODO: Remove category from world and lore pages
+        # Remove deleted category from world:
+        removeCat = World.get_by_id(ObjectId(self.world_id))
+        removeCat.remove_category(self.id)
+        # Remove deleted category from lore pages and add to "Uncategorised":
+        for lore_page in self.lore_pages:
+            removeLore = LorePage.get_by_id(ObjectId(lore_page))
+            removeLore.remove_category(self.id)
+            # If LorePage has no categories, add to "Uncategorised"
+            if len(removeLore.categories) == 0:
+                removeLore.add_category("Uncategorised")
         if result.deleted_count == 1:
             return True
         else:
@@ -1034,6 +1062,48 @@ class LorePage:
         addLore.add_lore_page(self.id)
 
         return self.id
+    
+    def add_category(self, category):
+        """
+        Adds a category to the lorepage.
+
+        Args:
+            category (str): The category to add.
+
+        Returns:
+            bool: True if the category was added successfully, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        try:
+            result = lorepages_collection.update_one(
+                {"_id": ObjectId(self.id)},
+                {"$push": {"categories": str(Category.get_by_name(category).id)}},
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+        
+    def remove_category(self, category):
+        """
+        Removes a category from the lorepage.
+
+        Args:
+            category (str): The category to remove.
+
+        Returns:
+            bool: True if the category was removed successfully, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        try:
+            result = lorepages_collection.update_one(
+                {"_id": ObjectId(self.id)},
+                {"$pull": {"categories": str(Category.get_by_name(category).id)}},
+            )
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
 
     def add_private_note(self):
         """
