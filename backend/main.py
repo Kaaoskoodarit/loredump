@@ -117,7 +117,7 @@ def user():
 def register():
     if session:
         session.clear()
-        return jsonify({"error": "User already logged in, logging you out"}), 403
+        return jsonify({"error": "User already logged in, logging you out"}), 401
     # Register new user:
     if request.method == "POST":
         try:
@@ -143,7 +143,7 @@ def login():
             # Get username and password from request body
             if session:
                 session.clear()
-                return jsonify({"error": "User already logged in, logging you out"}), 403
+                return jsonify({"error": "User already logged in, logging you out"}), 401
             username = request.json["username"]
             password = request.json["password"]
             user = User(None, username, password)
@@ -210,7 +210,7 @@ def before_request():
 def logout():
     # Clear session:
     if "user_id" not in session:
-        return jsonify({"error": "User not logged in"}), 400
+        return jsonify({"error": "User not logged in"}), 401
     session.clear()
     return jsonify({"success": "User successfully logged out"}), 200
 
