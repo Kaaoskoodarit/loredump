@@ -50,10 +50,10 @@ const Category = (props) => {
 	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();
-	const [loading,setLoading] = useState("");
+	const [loading,setLoading] = useState(Boolean(false));
 
-	if (catpage.custom_url !== url && loading===""){
-		setLoading (<CircularProgress color="inherit" />);
+	if (catpage.custom_url !== url && loading===false){
+		setLoading (true);
 		// Get page id based on url:
 		if (catlist) {
 			for (let cat of catlist) {
@@ -64,7 +64,7 @@ const Category = (props) => {
 				}
 			}
 		}
-	} else if (catpage.custom_url === url && loading !== "") {setLoading("")}
+	} else if (catpage.custom_url === url && loading === true) {setLoading(false)}
 	
 	// Function to change the state of the system, 
 	// changing between "remove", "edit" and "normal" mode
@@ -148,8 +148,8 @@ const Category = (props) => {
 				)
 			}
 			return(
-				<Grid item xs={3}>
-				<LoreSummaryCard key={index+page.id} page={page} index={index} changeMode={changeMode}
+				<Grid key={index+page.id} item xs={3}>
+				<LoreSummaryCard page={page} index={index} changeMode={changeMode}
 				worldurl={worldurl}/>
 				</Grid>
 			)
@@ -157,7 +157,7 @@ const Category = (props) => {
 	}
 
 	//Display the loading icon if state is loading
-	pages = loading!=="" ? loading : pages
+	pages = loading===false ? pages :<CircularProgress color="inherit" /> ;
 
 	// let managelinks_message = managelinks.mode!=="" ?
 	// 	<ManageLinks mode ={managelinks.mode} page={managelinks.page}/> : ""
