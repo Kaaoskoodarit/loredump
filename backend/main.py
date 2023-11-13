@@ -311,7 +311,7 @@ def get_categories(world_id):
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
-                world=world_id,
+                world_id=world_id,
                 custom_url=request.json["custom_url"],
             )
             if " " in category.custom_url:
