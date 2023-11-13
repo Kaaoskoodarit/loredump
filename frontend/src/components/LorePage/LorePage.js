@@ -106,9 +106,9 @@ const LorePage = (props) => {
 		console.log("Insert code for removing category")
 	}
 
-	const getCategoryTitle = (id) => {
+	const getCategoryData = (id) => {
 		for (const category of categorylist){
-			if (category.id === id) return category.title
+			if (category.id === id) return category
 		}
 		//MATCH WAS NOT FOUND
 		return "Lost Link";
@@ -118,19 +118,19 @@ const LorePage = (props) => {
 	if(page.categories){
 		categories_listed = page.categories.map((id,index)=>{
 			
-			let categoryTitle = getCategoryTitle(id)
+			let category = getCategoryData(id)
 			return (
 				<Grid item>
-				<Chip color="primary" label={categoryTitle} component={RouterLink} to={"/category/"+id} 
+				<Chip color="primary" label={category.title} component={RouterLink} to={"/"+worldurl+"/category/"+category.custom_url} 
 				clickable />
 				</Grid>
 			)
 		})	
 	}
 
-	const getConnection = (id) => {
+	const getConnectionData = (id) => {
 		for (const lore of pagelist){
-			if (lore.id === id) return {title:lore.title,custom_url:lore.custom_url}
+			if (lore.id === id) return lore
 		}
 		//MATCH WAS NOT FOUND
 		return "Lost Link";
@@ -140,14 +140,14 @@ const LorePage = (props) => {
 	if(page.connections){
 		connections_listed = page.connections.map((connection)=>{
 			if(connection.target_id!==""&&connection.type!==""){
-				let {title,custom_url} = getConnection(connection.target_id)
+				let lore = getConnectionData(connection.target_id)
 				return (
 					<Grid item >
 						<Stack direction='row' alignItems="center" spacing={0.5}>
 						<Typography variant='body2'>
 						{connection.type+":"}
 						</Typography>
-						<Chip color="primary" label={title} component={RouterLink} to={"/"+worldurl+"/lorepage/"+custom_url} 
+						<Chip color="primary" label={lore.title} component={RouterLink} to={"/"+worldurl+"/lorepage/"+lore.custom_url} 
 						clickable />
 						</Stack>
 					</Grid>
