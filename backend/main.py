@@ -171,9 +171,9 @@ def login():
     if request.method == "GET":
         if session:
             # If session exists, log user in automatically:
-            user = User.get_by_id(session["user_id"])
-            user.login()
             return jsonify({"success": "User already logged in"}), 200
+        else:
+            return jsonify({"error": "Please log in"})
 
 
 @app.route("/protected")
