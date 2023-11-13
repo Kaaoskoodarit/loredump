@@ -135,7 +135,7 @@ def register():
             return jsonify({"error": str(e)}, 400)
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     # Login user:
     if request.method == "POST":
@@ -167,6 +167,13 @@ def login():
             return jsonify({"success": "User successfully logged in"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 401
+        
+    if request.method == "GET":
+        if session:
+            # If session exists, log user in automatically:
+            user = User.get_by_id(session["user_id"])
+            user.login()
+            return jsonify({"success": "User already logged in"}), 200
 
 
 @app.route("/protected")
@@ -311,7 +318,7 @@ def get_categories(world_id):
                 description=request.json["description"],
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
-                world=world_id,
+                world_id=world_id,
                 custom_url=request.json["custom_url"],
             )
             if " " in category.custom_url:
