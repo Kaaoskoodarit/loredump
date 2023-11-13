@@ -37,6 +37,9 @@ export const getWorldList = () => {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
+			} else if (response.status === 404) {
+				console.log("Failed to fetch world information. No worlds exist!?");
+				return;
 			}
 			dispatch(fetchWorldListFailed("Failed to fetch world information. Server responded with a status "+response.status+" "+response.statusText))
 		}

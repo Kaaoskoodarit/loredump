@@ -39,6 +39,9 @@ export const getCategoryList = (worldid) => {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
+			} else if (response.status === 404) {
+				console.log("Failed to fetch category information. No categories exist!?");
+				return;
 			}
 			dispatch(fetchCategoryListFailed("Failed to fetch category information. Server responded with a status "+response.status+" "+response.statusText))
 		}

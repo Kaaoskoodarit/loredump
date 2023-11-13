@@ -37,6 +37,9 @@ export const getList = (worldid) => {
 			if(response.status === 403) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
+			} else if (response.status === 404) {
+				console.log("Failed to fetch page information. No lorepages exist!?");
+				return;
 			}
 			dispatch(fetchListFailed("Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
 		}
