@@ -85,7 +85,7 @@ const LorePage = (props) => {
 	
 
 	//IMAGES
-	const default_img = 'https://media.discordapp.net/attachments/1161992163765256203/1169189304220782662/image.png?ex=65547f64&is=65420a64&hm=32e108ff3fe3bb4e9bb89feed07a87015edb99fcc6a8f1d1ecc6b2ae8d4f0017&='
+	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
 
@@ -170,7 +170,6 @@ const LorePage = (props) => {
 	{loading}
 	<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
-		<Typography variant="lore">{worldurl}</Typography>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
