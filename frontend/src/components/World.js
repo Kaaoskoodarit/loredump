@@ -68,7 +68,7 @@ return(
     </Grid>
     
     <Grid item xs>
-    <ImageCard page={world}/>
+        <ImageCard page={world}/>
     </Grid>
     
     </Grid>
