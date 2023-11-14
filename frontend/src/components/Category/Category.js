@@ -46,11 +46,12 @@ const Category = (props) => {
 	// use navigate from react-router-dom
 	//const navigate = useNavigate();
 
-	/*
+	
 	useEffect(() => {
-		dispatch(getCategory(worldid,catpage.id))
+		dispatch(getCategory(worldid,catpage.id));
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
-	*/
+	
 	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();

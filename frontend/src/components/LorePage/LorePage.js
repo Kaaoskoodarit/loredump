@@ -58,11 +58,12 @@ const LorePage = (props) => {
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
 	//const navigate = useNavigate();
-	/*
+	
 	useEffect(() => {
-		dispatch(getPage(appState.worldid,page.id))
+		dispatch(getPage(appState.worldid,page.id));
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
-	*/
+	
 	
 	if (page.custom_url !== url && loading===""){
 		setLoading (<CircularProgress color="inherit" />);

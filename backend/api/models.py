@@ -1164,3 +1164,71 @@ class LorePage:
         for result in results_list:
             lore_page_urls.append(result["custom_url"])
         return lore_page_urls
+
+    @staticmethod
+    def get_by_connections(connections):
+        """
+        Returns a list of LorePage objects that are connected to the specified LorePage.
+
+        Args:
+            connections (list): A list of connections to filter by.
+
+        Returns:
+            list: A list of LorePage objects.
+        """
+        lorepages_collection = db["lorepages"]
+        lorepages = lorepages_collection.find({"connections": {"$elemMatch": {"target_id": {"$in": connections}}}})
+        return [
+            LorePage(
+                str(lorepage["_id"]),
+                lorepage["creator_id"],
+                lorepage["title"],
+                lorepage["world_id"],
+                lorepage["custom_url"],
+                lorepage["categories"],
+                lorepage["image"],
+                lorepage["description"],
+                lorepage["summary"],
+                lorepage["connections"],
+                lorepage["private_notes"],
+            )
+            for lorepage in lorepages
+        ]
+
+    @staticmethod
+    def remove_from_all_connections(lore_page_id):
+        """
+        Removes the specified LorePage from all connections.
+
+        Args:
+            lore_page_id (str): The ID of the LorePage to remove from all connections.
+
+        Returns:
+            bool: True if the LorePage was successfully removed from all connections, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        try:
+            result = lorepages_collection.update_many({}, {"$pull": {"connections": {"target_id": lore_page_id}}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    @staticmethod
+    def remove_from_all_categories(lore_page_id):
+        """
+        Removes the specified LorePage from all categories.
+
+        Args:
+            lore_page_id (str): The ID of the LorePage to remove from all categories.
+
+        Returns:
+            bool: True if the LorePage was successfully removed from all categories, False otherwise.
+        """
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": lore_page_id}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
