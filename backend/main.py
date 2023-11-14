@@ -1,5 +1,5 @@
 from collections import OrderedDict
-import datetime, os, jwt
+import datetime, os  # , jwt
 from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -385,6 +385,11 @@ def get_lore_pages(world_id):
             return jsonify({"error": "World doesn't have any lore pages"}), 404
     elif request.method == "POST":
         try:
+            # Check if empty strings in categories list and remove all of them
+            request.json["categories"] = list(filter(None, request.json["categories"]))
+            # If categories list is empty, add uncategorised category
+            if not request.json["categories"]:
+                request.json["categories"] = [Category.get_by_name("Uncategorised", world_id).id]
             lore_page = LorePage(
                 id=None,
                 title=request.json["title"],

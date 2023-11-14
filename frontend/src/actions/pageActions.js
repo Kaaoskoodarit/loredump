@@ -16,7 +16,7 @@ export const getList = (worldid) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page list from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages",request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages", request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -49,7 +49,7 @@ export const getList = (worldid) => {
 }
 
 // (async) function that dispatches a getPage action to the reducer
-export const getPage = (worldid,id) => {
+export const getPage = (worldid, id) => {
 	return async (dispatch) => {
 		// Set request
 		let request = {
@@ -58,7 +58,7 @@ export const getPage = (worldid,id) => {
 		// Start loading
 		dispatch(loading());
 		// Try to fetch the page from the server, wait for response
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/"+id,request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/" + id, request);
 		// Stop loading
 		dispatch(stopLoading());
 		// If no response, error
@@ -88,7 +88,7 @@ export const getPage = (worldid,id) => {
 }
 
 // (async) function that dispatches a "add page" action to the reducer
-export const addPage = (worldid,page) => {
+export const addPage = (worldid, page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"POST",
@@ -98,7 +98,7 @@ export const addPage = (worldid,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages",request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages", request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.ADD_PAGE_FAILED,"Failed to add new page. Server never responded. Try again later"))
@@ -125,13 +125,13 @@ export const addPage = (worldid,page) => {
 }
 
 // (async) function that dispatches a "remove page" action to the reducer
-export const removePage = (worldid,id) => {
+export const removePage = (worldid, id) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE"
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/"+id,request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/" + id, request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.REMOVE_PAGE_FAILED,"Failed to remove page. Server never responded. Try again later"))
@@ -155,7 +155,7 @@ export const removePage = (worldid,id) => {
 }
 
 // (async) function that dispatches a "edit page" action to the reducer
-export const editPage = (worldid,page) => {
+export const editPage = (worldid, page) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"PUT",
@@ -165,7 +165,7 @@ export const editPage = (worldid,page) => {
 			"body":JSON.stringify(page)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/"+page.id,request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/" + page.id, request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
@@ -186,7 +186,7 @@ export const editPage = (worldid,page) => {
 }
 
 // (async) function that dispatches a "update page" action to the reducer
-export const updatePage = (worldid,id,update) => {
+export const updatePage = (worldid, id, update) => {
 	return async (dispatch) => {
 		let tempbody = {"update":update}
 		let request = {
@@ -197,7 +197,7 @@ export const updatePage = (worldid,id,update) => {
 			"body":	JSON.stringify(tempbody)
 		}
 		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/lore_pages/update/"+id,request);
+		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/update/" + id, request);
 		dispatch(stopLoading());
 		if(!response) {
 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))

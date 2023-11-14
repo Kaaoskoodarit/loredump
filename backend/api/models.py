@@ -12,6 +12,7 @@ import secrets
 
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 # Connect to MongoDB
@@ -710,6 +711,17 @@ class Category:
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    # Remove one lore page from all categories. Used when deleting a lore page.
+    @staticmethod
+    def remove_lore_page_from_all(lore_page):
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
