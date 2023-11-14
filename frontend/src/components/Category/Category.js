@@ -50,7 +50,7 @@ const Category = (props) => {
 	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();
-	const [loading,setLoading] = useState(Boolean(false));
+	const [loading,setLoading] = useState(false);
 
 	if (catpage.custom_url !== url && loading===false){
 		setLoading (true);

@@ -1,7 +1,6 @@
 import {useState} from 'react';
-import {useSelector,useDispatch} from 'react-redux';
-import {addWorld,getWorld} from './../actions/worldActions';
-import { useNavigate, useParams } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import {addWorld} from './../actions/worldActions';
 import UploadWidget from './Cloudinary/UploadWidget';
 
 //MUI IMPORTS

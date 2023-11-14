@@ -127,7 +127,7 @@ function App() {
 				</div>
 			</Container>
 			);
-		} {
+		} else {
 		// Otherwise show Navbar, "message" and LoginPage
 		return (
 			<Container>

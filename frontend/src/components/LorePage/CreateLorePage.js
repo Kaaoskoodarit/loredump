@@ -8,8 +8,10 @@ import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
-
-
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import TextField from '@mui/material/TextField';
 import { Button, Divider, Paper } from '@mui/material';
 import { Container } from '@mui/system';
 
@@ -20,7 +22,7 @@ const CreateLorePage = (props) => {
 	const [state,setState] = useState({
 		title:"",
         custom_url:"",
-		categories:["Uncategorised"],
+		categories:[""],
 		image:"",
         summary:"",
         description:"",
@@ -86,12 +88,14 @@ const CreateLorePage = (props) => {
         
         let page = {
             ...state,
+           // categories: state.categories.filter(cat=>)
             world_id: worldid
         }
 
         //REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
         //custom url can be max 50 characters! (thus, the SLICE command)
         page.custom_url = page.custom_url === ""? state.title.slice(0,49).replace(/\s+/g, '_') : page.custom_url.replace(/\s+/g, '_')
+       
         // Add the new page to the database
         dispatch(addPage(worldid,page));
 
@@ -102,7 +106,7 @@ const CreateLorePage = (props) => {
         setState({
             title:"",
             custom_url:"",
-            categories:[],
+            categories:[""],
             image:"",
             summary:"",
             description:"",
@@ -123,70 +127,63 @@ const CreateLorePage = (props) => {
     },[pagestate]);
 
     return (
-        <Paper sx={{p:2, alignItems:"center"}}>
-            <Container >
+        <Paper elevation={3} sx={{p:2}}>
             <form className="mb-5" onSubmit={onSubmit}>
             <Typography variant="loreSmall">ADD A NEW LORE PAGE</Typography>
             <Divider/>
-            <Typography variant="h6">Title:</Typography>
-				<input type="text"
-						name="title"
-						id="title"
-						className="form-control"
-						onChange={onChange}
-						value={state.title}/>
-                <Typography variant="subtitle">This will be the title of your Lore Page!</Typography>
 
-                <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
-                <br/>
-                <br/>
-                <Typography variant="h6">Add Image:</Typography>
-                <br/>
-                <UploadWidget state={state} setState={setState} />
-                <br/>
-                <br/>
-                {/* <img key={image} src={image} style={{'maxWidth':200, 'maxHeight':200}} alt={""}></img> */}
-                <br/>
-                <br/>
-                <Typography variant="h6">Summary:</Typography>
-				<input type="text"
-						name="summary"
-						id="summary"
-						className="form-control"
-						onChange={onChange}
-						value={state.summary}/>
-                <Typography variant="h6">Description:</Typography>
-				<input type="text"
-						name="description"
-						id="description"
-						className="form-control"
-						onChange={onChange}
-						value={state.description}/>
-                <Connections state={state} setState={setState}/>
-                <br/>
-                <br/>
-                <Typography variant="h6">Private Notes:</Typography>
-				<input type="text"
-						name="private_notes"
-						id="private_notes"
-						className="form-control"
-						onChange={onChange}
-						value={state.private_notes}/>
-                <Typography variant="h6">Custom Url:</Typography>
-				<input type="text"
-						name="custom_url"
-						id="custom_url"
-						className="form-control"
-						onChange={onChange}
-						value={state.custom_url}/>
-                <br/>
-                <br/>
-                <br/>
-                <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
-            </form>
-            </Container>
+        <Grid container spacing={2}>
             
+            <Grid item xs={8}>
+                <Container sx={{ display: 'flex', flexDirection: 'column' }}>
+                {/* <Typography variant="lore">{page.title}</Typography> */}
+                    <TextField id="lore-title" name="title" label="Title" required multiline maxRows={2}
+                    value={state.title} onChange={onChange}/>
+
+                <Typography variant="subtitle">Categories:</Typography>
+                {/* <Grid container spacing={1}> */}
+                        <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
+                {/* </Grid> */}
+                <br/>
+                
+                <Typography variant="h6">Description:</Typography>
+                <TextField id="lore-description" name="description" label="Description" required multiline maxRows={10}
+                    value={state.description} onChange={onChange}/>
+                    <br/>
+                <Typography variant="h6">Notes:</Typography>
+                <TextField id="lore-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
+                    value={state.private_notes} onChange={onChange}/>
+                <br/>
+                <TextField id="lore-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
+                value={state.custom_url} onChange={onChange}/>
+                </Container>
+
+                </Grid>
+                <Grid item xs={4}>
+                    <Card elevation={3} sx={{ p:1, maxWidth:300 }}>
+
+                        <CardMedia sx={{ height:200}} image={state.image}/>                      
+                    <Typography variant="h6">Add Image:</Typography>
+                    <UploadWidget state={state} setState={setState} />
+                    <Typography variant="h6">Summary:</Typography>
+                    <TextField id="lore-summary" name="summary" label="Summary" required multiline maxRows={4}
+                    value={state.summary} onChange={onChange}/>
+                    <br/>
+                    <Typography variant="h6">Connections:</Typography>
+                    
+                    <Connections state={state} setState={setState}/>
+                    </Card>
+                </Grid>
+        <Grid item alignItems="center" xs={12}>
+        <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+        </Grid>
+                </Grid>
+        </form>
+
+			
+
         </Paper>
+
 
     )
 	
