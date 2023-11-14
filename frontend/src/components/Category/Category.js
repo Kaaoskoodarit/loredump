@@ -152,7 +152,7 @@ const Category = (props) => {
 				)
 			}
 			return(
-				<Grid key={index+page.id} item xs={3}>
+				<Grid key={index+page.id} item xs minWidth="240" >
 				<LoreSummaryCard page={page} index={index} changeMode={changeMode}
 				worldurl={worldurl}/>
 				</Grid>
@@ -168,10 +168,10 @@ const Category = (props) => {
 
 	return(
 		<Paper elevation={3} sx={{ p:2}}>
-		<Grid container spacing={2}>
+		<Grid container spacing={2} >
 		
 
-		<Grid item xs={8}>
+		<Grid item xs={12} sm={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{catpage.title}</Typography>
 
@@ -183,7 +183,7 @@ const Category = (props) => {
 		</Container>
 		</Grid>
 		
-		<Grid item xs={4}>
+		<Grid item xs >
 		<ImageCard page={catpage}/>
 		</Grid>
 		
