@@ -5,8 +5,6 @@ import EditRow from './EditRow';
 import { useParams } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {removePage,editPage} from '../../actions/pageActions';
-//import { useNavigate} from 'react-router-dom';
-//import ManageLinks from '../ManageLinks';
 import { getCategory} from '../../actions/categoryActions';
 import ImageCard from '../common/ImageCard';
 
@@ -43,32 +41,30 @@ const Category = (props) => {
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
-	// use navigate from react-router-dom
-	//const navigate = useNavigate();
 
-	
-	useEffect(() => {
-		dispatch(getCategory(worldid,catpage.id));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[])
-	
-	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();
+	
+	useEffect(() => {
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	
+	// Get page id based on url:
+	if (catlist) {
+		for (let cat of catlist) {
+			if (cat.custom_url === url) {
+				// If find a match, dispatch getPage to update page state
+				dispatch(getCategory(worldid,cat.id));
+				break;
+			}
+		}
+	}
+	},[url])
+	
+	
 	const [loading,setLoading] = useState(false);
 
 	if (catpage.custom_url !== url && loading===false){
 		setLoading (true);
-		// Get page id based on url:
-		if (catlist) {
-			for (let cat of catlist) {
-				if (cat.custom_url === url) {
-					// If find a match, dispatch getPage to update page state
-					dispatch(getCategory(worldid,cat.id));
-					break;
-				}
-			}
-		}
 	} else if (catpage.custom_url === url && loading === true) {setLoading(false)}
 	
 	// Function to change the state of the system, 
@@ -91,30 +87,17 @@ const Category = (props) => {
 				removeIndex:-1,
 				editIndex:-1
 			})
-			// setManagelinks({
-			// 	mode:"",
-			// 	page:""
-			//})
+
 		}
 	}
 
 
-	//Handler for the clickable link buttons in Row component
-	/*
-	const handleNavigate = (id) => {
-		dispatch(getPage(worldid,id));
-		navigate("/api/worlds/"+worldid+"/lore_pages/"+id)
-	}
-	*/
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(worldid,id));
 		changeMode("cancel");
 		return;
 
-
-		// removeLinkFromCategory(page,store)
-		//setManagelinks({mode:"remove-page",page:page})
 		
 	}
 	
@@ -164,8 +147,6 @@ const Category = (props) => {
 	//Display the loading icon if state is loading
 	pages = loading===false ? pages :<CircularProgress color="inherit" /> ;
 
-	// let managelinks_message = managelinks.mode!=="" ?
-	// 	<ManageLinks mode ={managelinks.mode} page={managelinks.page}/> : ""
 
 	return(
 		<Paper elevation={3} sx={{ p:2}}>

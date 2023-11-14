@@ -51,7 +51,7 @@ const LorePage = (props) => {
 	//ID RECIEVED FROM ROUTER URL	
 	let {worldurl, url}  = useParams();
 
-	const [loading,setLoading] = useState("");
+	//const [loading,setLoading] = useState(false);
 
 
     // Use dispatcer from react-redux
@@ -60,24 +60,24 @@ const LorePage = (props) => {
 	//const navigate = useNavigate();
 	
 	useEffect(() => {
-		dispatch(getPage(appState.worldid,page.id));
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[])
 	
-	
-	if (page.custom_url !== url && loading===""){
-		setLoading (<CircularProgress color="inherit" />);
-		// Get page id based on url:
-		if (pagelist) {
-			for (let page of pagelist) {
-					if (page.custom_url === url) {
-					// If find a match, dispatch getPage to update page state
-					dispatch(getPage(appState.worldid,page.id));
-					break;
-				}
+	// Get page id based on url:
+	if (pagelist) {
+		for (let page of pagelist) {
+				if (page.custom_url === url) {
+				// If find a match, dispatch getPage to update page state
+				dispatch(getPage(appState.worldid,page.id));
+				break;
 			}
 		}
-	} else if (page.custom_url === url && loading!=="") {setLoading("")}
+	}
+	},[url])
+	
+	
+	// if (page.custom_url !== url && loading===false){
+	// 	setLoading (true);
+	// } else if (page.custom_url === url && loading!==false) {setLoading(false)}
 
 	
 	const handleClickOpen = () => {
@@ -176,7 +176,6 @@ const LorePage = (props) => {
 	<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{page.title}</Typography>
-		{loading}
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
 		{categories_listed}
