@@ -1,5 +1,5 @@
 from collections import OrderedDict
-import datetime, os #, jwt
+import datetime, os  # , jwt
 from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -23,7 +23,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 if os.getenv("LOCAL") == "True":
     client = MongoClient("mongodb://localhost:27017/")
 else:
-    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://" + os.getenv("MONGODB_USER") + ":" + os.getenv("MONGODB_PASSWORD") + "@" + os.getenv("MONGODB_URL") + "/?retryWrites=true&w=majority")
 app.json.sort_keys = False  # Stop jsonify from sorting keys alphabetically
 
 # # Create a new client and connect to the server
@@ -60,6 +60,7 @@ def index():
             return jsonify({"error": "Session expired"}), 401
         return jsonify({"message": "Welcome to LoreDump!"})
 
+
 # Get currently logged in user's ID:
 @app.route("/api/id", methods=["GET"])
 def get_id():
@@ -67,7 +68,8 @@ def get_id():
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
-        return jsonify({"id": session['user_id']}), 200
+        return jsonify({"id": session["user_id"]}), 200
+
 
 # Routes for User model
 # Get currently logged in user:
@@ -167,7 +169,7 @@ def login():
             return jsonify({"success": "User successfully logged in"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 401
-        
+
     if request.method == "GET":
         if session:
             # If session exists, log user in automatically:
