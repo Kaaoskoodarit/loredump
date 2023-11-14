@@ -180,7 +180,7 @@ export const registerFailed = (error) => {
 	}
 }
 
-const loginSuccess = (username) => {
+const loginSuccess = () => {
 	return {
 		type:actionConstants.LOGIN_SUCCESS
 	}

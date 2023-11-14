@@ -16,7 +16,7 @@ const getInitialState = () => {
 
 // Save to sessionStorage
 const saveToStorage = (state) => {
-	sessionStorage.setItem("pagestate",JSON.stringify(state));
+	sessionStorage.setItem("worldstate",JSON.stringify(state));
 }
 
 // Initialize state

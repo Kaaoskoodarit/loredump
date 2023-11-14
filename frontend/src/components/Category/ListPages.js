@@ -21,7 +21,6 @@ const ListPages = (props) => {
 	const appState = useSelector((state) => {
 		return {
 			worldid:state.world.page.id,
-			//worldurl:state.world.page.custom_url,  // when transitioning from ids to urls
 			list:state.lore.list
 		}
 	})
