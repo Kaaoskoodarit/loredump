@@ -55,7 +55,7 @@ return(
     <Grid container spacing={2}>
     
 
-    <Grid item xs={8}>
+    <Grid item xs={12} sm={8}>
     <Container sx={{ display: 'flex', flexDirection: 'column' }}>
     <Typography variant="lore">{world.title}</Typography>
     
@@ -67,14 +67,14 @@ return(
     </Container>
     </Grid>
     
-    <Grid item xs={4}>
+    <Grid item xs>
     <ImageCard page={world}/>
     </Grid>
     
     </Grid>
     <br/>
     <br/>
-    <Table sx={{ minWidth: 650 }} size='small' aria-label="table of categories">
+    <Table size='small' aria-label="table of categories">
     <TableHead>
         <TableRow>
             <TableCell ><Typography variant='loreSmall'>Categories in this world:</Typography></TableCell>
