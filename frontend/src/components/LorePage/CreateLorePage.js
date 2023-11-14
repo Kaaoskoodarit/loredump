@@ -124,6 +124,7 @@ const CreateLorePage = (props) => {
             console.log(pagestate.custom_url);
             navigate("/"+worldurl+"/lorepage/"+pagestate.custom_url);
         }  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },[pagestate]);
 
     return (

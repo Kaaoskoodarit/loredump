@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import { useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -58,7 +58,11 @@ const LorePage = (props) => {
 	const dispatch = useDispatch();
 	// use navigate from react-router-dom
 	//const navigate = useNavigate();
-
+	/*
+	useEffect(() => {
+		dispatch(getPage(appState.worldid,page.id))
+	},[])
+	*/
 	
 	if (page.custom_url !== url && loading===""){
 		setLoading (<CircularProgress color="inherit" />);

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 import LoreSummaryCard from './../common/LoreSummaryCard';
 import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
@@ -46,7 +46,11 @@ const Category = (props) => {
 	// use navigate from react-router-dom
 	//const navigate = useNavigate();
 
-	
+	/*
+	useEffect(() => {
+		dispatch(getCategory(worldid,catpage.id))
+	},[])
+	*/
 	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();

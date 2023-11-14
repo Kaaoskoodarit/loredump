@@ -1,4 +1,5 @@
 import {loading,stopLoading,logoutFailed} from './loginActions';
+import { getWorld } from './worldActions';
 import * as actionConstants from './actionConstants';
 
 //ASYNC THUNKS
@@ -113,6 +114,7 @@ export const addCategory = (worldid,category) => {
 			// Get new page
 			const newcategory = await response.json();
 			dispatch(getCategory(worldid,newcategory.id))
+			dispatch(getWorld(worldid));
 		} else {
 			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -141,6 +143,7 @@ export const removeCategory = (worldid,id) => {
 			dispatch(fetchCategorySuccess(actionConstants.REMOVE_CATEGORY_SUCCESS));
 			// Get updated list
 			dispatch(getCategoryList(worldid));
+			dispatch(getWorld(worldid));
 		} else {
 			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
