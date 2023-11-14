@@ -381,24 +381,6 @@ class World:
             print(e)
             return False
 
-    def remove_category(self, category):
-        """
-        Removes a category from the world.
-
-        Args:
-            category (str): The category to be removed.
-
-        Returns:
-            bool: True if the category was removed successfully, False otherwise.
-        """
-        worlds_collection = db["worlds"]
-        try:
-            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"categories": str(category)}})
-            return result.modified_count == 1
-        except Exception as e:
-            print(e)
-            return False
-
     def add_lore_page(self, lore_page):
         """
         Adds a new lore page to the current world.
@@ -413,6 +395,24 @@ class World:
         worlds_collection = db["worlds"]
         try:
             result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
+
+    def remove_lore_page(self, lore_page):
+        """
+        Removes a lore page from the current world.
+
+        Args:
+            lore_page (str): The lore page to remove.
+
+        Returns:
+            bool: True if the lore page was successfully removed, False otherwise.
+        """
+        worlds_collection = db["worlds"]
+        try:
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)

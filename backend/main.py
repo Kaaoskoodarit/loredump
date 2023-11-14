@@ -317,10 +317,11 @@ def get_categories(world_id):
                 private_notes=request.json["private_notes"],
                 world_id=world_id,
                 custom_url=request.json["custom_url"],
+                lore_pages=request.json["lore_pages"],
             )
-            category.save()
+            result = category.save()
             # World.add_category(world_id, category.id)
-            return jsonify({"success": "Category successfully created"}), 200
+            return jsonify({"success": "Category successfully created", "id": result}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
@@ -463,7 +464,11 @@ def get_lore_page(world_id, lore_page_id):
                 return jsonify({"error": "Lore page not found"}), 404
             # Delete lore page from all categories
             Category.remove_lore_page_from_all(lore_page_id)
+            # Delete lore page from all connections
             lore_page.remove_from_all_connections(lore_page_id)
+            # Delete lore page from world
+            World.remove_lore_page(world_id, lore_page_id)
+            # Delete lore page from database
             lore_page.delete()
             return jsonify({"success": "Lore page successfully deleted"}), 200
         except Exception as e:
