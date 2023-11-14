@@ -2,11 +2,13 @@ import {useState} from 'react';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
+import Checkbox from '@mui/material/Checkbox';
+import ListItemText from '@mui/material/ListItemText';
+import { InputLabel } from '@mui/material';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -19,10 +21,10 @@ const MenuProps = {
   },
 };
 
-function getStyles(page, personName, theme) {
+function getStyles(page, options, theme) {
     return {
       fontWeight:
-        personName.indexOf(page) === -1
+        options.indexOf(page) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium,
     };
@@ -30,46 +32,70 @@ function getStyles(page, personName, theme) {
 
 const MultipleSelectChip =(props) => {
     const fullList = props.list 
+    const label = props.label
     const theme = useTheme();
-    const [personName, setPersonName] = useState([]);
+    const [options, setOptions] = useState([]);
   
     const handleChange = (event) => {
       const {
         target: { value },
       } = event;
-      setPersonName(
-        // On autofill we get a stringified value.
-        typeof value === 'string' ? value.split(',') : value,
-      );
+      // On autofill we get a stringified value.
+      let tempValue = typeof value === 'string' ? value.split(',') : value;
+
+      props.setState(() => {
+        return {
+            ...props.state,
+            [props.name]:tempValue,
+        }
+      });
+      setOptions(tempValue);
     };
-  
+
+    const getTitle = (id) => {
+      for (const page of fullList){
+        if (page.id === id) return page.title
+      }
+      return id;
+    }
+
     return (
       <div>
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
-          <Select
-            labelId="demo-multiple-chip-label"
-            id="demo-multiple-chip"
-            multiple
-            value={personName}
-            onChange={handleChange}
-            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value} />
-                ))}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+           {options.map((id) => {
+                let title = getTitle(id);
+                return  <Chip key={id} label={title} color='primary'/>
+                })}
               </Box>
-            )}
+        <FormControl sx={{ m: 1, width: 300 }}>
+          {/* <InputLabel id="demo-multiple-chip-label">{label}</InputLabel> */}              
+          <Select
+            labelId="multiple-select-chip-label"
+            id="multiple-chip"
+            multiple
+            displayEmpty
+            value={options}
+            onChange={handleChange}
+            input={<OutlinedInput id="select-multiple-chip" />}
+            renderValue={(selected)=> {
+              if (selected.length === 0) {
+              return <InputLabel id="multiple-chip-label">Select {label}</InputLabel>;
+            } 
+            return <InputLabel id="multiple-chip-label">{selected.length} {label} selected</InputLabel> 
+          }}
+
             MenuProps={MenuProps}
           >
             {fullList.map((page) => (
               <MenuItem
                 key={page.id}
                 value={page.id}
-                style={getStyles(page, personName, theme)}
+                name={page.title}
+                style={getStyles(page, options, theme)}
               >
-                {page.title}
+                 <Checkbox checked={options.indexOf(page.id) > -1} />
+                <ListItemText primary={page.title} />
+                
               </MenuItem>
             ))}
           </Select>

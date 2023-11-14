@@ -9,7 +9,6 @@ import UploadWidget from '../Cloudinary/UploadWidget';
 import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import Chip from '@mui/material/Chip';
 import MultipleSelectChip from './../common/MultipleSelectChip';
 
 
@@ -52,29 +51,6 @@ const CreateCategory = (props) => {
         })
     }
 
-    //OnChange function specifically for Categories
-    // const onCatChange = (event) => {
-
-    //     let tempArr =state.categories
-    //     //event target = Select html element, ID HAS to be the index of the row
-    //     tempArr[event.target.id] = event.target.value
-    //     setState(() => {
-    //         return{ 
-    //             ...state,
-    //             [event.target.name]:tempArr
-    //            }
-    //         })
-
-    // }
-
-    // const getLore = (id) => {
-	// 	for (const lore of lorelist){
-	// 		if (lore.id === id) return lore
-	// 	}
-	// 	return id;
-	// }
-
-
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -103,25 +79,21 @@ const CreateCategory = (props) => {
         })
 
     }
-    const getLoreTitle = (id) => {
-		for (const lore of lorelist){
-			if (lore.id === id) return lore.title
-		}
-		return id;
-	}
 
-	let lore_listed;
-	if(state.lore_pages){
-		lore_listed = state.lore_pages.map((id,index)=>{
-			let loreTitle = getLoreTitle(id)
-			return (
-				<Grid item>
-				<Chip color="primary" label={loreTitle} component={RouterLink} to={"/category/"+id} 
-				clickable />
-				</Grid>
-			)
-		})	
-	}
+    //TESTING
+    // let testRow = state.lore_pages? state.lore_pages.map((id)=>{<Typography >Lore: {id}</Typography>}):"NA"
+    // let testData = 
+    // <>
+    //     <Typography>Title {state.title}</Typography>
+    //     <Typography>Url {state.custom_url}</Typography>
+    //     <Typography>Img {state.image}</Typography>
+    //     <Typography>Desc {state.description}</Typography>
+    //     <Typography>Notes {state.private_notes}</Typography>
+    //     {testRow}
+    // </>
+    
+    
+    
     return(
 		<Paper elevation={3} sx={{ p:2}}>
              <form onSubmit={onSubmit}>
@@ -150,17 +122,17 @@ const CreateCategory = (props) => {
 		</Grid>
 		<Container>
 		<br/>
-		<br/>
-		<Divider/>
 		<Typography variant='loreSmall' >Add Lore to this Category:</Typography>
+		<Divider/>
+		<br/>	
+        <MultipleSelectChip list={lorelist} label={"Lore"} state={state} name="lore_pages" setState={setState}/>
 		<br/>
-				
-        <MultipleSelectChip list={lorelist} state={state} setState={setState}/>
+		<br/>
         <Button type='submit' color="success" variant='contained' size='xl'>Create Category</Button>
 		
+        {/* {testData} */}
 		</Container>
 		</form>
-
 	</Paper>
 
 	)
