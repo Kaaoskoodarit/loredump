@@ -400,7 +400,8 @@ class World:
             print(e)
             return False
 
-    def remove_lore_page(self, lore_page):
+    @staticmethod
+    def remove_lore_page(world_id, lore_page):
         """
         Removes a lore page from the current world.
 
@@ -412,7 +413,8 @@ class World:
         """
         worlds_collection = db["worlds"]
         try:
-            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
+            result = worlds_collection.update_one({"_id": ObjectId(world_id)}, {"$pull": {"lore_pages": str(lore_page)}})
+            print("asdfasdf")
             return result.modified_count == 1
         except Exception as e:
             print(e)

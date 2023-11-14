@@ -244,7 +244,7 @@ def get_worlds():
             )
             world.id = world.save()
             Category.add_uncategorised(str(world.id))
-            return jsonify({"success": "World successfully created"}), 200
+            return jsonify({"success": "World successfully created", "id": str(world.id)}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
