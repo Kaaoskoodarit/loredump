@@ -242,7 +242,7 @@ def get_worlds():
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
             )
-            world.save()
+            world.id = world.save()
             Category.add_uncategorised(str(world.id))
             return jsonify({"success": "World successfully created"}), 200
         except Exception as e:

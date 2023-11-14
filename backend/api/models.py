@@ -254,7 +254,7 @@ class World:
         image=None,
         description=None,
         private_notes=None,
-        categories=["Uncategorised"],
+        categories=[],
         lore_pages=[],
     ):
         self.id = id
