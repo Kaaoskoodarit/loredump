@@ -34,7 +34,8 @@ const MultipleSelectChip =(props) => {
     const fullList = props.list 
     const label = props.label
     const theme = useTheme();
-    const [options, setOptions] = useState([]);
+    //const [options, setOptions] = useState([]);
+    const options = props.state[props.name];
   
     const handleChange = (event) => {
       const {
@@ -49,7 +50,7 @@ const MultipleSelectChip =(props) => {
             [props.name]:tempValue,
         }
       });
-      setOptions(tempValue);
+      //setOptions(tempValue);
     };
 
     const getTitle = (id) => {
@@ -60,16 +61,16 @@ const MultipleSelectChip =(props) => {
     }
 
     return (
-      <div>
+        <FormControl >
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
            {options.map((id) => {
                 let title = getTitle(id);
                 return  <Chip key={id} label={title} color='primary'/>
                 })}
               </Box>
-        <FormControl sx={{ m: 1, width: 300 }}>
+              <br/>
           {/* <InputLabel id="demo-multiple-chip-label">{label}</InputLabel> */}              
-          <Select
+          <Select sx={{ width: 300 }}
             labelId="multiple-select-chip-label"
             id="multiple-chip"
             multiple
@@ -100,7 +101,6 @@ const MultipleSelectChip =(props) => {
             ))}
           </Select>
         </FormControl>
-      </div>
     );
   }
 

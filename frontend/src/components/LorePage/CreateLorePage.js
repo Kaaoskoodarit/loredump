@@ -4,6 +4,7 @@ import {addPage} from '../../actions/pageActions';
 //import {editCategory,getCategoryList} from '../../actions/categoryActions';
 import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
+import MultipleSelectChip from './../common/MultipleSelectChip';
 import AssignCategories from './AssignCategories'
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
@@ -22,7 +23,7 @@ const CreateLorePage = (props) => {
 	const [state,setState] = useState({
 		title:"",
         custom_url:"",
-		categories:[""],
+		categories:[],
 		image:"",
         summary:"",
         description:"",
@@ -40,7 +41,7 @@ const CreateLorePage = (props) => {
     const worldid = useSelector(state => state.world.page.id);
     const worldurl = useSelector(state => state.world.page.custom_url); 
     const pagestate = useSelector(state => state.lore.page);
-    //const categorylist = useSelector(state => state.category.list);
+    const categorylist = useSelector(state => state.category.list);
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -106,7 +107,7 @@ const CreateLorePage = (props) => {
         setState({
             title:"",
             custom_url:"",
-            categories:[""],
+            categories:[],
             image:"",
             summary:"",
             description:"",
@@ -130,25 +131,27 @@ const CreateLorePage = (props) => {
     return (
         <Paper elevation={3} sx={{p:2}}>
             <form className="mb-5" onSubmit={onSubmit}>
-            <Typography variant="loreSmall">ADD A NEW LORE PAGE</Typography>
-            <Divider/>
 
-        <Grid container spacing={2}>
-            
-            <Grid item xs={8}>
+        <Grid container rowSpacing={2}>
+            <Container>
+            <Typography variant="lore">Create a new Lore Page</Typography>
+            </Container>
+            <Grid item sm={12} md={8}>
                 <Container sx={{ display: 'flex', flexDirection: 'column' }}>
                 {/* <Typography variant="lore">{page.title}</Typography> */}
                     <TextField id="lore-title" name="title" label="Title" required multiline maxRows={2}
                     value={state.title} onChange={onChange}/>
 
-                <Typography variant="subtitle">Categories:</Typography>
                 {/* <Grid container spacing={1}> */}
-                        <AssignCategories state={state} setState={setState} onChange={onCatChange}/>
+                <br/>
+                <MultipleSelectChip list={categorylist} label={"Categories"} state={state} name="categories" setState={setState}/>
+
+                {/* <AssignCategories state={state} setState={setState} onChange={onCatChange}/> */}
                 {/* </Grid> */}
                 <br/>
                 
                 <Typography variant="h6">Description:</Typography>
-                <TextField id="lore-description" name="description" label="Description" required multiline maxRows={10}
+                <TextField id="lore-description" name="description" label="Description" multiline maxRows={10}
                     value={state.description} onChange={onChange}/>
                     <br/>
                 <Typography variant="h6">Notes:</Typography>
@@ -160,25 +163,28 @@ const CreateLorePage = (props) => {
                 </Container>
 
                 </Grid>
-                <Grid item xs={4}>
-                    <Card elevation={3} sx={{ p:1, maxWidth:300 }}>
+                <Grid item xs>
+                    <Container>
 
-                        <CardMedia sx={{ height:200}} image={state.image}/>                      
+                    <Card elevation={3} sx={{ p:1, maxWidth:300,display: 'flex', flexDirection: 'column'  }}>
+
+                    <CardMedia sx={{ height:200}} image={state.image}/>                      
                     <Typography variant="h6">Add Image:</Typography>
                     <UploadWidget state={state} setState={setState} />
                     <Typography variant="h6">Summary:</Typography>
-                    <TextField id="lore-summary" name="summary" label="Summary" required multiline maxRows={4}
+
+                    <TextField id="lore-summary" name="summary" label="Summary" multiline maxRows={4}
                     value={state.summary} onChange={onChange}/>
                     <br/>
-                    <Typography variant="h6">Connections:</Typography>
                     
                     <Connections state={state} setState={setState}/>
-                    </Card>
+                    </Card  >
+                    </Container>
                 </Grid>
-        <Grid item alignItems="center" xs={12}>
-        <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+        <Container>
+            <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+        </Container>
         </Grid>
-                </Grid>
         </form>
 
 			

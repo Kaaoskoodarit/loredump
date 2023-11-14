@@ -56,8 +56,6 @@ const LorePage = (props) => {
 
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
-	// use navigate from react-router-dom
-	//const navigate = useNavigate();
 	
 	useEffect(() => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,11 +141,11 @@ const LorePage = (props) => {
 
 	let connections_listed;
 	if(page.connections){
-		connections_listed = page.connections.map((connection)=>{
+		connections_listed = page.connections.map((connection,index)=>{
 			if(connection.target_id!==""&&connection.type!==""){
 				let lore = getConnectionData(connection.target_id)
 				return (
-					<Grid item >
+					<Grid item key={index+":"+connection.target_id}>
 						<Stack direction='row' alignItems="center" spacing={0.5}>
 						<Typography variant='body2'>
 						{connection.type+":"}
@@ -163,7 +161,7 @@ const LorePage = (props) => {
 
 	// // IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
 	if (!page.connections){
-		connections_listed=<Grid item>None</Grid>
+		connections_listed=<Grid item key="None">None</Grid>
 	}
 
 	

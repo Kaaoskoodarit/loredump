@@ -10,6 +10,7 @@ import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import MultipleSelectChip from './../common/MultipleSelectChip';
+import Box from '@mui/material/Box';
 
 
 
@@ -98,26 +99,34 @@ const CreateCategory = (props) => {
 		<Paper elevation={3} sx={{ p:2}}>
              <form onSubmit={onSubmit}>
             
+		<Grid container spacing={1}>
+            <Container>
             <Typography variant='lore'>Create a new Category</Typography>
-		<Grid container spacing={2}>
+            </Container>
 		
 
-		<Grid item xs={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
-        <TextField id="category-title" name="title" label="Title" required multiline maxRows={2}
-            value={state.title} onChange={onChange}/>
+		<Grid item xs={12} sm={8}>
+            <Container sx={{ display: 'flex', flexDirection: 'column' }}>
+            <TextField id="category-title" name="title" label="Title" required multiline maxRows={2}
+                value={state.title} onChange={onChange}/>
+                <br/>
+            <TextField id="category-description" name="description" label="Description" multiline maxRows={10}
+                value={state.description} onChange={onChange}/>
             <br/>
-        <TextField id="category-description" name="description" label="Description" multiline maxRows={10}
-            value={state.description} onChange={onChange}/>
-        <br/>
-        <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
-            value={state.private_notes} onChange={onChange}/>
-		<br/>
-        <TextField id="category-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
-            value={state.custom_url} onChange={onChange}/>
-		</Container>
+            <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
+                value={state.private_notes} onChange={onChange}/>
+            <br/>
+            <TextField id="category-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
+                value={state.custom_url} onChange={onChange}/>
+            </Container>
 		</Grid>
-		<UploadWidget state={state} setState={setState} />
+        <Grid item xs={4}>
+            <Box sx={{ height:200 }}>
+            <img src={state.image}/>
+            </Box>
+            <Typography variant="h6">Add Image:</Typography>
+            <UploadWidget state={state} setState={setState} />
+        </Grid>
 		
 		</Grid>
 		<Container>
