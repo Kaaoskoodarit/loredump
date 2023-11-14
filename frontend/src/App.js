@@ -98,9 +98,11 @@ function App() {
 					<Route path="/:worldurl/new-category" element={<CreateCategory user={appState.user}/>}/>
 					<Route path="/:worldurl/new-page" element={<CreateLorePage user={appState.user}/>}/>
 					<Route path="/:worldurl/category" element={<Category/>}/>
+					<Route path="/:worldurl/category/undefined" element={<ListPages/>}/>
 					<Route path="/:worldurl/category/:url" element={<Category/>}/>
 					{/* <Route path="/category/*" element={<Category />}/> */}
 					<Route path="/:worldurl/lorepage" element={<ListPages />}/>
+					<Route path="/:worldurl/lorepage/undefined" element={<ListPages/>}/>
 					<Route path="/:worldurl/lorepage/:url" element={<LorePage/>}/>
 					{/* <Route path={"/lorepage/"+id} element={<LorePage id={id}/>}/> */}
 					{/* <Route path="/lorepage/*" element={<LorePage/>}/> */}

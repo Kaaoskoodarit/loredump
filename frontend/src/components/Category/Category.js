@@ -112,7 +112,8 @@ const Category = (props) => {
 		for (const lore of lorelist){
 			if (lore.id === id) return lore
 		}
-		return id;
+		//MATCH WAS NOT FOUND
+		return "Lost Link";
 	}
 
 	let pages = <Typography sx={{p:2}} variant="body1">No Lore pages linked yet.</Typography>
