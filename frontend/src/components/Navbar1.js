@@ -24,11 +24,11 @@ const Navbar1 = (props) => {
 		return {
 			isLogged:state.login.isLogged,
 			user:state.login.user,
+			username:state.login.username,
 			//world:state.world.title
 		}
 	})
 	const isLogged = state.isLogged
-	const title = state.title
 
 	//const [auth, setAuth] = useState(true);
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -69,6 +69,7 @@ const Navbar1 = (props) => {
 				>
 					<AccountCircle />
 				</IconButton>
+				<Typography>{state.username}</Typography>
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}
@@ -84,8 +85,7 @@ const Navbar1 = (props) => {
 					open={Boolean(anchorEl)}
 					onClose={()=>handleClose("E1")}
 				>
-					<MenuItem onClick={()=>handleClose("E1")}>Profile</MenuItem>
-					<MenuItem onClick={()=>handleClose("E1")}>My account</MenuItem>
+					<MenuItem onClick={()=>handleClose("E1")}></MenuItem>
 					<MenuItem onClick={()=>handleClose("E1")}>
 					<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
 					</MenuItem>

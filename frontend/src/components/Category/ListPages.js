@@ -4,7 +4,7 @@ import RemoveRow from './RemoveRow';
 import EditRow from './EditRow';
 import {useSelector,useDispatch} from 'react-redux';
 import {removePage,editPage} from '../../actions/pageActions';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import { Grid } from '@mui/material';
 
 
@@ -25,14 +25,12 @@ const ListPages = (props) => {
 			list:state.lore.list
 		}
 	})
-	console.log("Listpages: world ID",appState.worldid);
+	//console.log("Listpages: world ID",appState.worldid);
 	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
-	// use navigate from react-router-dom
-	//const navigate = useNavigate();
 
-	let {worldurl, id}  = useParams();
+	let {worldurl}  = useParams();
 
 	
 	// Function to change the state of the system, 
@@ -57,15 +55,6 @@ const ListPages = (props) => {
 			})
 		}
 	}
-
-	//Handler for the clickable link buttons in Row component
-	/*
-	const handleNavigate = (id) => {
-		console.log(appState.worldid);
-		dispatch(getPage(appState.worldid,id));
-		navigate("/api/worlds/"+appState.worldid+"/lore_pages/"+id)
-	}
-	*/
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(appState.worldid,id));

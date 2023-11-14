@@ -125,7 +125,7 @@ const LorePage = (props) => {
 			
 			let category = getCategoryData(id)
 			return (
-				<Grid item>
+				<Grid item key={index+":"+id}>
 				<Chip color="primary" label={category.title} component={RouterLink} to={"/"+worldurl+"/category/"+category.custom_url} 
 				clickable />
 				</Grid>
