@@ -93,7 +93,7 @@ export const login = (user) => {
 				return;
 			}
 			// If data parsed, set current user
-			dispatch(loginSuccess());
+			dispatch(loginSuccess(user.username));
 			dispatch(getUser());
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
@@ -151,9 +151,10 @@ export const registerFailed = (error) => {
 	}
 }
 
-const loginSuccess = () => {
+const loginSuccess = (username) => {
 	return {
-		type:actionConstants.LOGIN_SUCCESS
+		type:actionConstants.LOGIN_SUCCESS,
+		username:username
 	}
 }
 
