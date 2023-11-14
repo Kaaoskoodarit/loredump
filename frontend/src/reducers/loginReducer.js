@@ -58,6 +58,15 @@ const loginReducer = (state = initialState,action) => {
 		case actionConstants.LOGIN_SUCCESS:
 			tempState = {
 				...state,
+				isLogged:true
+			}
+			saveToStorage(tempState);
+			return tempState;
+		case actionConstants.SET_LOGIN:
+			tempState = {
+				...state,
+				isLogged:true,
+				user:action.user,
 				username:action.username
 			}
 			saveToStorage(tempState);
@@ -93,8 +102,8 @@ const loginReducer = (state = initialState,action) => {
 		case actionConstants.SET_USERNAME:
 			tempState = {
 				...state,
-				isLogged:true,
-				user:action.user
+				user:action.user,
+				username:action.username
 			}
 			saveToStorage(tempState);
 			return tempState;

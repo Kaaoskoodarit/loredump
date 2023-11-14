@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import {register,registerFailed,login,getUser} from '../actions/loginActions';
+import {register,registerFailed,login,checkLogin} from '../actions/loginActions';
 import { Button, Card } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -35,16 +35,10 @@ const LoginPage = (props) => {
 	// Lets us use dispatch function from Redux store
 	const dispatch = useDispatch();
 
+	// NEW ACTION FOR LOGINCHECK!?
 	// Check if user is logged in, by trying to find a cookie
 	useEffect(() => {
-		dispatch(getUser())
-		/*
-		console.log("test useEffect");
-		if (document.cookie.match(/^(.*;)?\s*session\s*=\s*[^;]+(.*)?$/)) {
-			console.log(document.cookie);
-			dispatch(getUser())
-		}
-		*/
+		dispatch(checkLogin())
 	},[])
 	
 	// Function to handle "onChange" events in components

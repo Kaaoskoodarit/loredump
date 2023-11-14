@@ -39,6 +39,35 @@ export const register = (user) => {
 }
 
 // (async) function that dispatches a login action to the reducer
+export const checkLogin = () => {
+	return async (dispatch) => {
+		let request = {
+			"method":"GET"
+		}
+		dispatch(loading());
+		const response = await fetch("/api/id",request);
+		dispatch(stopLoading());
+		if(!response) {
+			console.log("Checking login status. Server never responded. Try again later");
+			return;
+		}
+		if(response.ok) {
+			// takes response, and turns it from JSON string to JS object
+			// waits for parsing to be done!
+			const data = await response.json();
+			if(!data) {
+				console.log("Failed to parse user information. Try again later");
+				return;
+			}
+			// If data parsed, set current user
+			dispatch(setLogin(data.id,data.username));
+		} else {
+			console.log("User not logged in!");
+		}
+	}
+}
+
+// (async) function that dispatches a login action to the reducer
 export const getUser = () => {
 	return async (dispatch) => {
 		let request = {
@@ -60,7 +89,7 @@ export const getUser = () => {
 				return;
 			}
 			// If data parsed, set current user
-			dispatch(setUser(data.id));
+			dispatch(setUser(data.id,data.username));
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
@@ -93,7 +122,7 @@ export const login = (user) => {
 				return;
 			}
 			// If data parsed, set current user
-			dispatch(loginSuccess(user.username));
+			dispatch(loginSuccess());
 			dispatch(getUser());
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
@@ -153,7 +182,14 @@ export const registerFailed = (error) => {
 
 const loginSuccess = (username) => {
 	return {
-		type:actionConstants.LOGIN_SUCCESS,
+		type:actionConstants.LOGIN_SUCCESS
+	}
+}
+
+const setLogin = (user,username) => {
+	return {
+		type:actionConstants.SET_LOGIN,
+		user:user,
 		username:username
 	}
 }
@@ -178,9 +214,10 @@ export const logoutFailed = (error) => {
 	}
 }
 
-const setUser = (user) => {
+const setUser = (user,username) => {
 	return {
 		type:actionConstants.SET_USERNAME,
-		user:user
+		user:user,
+		username:username
 	}
 }
