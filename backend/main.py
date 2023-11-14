@@ -1,9 +1,8 @@
 from collections import OrderedDict
-import datetime, os #, jwt
+import datetime, os, jwt
 from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-import pymongo
 from flask import Flask, Response, jsonify, request, session
 import pytz
 from api.models import User, World, Category, LorePage
@@ -20,6 +19,7 @@ uri = os.getenv("DOMAIN")
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
 if os.getenv("LOCAL") == "True":
     client = MongoClient("mongodb://localhost:27017/")
 else:
@@ -30,7 +30,9 @@ app.json.sort_keys = False  # Stop jsonify from sorting keys alphabetically
 # client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Connect to MongoDB
-db = client["LoreDump"]
+mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
+client = MongoClient(mongourl)
+db = client['LoreDump']
 
 # Session Time-To-Alive, until user has to log in again
 ttl = 60  # minutes
@@ -53,7 +55,9 @@ def index():
     if request.method == "GET":
         if session["ttl"] < datetime.datetime.utcnow():
             # Reset session Time-To-Live
-            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=ttl)
+            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(
+                minutes=ttl
+            )
         else:
             # Delete session
             session.clear()
@@ -71,7 +75,7 @@ def get_id():
 
 # Routes for User model
 # Get currently logged in user:
-@app.route("/api/user", methods=["GET", "PATCH", "DELETE"])
+@app.route("/api/user", methods=["GET", "PUT", "DELETE"])
 def user():
     """
     Returns the username of the logged in user, if any.
@@ -84,7 +88,7 @@ def user():
             return jsonify(user.serialize())
         except Exception as e:
             return jsonify({"error": str(e)}), 401
-    if request.method == "PATCH":
+    if request.method == "PUT":
         try:
             if "user_id" not in session:
                 return jsonify({"error": "User not logged in"}), 401
@@ -94,8 +98,8 @@ def user():
                 user.password = request.json["password"]
             else:
                 user.password = user.password
-            user.update()
-            return jsonify({"success": "Password successfully updated"}), 200
+            user.save()
+            return jsonify({"success": "User successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
     if request.method == "DELETE":
@@ -117,7 +121,7 @@ def user():
 def register():
     if session:
         session.clear()
-        return jsonify({"error": "User already logged in, logging you out"}), 403
+        return jsonify({"error": "User already logged in, logging you out"}), 401
     # Register new user:
     if request.method == "POST":
         try:
@@ -143,7 +147,7 @@ def login():
             # Get username and password from request body
             if session:
                 session.clear()
-                return jsonify({"error": "User already logged in, logging you out"}), 403
+                return jsonify({"error": "User already logged in, logging you out"}), 401
             username = request.json["username"]
             password = request.json["password"]
             user = User(None, username, password)
@@ -171,9 +175,9 @@ def login():
     if request.method == "GET":
         if session:
             # If session exists, log user in automatically:
-            user = User.get_by_id(session["user_id"])
-            user.login()
             return jsonify({"success": "User already logged in"}), 200
+        else:
+            return jsonify({"error": "Please log in"})
 
 
 @app.route("/protected")
@@ -199,7 +203,9 @@ def before_request():
         return jsonify({"error": "User not logged in"}), 401
     if session["ttl"] > datetime.datetime.now(pytz.utc):
         # Reset session Time-To-Live
-        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
+        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
+            minutes=ttl
+        )
     else:
         # Delete session
         session.clear()
@@ -210,7 +216,7 @@ def before_request():
 def logout():
     # Clear session:
     if "user_id" not in session:
-        return jsonify({"error": "User not logged in"}), 400
+        return jsonify({"error": "User not logged in"}), 401
     session.clear()
     return jsonify({"success": "User successfully logged out"}), 200
 
@@ -240,14 +246,9 @@ def get_worlds():
                 image=request.json["image"],
                 private_notes=request.json["private_notes"],
             )
-            if " " in world.custom_url:
-                return jsonify({"error": "URL can't contain spaces"}), 400
-            result = world.save()
-            Category.add_uncategorised(str(result))
-            return (
-                jsonify({"success": "World successfully created", "id": str(result)}),
-                200,
-            )
+            world.save()
+            Category.add_uncategorised(str(world.id))
+            return jsonify({"success": "World successfully created"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
@@ -306,7 +307,7 @@ def get_categories(world_id):
     if request.method == "GET":
         categories = Category.get_all_by_world(world_id)
         if categories:
-            return jsonify([category.serialize() for category in categories]), 200
+            return jsonify([category.serialize() for category in categories])
         else:
             return jsonify({"error": "World doesn't have any categories"}), 404
     elif request.method == "POST":
@@ -321,27 +322,15 @@ def get_categories(world_id):
                 world_id=world_id,
                 custom_url=request.json["custom_url"],
             )
-            if " " in category.custom_url:
-                return jsonify({"error": "URL can't contain spaces"}), 400
-            # Check if URL is in use:
-            if category.custom_url in Category.get_all_category_urls_from_world(world_id) and category.custom_url != None:
-                return (
-                    jsonify({"error": "URL is already in use, it must be unique inside the world"}),
-                    409,
-                )
-            result = category.save()
+            category.save()
             # World.add_category(world_id, category.id)
-            return (
-                jsonify({"success": "Category successfully created", "id": result}),
-                200,
-            )
+            return jsonify({"success": "Category successfully created"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
 
 @app.route(
-    "/api/worlds/<world_id>/categories/<category_id>",
-    methods=["GET", "PATCH", "DELETE"],
+    "/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"]
 )
 def get_category(world_id, category_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
@@ -352,7 +341,7 @@ def get_category(world_id, category_id):
             return jsonify({"error": "Category not found"}), 404
         else:
             return jsonify(category.serialize())
-    elif request.method == "PATCH":
+    elif request.method == "PUT":
         try:
             category = Category.get_by_id(category_id)
             if not category:
@@ -434,7 +423,7 @@ def get_lore_pages(world_id):
 
 @app.route(
     "/api/worlds/<world_id>/lore_pages/<lore_page_id>",
-    methods=["GET", "DELETE", "PATCH"],
+    methods=["GET", "PUT", "DELETE", "PATCH"],
 )
 def get_lore_page(world_id, lore_page_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:

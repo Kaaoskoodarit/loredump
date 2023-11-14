@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import {register,registerFailed,login} from '../actions/loginActions';
+import {register,registerFailed,login,getUser} from '../actions/loginActions';
 import { Button, Card } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -31,10 +31,21 @@ const LoginPage = (props) => {
 	const handleMouseDownPassword = (event) => {
 		event.preventDefault();
 	};
-	
 	  
 	// Lets us use dispatch function from Redux store
 	const dispatch = useDispatch();
+
+	// Check if user is logged in, by trying to find a cookie
+	useEffect(() => {
+		dispatch(getUser())
+		/*
+		console.log("test useEffect");
+		if (document.cookie.match(/^(.*;)?\s*session\s*=\s*[^;]+(.*)?$/)) {
+			console.log(document.cookie);
+			dispatch(getUser())
+		}
+		*/
+	},[])
 	
 	// Function to handle "onChange" events in components
 	const onChange = (event) => {
