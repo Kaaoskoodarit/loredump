@@ -4,14 +4,13 @@ import {Link as RouterLink} from 'react-router-dom'
 import ImageCard from './common/ImageCard';
 
 //MUI
-import { Grid, Typography, Paper, Divider, Stack } from '@mui/material';
+import { Grid, Typography, Paper} from '@mui/material';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
             
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
@@ -35,14 +34,14 @@ const World = (props) => {
 
     const catLinks = categorylist? categorylist.map((cat) => {
 		return(
-            <TableRow>
+            <TableRow key={cat.id}>
             <TableCell>
-                <Link key={cat.id} variant="h6" color="inherit" underline="hover" component={RouterLink} 
+                <Link  variant="h6" color="inherit" underline="hover" component={RouterLink} 
                 to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.title}</Link>
             </TableCell>
             <TableCell>
                 <Typography align='right'>
-                <Link key={cat.id} variant="body1" align='right' color="inherit" underline="hover" component={RouterLink} 
+                <Link variant="body1" align='right' color="inherit" underline="hover" component={RouterLink} 
                     to={"/"+worldurl+"/category/"+cat.custom_url}>{cat.lore_pages.length} Pages</Link>
                     </Typography>
             </TableCell>

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Card, CardMedia, CardActionArea } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 
@@ -30,7 +29,7 @@ const handleClickOpen = () => {
             <CardMedia sx={{height:200}} image={image} title={"Image for "+page.title}/>
             </CardActionArea>
             <Dialog open={open} onClose={handleClose} aria-label="image-dialog">
-        <DialogContent maxWidth="1000" maxHeight="1000" >
+        <DialogContent sx={{maxWidth:"1000", maxHeight:"1000"}} >
             <img height='100%' width='100%' src={image} alt={""}/>
         </DialogContent>
             </Dialog> </Card> 

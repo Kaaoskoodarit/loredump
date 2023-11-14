@@ -1,8 +1,8 @@
 import { Card,CardMedia,CardContent, CardActions, Typography,Button, CardActionArea } from "@mui/material"
 
-import {useSelector} from 'react-redux';
+//import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 //import Box from '@mui/material/Box';
 
 
@@ -15,37 +15,40 @@ const LoreSummaryCard = (props) => {
 	const image = (props.page.image!=="")? props.page.image: default_img;
 	const worldurl = props.worldurl
 
-	const categorylist = useSelector(state => state.category.list);
+	
+	//CODE FOR LISTING CATEGORIES FOR EACH LORE
+	
+	//const categorylist = useSelector(state => state.category.list);
 
-	const getCategoryTitle = (id) => {
-		for (const category of categorylist){
-			if (category.id === id) return category.title
-		}
-		return id;
-	}
+	// const getCategoryTitle = (id) => {
+	// 	for (const category of categorylist){
+	// 		if (category.id === id) return category.title
+	// 	}
+	// 	return id;
+	// }
 
-	const getCategoryUrl = (id) => {
-		for (const category of categorylist){
-			if (category.id === id) return category.custom_url
-		}
-		return id;
-	}
+	// const getCategoryUrl = (id) => {
+	// 	for (const category of categorylist){
+	// 		if (category.id === id) return category.custom_url
+	// 	}
+	// 	return id;
+	// }
 
-	let categories_listed;
-	if(props.page.categories){
-		categories_listed = props.page.categories.map((id,index)=>{
-			let categoryTitle = getCategoryTitle(id)
-			let categoryUrl = getCategoryUrl(id)
-			return (
-			<Link key={index+id} color="alert" underline="hover" component={RouterLink}
-			to={"/"+worldurl+"/category/"+categoryUrl}>{categoryTitle}</Link>
-			)
-		})
-	}
+	// let categories_listed;
+	// if(props.page.categories){
+	// 	categories_listed = props.page.categories.map((id,index)=>{
+	// 		let categoryTitle = getCategoryTitle(id)
+	// 		let categoryUrl = getCategoryUrl(id)
+	// 		return (
+	// 		<Link key={index+id} color="alert" underline="hover" component={RouterLink}
+	// 		to={"/"+worldurl+"/category/"+categoryUrl}>{categoryTitle}</Link>
+	// 		)
+	// 	})
+	// }
 
 	//className="nav-link"
 	return(
-	<Card elevation={6} sx={{ p:1, display: 'flex', flexDirection: 'column', alignItems:"center" }}>
+	<Card key={props.page.id} elevation={6} sx={{ p:1, display: 'flex', flexDirection: 'column', alignItems:"center" }}>
 
 
 	{/* <Box  sx={{ display: 'flex', flexDirection: 'column' }}> */}

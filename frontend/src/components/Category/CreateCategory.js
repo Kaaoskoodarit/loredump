@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {addCategory,getCategory} from '../../actions/categoryActions';
-import { useNavigate, useParams } from 'react-router-dom';
+import {addCategory} from '../../actions/categoryActions';
 import {Link as RouterLink} from 'react-router-dom'
 import UploadWidget from '../Cloudinary/UploadWidget';
 
@@ -11,7 +10,6 @@ import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
-import Connections from '../LorePage/Relationships';
 import MultipleSelectChip from './../common/MultipleSelectChip';
 
 
@@ -33,14 +31,11 @@ const CreateCategory = (props) => {
     // Get token and categorystate from the store
     const worldid = useSelector(state => state.world.page.id);
     //const worldurl = useSelector(state => state.world.page.custom_url);
-    const categorystate = useSelector(state => state.category.page);
+    //const categorystate = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.lore.list)
 
-    // Use dispatch and navigate
+    // Use dispatch
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    let {worldurl, id}  = useParams();
 
     // Handle normal onChange events    
     const onChange = (event) => {
@@ -58,26 +53,26 @@ const CreateCategory = (props) => {
     }
 
     //OnChange function specifically for Categories
-    const onCatChange = (event) => {
+    // const onCatChange = (event) => {
 
-        let tempArr =state.categories
-        //event target = Select html element, ID HAS to be the index of the row
-        tempArr[event.target.id] = event.target.value
-        setState(() => {
-            return{ 
-                ...state,
-                [event.target.name]:tempArr
-               }
-            })
+    //     let tempArr =state.categories
+    //     //event target = Select html element, ID HAS to be the index of the row
+    //     tempArr[event.target.id] = event.target.value
+    //     setState(() => {
+    //         return{ 
+    //             ...state,
+    //             [event.target.name]:tempArr
+    //            }
+    //         })
 
-    }
+    // }
 
-    const getLore = (id) => {
-		for (const lore of lorelist){
-			if (lore.id === id) return lore
-		}
-		return id;
-	}
+    // const getLore = (id) => {
+	// 	for (const lore of lorelist){
+	// 		if (lore.id === id) return lore
+	// 	}
+	// 	return id;
+	// }
 
 
     
@@ -89,11 +84,14 @@ const CreateCategory = (props) => {
             ...state,
             world_id: worldid
         }
+
+        //REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        category.custom_url = category.custom_url === ""? state.title.slice(0,49).replace(/\s+/g, '_') : category.custom_url.replace(/\s+/g, '_')
+
         // Add the new page to the database
         dispatch(addCategory(worldid,category));
-        // Redirect to the new Category (getCategory maybe redundant? test after merge!)
-        // dispatch(getCategory(worldid,categorystate.id));
-        // navigate("/"+worldid+"/category/"+categorystate.id);
+       
         // Reset the state of the page and relationships
         setState({
             title:"",
@@ -156,80 +154,16 @@ const CreateCategory = (props) => {
 		<Divider/>
 		<Typography variant='loreSmall' >Add Lore to this Category:</Typography>
 		<br/>
-		<br/>
-		</Container>
-		
-		<Grid container spacing={3}>
-            <MultipleSelectChip list={lorelist} state={state} setState={setState}/>
-			{/* add more pages */}
-		</Grid>
+				
+        <MultipleSelectChip list={lorelist} state={state} setState={setState}/>
         <Button type='submit' color="success" variant='contained' size='xl'>Create Category</Button>
+		
+		</Container>
 		</form>
 
 	</Paper>
 
 	)
-    // return (
-    //     <>
-    //     <div style={{
-	// 		margin:"auto",
-	// 		width:"40%",
-	// 		textAlign:"left"
-	// 	}}>
-    //         <form className="mb-5" onSubmit={onSubmit}>
-	// 			<label htmlFor="title" className="form-label">Title</label>
-	// 			<input type="text"
-	// 					name="title"
-	// 					id="title"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.title}/>
-    //                 <div id="title-help" className="form-text">
-    //                 This will be the title of your Category!
-    //                 </div>
-    //             <br/>
-    //             <br/>
-    //             <label htmlFor="image" className="form-label">Image link</label>
-	// 			<input type="url"
-	// 					name="image"
-	// 					id="image"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.image}/>
-    //             <label htmlFor="summary" className="form-label">Summary</label>
-	// 			<input type="text"
-	// 					name="summary"
-	// 					id="summary"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.summary}/>
-    //             <label htmlFor="description" className="form-label">Description</label>
-	// 			<input type="text"
-	// 					name="description"
-	// 					id="description"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.description}/>
-    //             <label htmlFor="notes" className="form-label">Private Notes</label>
-	// 			<input type="text"
-	// 					name="notes"
-	// 					id="notes"
-	// 					className="form-control"
-	// 					onChange={onChange}
-	// 					value={state.private_notes}/>
-    //             <select name={"categories"}
-    //                         id={index}
-    //                         className="form-select"
-    //                         aria-label="Select Categories"
-    //                         onChange={onCatChange}>
-    //                     <option key={"selected"} value={state.categories[index]}>{selectedText}</option>
-    //             </select>
-    //             <br/>
-    //             <input type="submit" className="btn btn-primary" value="Create new Lore Page"/>
-    //         </form>
-    //     </div>
-    //      </>
-    // )
 	
 }
 

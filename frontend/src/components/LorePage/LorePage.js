@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
 import {Link as RouterLink} from 'react-router-dom'
@@ -157,7 +157,7 @@ const LorePage = (props) => {
 	}
 
 	// // IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	if (connections_listed.length ===1 && connections_listed[0]===""){
+	if (!page.connections){
 		connections_listed=<Grid item>None</Grid>
 	}
 
@@ -167,10 +167,11 @@ const LorePage = (props) => {
 		
 	<Paper elevation={3} sx={{ p:2}}>
 	<Grid container spacing={2}>
-	{loading}
+	
 	<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{page.title}</Typography>
+		{loading}
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
 		{categories_listed}
@@ -213,8 +214,8 @@ const LorePage = (props) => {
         onClose={handleClose}
         aria-label="image-dialog"
       >
-		<DialogContent maxWidth="1000" maxHeight="1000" >
-			<img height='100%' width='100%' src={image} alt={""}/>
+		<DialogContent sx={{maxWidth:"1000", maxHeight:"1000"}}>
+			<img height='100%' width='100%' src={image} alt={"Image for "+page.title}/>
 		</DialogContent>
 	  </Dialog>
 		<Typography variant="h6">Summary:</Typography>
