@@ -23,16 +23,14 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 if os.getenv("LOCAL") == "True":
     client = MongoClient("mongodb://localhost:27017/")
 else:
-    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
+    client = MongoClient("mongodb+srv://" + os.getenv("MONGODB_USER") + ":" + os.getenv("MONGODB_PASSWORD") + "@" + os.getenv("MONGODB_URL") + "/?retryWrites=true&w=majority")
 app.json.sort_keys = False  # Stop jsonify from sorting keys alphabetically
 
 # # Create a new client and connect to the server
 # client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Connect to MongoDB
-mongourl = "mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority"
-client = MongoClient(mongourl)
-db = client['LoreDump']
+db = client["LoreDump"]
 
 # Session Time-To-Alive, until user has to log in again
 ttl = 60  # minutes
@@ -55,14 +53,13 @@ def index():
     if request.method == "GET":
         if session["ttl"] < datetime.datetime.utcnow():
             # Reset session Time-To-Live
-            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(
-                minutes=ttl
-            )
+            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=ttl)
         else:
             # Delete session
             session.clear()
             return jsonify({"error": "Session expired"}), 401
         return jsonify({"message": "Welcome to LoreDump!"})
+
 
 # Get currently logged in user's ID:
 @app.route("/api/id", methods=["GET"])
@@ -71,7 +68,8 @@ def get_id():
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
-        return jsonify({"id": session['user_id']}), 200
+        return jsonify({"id": session["user_id"]}), 200
+
 
 # Routes for User model
 # Get currently logged in user:
@@ -171,7 +169,7 @@ def login():
             return jsonify({"success": "User successfully logged in"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 401
-        
+
     if request.method == "GET":
         if session:
             # If session exists, log user in automatically:
@@ -203,9 +201,7 @@ def before_request():
         return jsonify({"error": "User not logged in"}), 401
     if session["ttl"] > datetime.datetime.now(pytz.utc):
         # Reset session Time-To-Live
-        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(
-            minutes=ttl
-        )
+        session["ttl"] = datetime.datetime.now(pytz.utc) + datetime.timedelta(minutes=ttl)
     else:
         # Delete session
         session.clear()
@@ -329,9 +325,7 @@ def get_categories(world_id):
             return jsonify({"error": str(e)}), 400
 
 
-@app.route(
-    "/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"]
-)
+@app.route("/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"])
 def get_category(world_id, category_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401

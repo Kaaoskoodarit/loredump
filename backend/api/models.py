@@ -11,14 +11,16 @@ from jwt import encode
 import secrets
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Connect to MongoDB
 if os.getenv("LOCAL") == "True":
     client = MongoClient("mongodb://localhost:27017/")
 else:
-    client = MongoClient("mongodb+srv://"+os.getenv("MONGODB_USER")+":"+os.getenv("MONGODB_PASSWORD")+"@"+os.getenv("MONGODB_URL")+"/?retryWrites=true&w=majority")
-db = client['LoreDump']
+    client = MongoClient("mongodb+srv://" + os.getenv("MONGODB_USER") + ":" + os.getenv("MONGODB_PASSWORD") + "@" + os.getenv("MONGODB_URL") + "/?retryWrites=true&w=majority")
+db = client["LoreDump"]
+
 
 # Define User model
 class User:
@@ -354,14 +356,12 @@ class World:
             #         {'_id': ObjectId(self.id)},
             #         {'$push': {'categories': 'Uncategorised'}}
             #     )
-            result = worlds_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"categories": str(category)}}
-            )
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"categories": str(category)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
             return False
-        
+
     def remove_category(self, category):
         """
         Removes a category from the world.
@@ -379,7 +379,7 @@ class World:
         except Exception as e:
             print(e)
             return False
-        
+
     def remove_category(self, category):
         """
         Removes a category from the world.
@@ -411,9 +411,7 @@ class World:
 
         worlds_collection = db["worlds"]
         try:
-            result = worlds_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}}
-            )
+            result = worlds_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -701,9 +699,7 @@ class Category:
     def add_lore_page(self, lore_page):
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -713,9 +709,7 @@ class Category:
     def remove_lore_page(self, lore_page):
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_one(
-                {"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -726,9 +720,7 @@ class Category:
     def remove_lore_page_from_all(lore_page):
         categories_collection = db["categories"]
         try:
-            result = categories_collection.update_many(
-                {}, {"$pull": {"lore_pages": str(lore_page)}}
-            )
+            result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
             return result.modified_count == 1
         except Exception as e:
             print(e)
@@ -950,16 +942,14 @@ class LorePage:
         # add LorePage to Category
         for category in self.categories:
             categories_collection = db["categories"]
-            result = categories_collection.update_one(
-                {"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}}
-            )
+            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
 
         # add LorePage to World
         addLore = World.get_by_id(ObjectId(self.world_id))
         addLore.add_lore_page(self.id)
 
         return self.id
-    
+
     def add_category(self, category):
         """
         Adds a category to the lorepage.
@@ -980,7 +970,7 @@ class LorePage:
         except Exception as e:
             print(e)
             return False
-        
+
     def remove_category(self, category):
         """
         Removes a category from the lorepage.
@@ -1063,9 +1053,7 @@ class LorePage:
             "connections": self.connections,
             "private_notes": self.private_notes,
         }
-        lorepages_collection.update_one(
-            {"_id": ObjectId(self.id)}, {"$set": lorepage_data}
-        )
+        lorepages_collection.update_one({"_id": ObjectId(self.id)}, {"$set": lorepage_data})
 
     @staticmethod
     def get_by_id(id):
@@ -1151,3 +1139,16 @@ class LorePage:
             )
             for lorepage in lorepages
         ]
+
+    @staticmethod
+    def get_all_lore_page_urls_from_world(world_id):
+        """
+        Returns a list of all lore page URLs from the 'lorepages' collection in the database.
+        """
+        lorepages_collection = db["lorepages"]
+        results = lorepages_collection.find({"world_id": world_id})
+        results_list = list(results)
+        lore_page_urls = []
+        for result in results_list:
+            lore_page_urls.append(result["custom_url"])
+        return lore_page_urls
