@@ -878,6 +878,19 @@ class Category:
         else:
             return None
 
+    @staticmethod
+    def get_all_category_urls_from_world(world_id):
+        """
+        Returns a list of all category URLs from the 'categories' collection in the database.
+        """
+        categories_collection = db["categories"]
+        results = categories_collection.find({"world_id": world_id})
+        results_list = list(results)
+        category_urls = []
+        for result in results_list:
+            category_urls.append(result["custom_url"])
+        return category_urls
+
 
 class LorePage:
     # LorePage Schema:
