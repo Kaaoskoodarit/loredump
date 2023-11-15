@@ -710,6 +710,15 @@ class Category:
 
     # Remove one lore page from one category
     def remove_lore_page(self, lore_page):
+        """
+        Removes a lore page from the category's list of lore pages.
+
+        Args:
+            lore_page (str): The ID of the lore page to remove.
+
+        Returns:
+            bool: True if the lore page was successfully removed, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$pull": {"lore_pages": str(lore_page)}})
