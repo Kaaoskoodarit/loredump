@@ -448,6 +448,7 @@ def get_lore_page(world_id, lore_page_id):
                 if " " in request.json["custom_url"]:
                     return jsonify({"error": "URL can't contain spaces"}), 400
                 unavailable_urls = LorePage.get_all_lore_page_urls_from_world(world_id)
+                unavailable_urls.remove(lore_page.custom_url)
                 if request.json["custom_url"] in unavailable_urls:
                     return (
                         jsonify({"error": "URL is already in use, it must be unique inside the world"}),
