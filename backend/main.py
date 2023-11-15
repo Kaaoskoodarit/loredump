@@ -319,6 +319,14 @@ def get_categories(world_id):
                 custom_url=request.json["custom_url"],
                 lore_pages=request.json["lore_pages"],
             )
+            if " " in category.custom_url:
+                return jsonify({"error": "URL can't contain spaces"}), 400
+            # Check if URL is in use:
+            if category.custom_url in Category.get_all_category_urls_from_world(world_id):
+                return (
+                    jsonify({"error": "URL is already in use, it must be unique inside the world"}),
+                    409,
+                )
             result = category.save()
             # World.add_category(world_id, category.id)
             return jsonify({"success": "Category successfully created", "id": result}), 200
