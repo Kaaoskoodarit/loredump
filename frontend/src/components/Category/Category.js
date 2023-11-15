@@ -1,16 +1,15 @@
 import {useState,useEffect} from 'react';
 import LoreSummaryCard from './../common/LoreSummaryCard';
-import RemoveRow from './RemoveRow';
-import EditRow from './EditRow';
 import { useParams } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {removePage,editPage} from '../../actions/pageActions';
-import { getCategory} from '../../actions/categoryActions';
+import { getCategory,editCategory, removeCategory} from '../../actions/categoryActions';
 import ImageCard from '../common/ImageCard';
-
-import { Grid, Typography, Paper, Divider } from '@mui/material';
+import Button from '@mui/material/Button';
+import { Grid, Typography, Paper, Divider, Stack, DialogActions, DialogTitle, DialogContentText } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 
 
 
@@ -18,15 +17,7 @@ import Container from '@mui/material/Container';
 
 
 const Category = (props) => {
-	// Set state of the component: indices of objects to be 
-	// removed or edited. Only one can be other than -1 at a time
-	const [state,setState] = useState({
-		removeIndex:-1,
-		editIndex:-1
-	})
 
-
-	
 	// Get token and links from "store" state with useSelector
 	const worldid = useSelector(state => state.world.page.id)
 	//const worldurl = useSelector(state => state.world.page.custom_url) // when transitioning from ids to urls
@@ -37,11 +28,12 @@ const Category = (props) => {
 	
 
 
-	//mode:verbose
-	
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
-
+	
+	const [mode,setMode] = useState("default")
+	
+	
 	//ID RECIEVED FROM ROUTER URL
 	let {worldurl, url}  = useParams();
 	
@@ -66,46 +58,49 @@ const Category = (props) => {
 		setLoading (true);
 	} else if (catpage.custom_url === url && loading === true) {setLoading(false)}
 	
-	// Function to change the state of the system, 
-	// changing between "remove", "edit" and "normal" mode
-	const changeMode = (mode,index) => {
-		if(mode === "remove") {
-			setState({
-				removeIndex:index,
-				editIndex:-1
-			})
-		}
-		if(mode === "edit") {
-			setState({
-				removeIndex:-1,
-				editIndex:index
-			})
-		}
-		if(mode === "cancel") {
-			setState({
-				removeIndex:-1,
-				editIndex:-1
-			})
-
-		}
-	}
+	
 
 
 	
-	const removeAPage = (id) => {
-		dispatch(removePage(worldid,id));
-
-		changeMode("cancel");
+	const removeCat = () => {
+		dispatch(removeCategory(worldid,catpage.id));
+		setMode("default");
 		return;
-
-		
 	}
 	
-	const editAPage = (page) => {
-		console.log("EDITING")
-		dispatch(editPage(worldid,page));
-		changeMode("cancel");
+	const editCat = () => {
+		dispatch(editCategory(worldid,catpage));
+		setMode("default");
 	}
+
+	//  change the state of the system, 
+	// changing between "remove", "edit" and "default" mode
+	let actionButtons;
+	
+	if (mode==="remove"){
+		actionButtons = <>
+		<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Category</Button>
+			</>}
+	
+	if(mode === "edit") {
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button size="small" variant="contained" color="success" onClick={editCat}
+			>Save</Button>
+			</>}
+	
+	if (mode === "default"){
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Category</Button>
+			</>}
+
 
 	//Get one Lore Page from the list of all pages in the database based on ID
 	const getLore = (id) => {
@@ -116,6 +111,7 @@ const Category = (props) => {
 		return "Lost Link";
 	}
 
+	//LIST THE PAGES IN THIS CATEGORY
 	let pages = <Typography sx={{p:2}} variant="body1">No Lore pages linked yet.</Typography>
 
 	//if category has at least one link to a lore saved:
@@ -125,21 +121,10 @@ const Category = (props) => {
 		pages = links.map((id,index) => {
 			//define an instance of lore page
 			let page = getLore(id)
-			if(index === state.removeIndex) {
-				return(
-					<RemoveRow key={index+page.id} page={page} changeMode={changeMode} removePage={removeAPage}/>
-				)
-			}
-			if(index === state.editIndex) {
-
-				return(
-					<EditRow key={index+page.id} page={page} changeMode={changeMode} editPage={editAPage}/>
-				)
-			}
+			
 			return(
 				<Grid key={index+page.id} item xs  >
-				<LoreSummaryCard page={page} index={index} category={catpage}
-				worldurl={worldurl}/>
+				<LoreSummaryCard page={page} index={index} category={catpage} worldurl={worldurl}/>
 				</Grid>
 			)
 		})
@@ -151,12 +136,15 @@ const Category = (props) => {
 
 	return(
 		<Paper elevation={3} sx={{ p:2}}>
+		<Stack direction="row" justifyContent="flex-end" spacing={1}>
+			{actionButtons}
+		</Stack>
 		<Grid container spacing={2} >
-		
+	
 
 		<Grid item xs={12} sm={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{catpage.title}</Typography>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 
 		<Typography variant="h6">Description:</Typography>
 		<Typography variant="body1">{catpage.description}</Typography>
@@ -167,11 +155,14 @@ const Category = (props) => {
 		</Grid>
 		
 		<Grid item xs >
+			<br/>
 		<ImageCard page={catpage}/>
 		</Grid>
 		
 		</Grid>
 		<Container>
+
+
 		<br/>
 		<br/>
 		<Divider/>
@@ -184,6 +175,20 @@ const Category = (props) => {
 		</Grid>
 		</Container>
 			
+		<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
+        <DialogTitle>
+			Deleting category: {catpage.title}</DialogTitle>
+		<DialogContent >
+			<DialogContentText> 
+				This action cannot be undone.</DialogContentText>
+		</DialogContent>
+		<DialogActions >
+		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button variant="contained" color="alert" onClick={removeCat}
+			>Delete Category</Button>
+		</DialogActions>
+        </Dialog>
 
 	</Paper>
 

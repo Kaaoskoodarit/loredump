@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {useSelector,useDispatch} from 'react-redux';
 import {removePage,editPage} from '../../actions/pageActions';
+import { editCategory } from "../../actions/categoryActions";
 
 //import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
@@ -8,8 +9,9 @@ import UploadWidget from "../Cloudinary/UploadWidget";
 //import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { Card,CardMedia,CardContent, CardActions, Typography,Button, CardActionArea, TextField } from "@mui/material"
-import { editCategory } from "../../actions/categoryActions";
-
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import { DialogActions, DialogTitle, DialogContentText } from '@mui/material';
 
 // Component that shows a normal list entry, with "remove" and "edit" buttons
 const LoreSummaryCard = (props) => {
@@ -31,7 +33,7 @@ const LoreSummaryCard = (props) => {
 	const category = props.category
 
 	const dispatch = useDispatch();
-	const [state,setState] = useState("default")
+	const [mode,setMode] = useState("default")
 
 	const [editState,setEditState] = useState({
 		...props.page,
@@ -43,13 +45,13 @@ const LoreSummaryCard = (props) => {
 
 	const removeAPage = () => {
 		dispatch(removePage(worldid,props.page.id));
-		setState("default");
+		setMode("default");
 		return;
 	}
 
 	const editAPage = () => {
 		dispatch(editPage(worldid,editState));
-		setState("default");
+		setMode("default");
 	}
 
 	const unlinkAPage = () => {
@@ -77,7 +79,7 @@ const LoreSummaryCard = (props) => {
 		}
 		dispatch(editPage(worldid,updatePage))
 
-		setState("default");
+		setMode("default");
 	}
 	const onChange = (event) => {
 
@@ -125,7 +127,7 @@ const LoreSummaryCard = (props) => {
 	let cardActions;
 
 	//CONTENT ABOVE THE BUTTONS
-	if (state==="default"||"unlink"||"delete") {
+	if (mode==="default"||"unlink"||"delete") {
 		cardContents = <>
 		<CardActionArea component={RouterLink} to={"/"+worldurl+"/lorepage/"+props.page.custom_url}>
 		<CardMedia
@@ -139,7 +141,7 @@ const LoreSummaryCard = (props) => {
 		</CardActionArea>
 			</>}
 
-	if (state==="edit"){
+	if (mode==="edit"){
 		cardContents = <>
 		<Box sx={{ height:200,width:'100%', display: 'flex', flexDirection: 'column'}} >
 		<CardMedia 
@@ -158,37 +160,39 @@ const LoreSummaryCard = (props) => {
 			</>}
 
 	//BUTTONS 
-	if (state==="default"){
+	if (mode==="default"){
 
 	cardActions = <>
-			<Button size="small" variant="contained" color="secondary" onClick={() => setState("edit")}
+			<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
 				>Edit</Button>
-			{category&&category.title!=="Uncategorised"?<Button size="small" variant="contained" onClick={() => setState("unlink")}
+			{category&&category.title!=="Uncategorised"?<Button size="small" variant="contained" onClick={() => setMode("unlink")}
 				>Unlink</Button>:""}
-			<Button size="small" variant="contained" color="alert" onClick={() => setState("delete")}
+			<Button size="small" variant="contained" color="alert" onClick={() => setMode("delete")}
 				>Delete</Button>
 				</>}
 
-	if (state==="unlink"){
+	if (mode==="unlink"){
 		cardActions = <>
-				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
+				<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
 					>Cancel</Button>
 				<Button size="small" variant="contained" color="alert" onClick={unlinkAPage}
 					>Unlink from Category</Button>
 					</>}
 					
-	if (state==="delete"){
+	if (mode==="delete"){
 		cardActions = <>
-				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
-					>Cancel</Button>
-				<Button size="small" variant="contained" color="alert" onClick={removeAPage}
-					>Delete Lore</Button>
+				<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
+				>Edit</Button>
+			{category&&category.title!=="Uncategorised"?<Button size="small" disabled variant="contained" onClick={() => setMode("unlink")}
+				>Unlink</Button>:""}
+			<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("delete")}
+				>Delete</Button>
 					</>
 			}
 
-	if (state==="edit"){
+	if (mode==="edit"){
 		cardActions = <>
-				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
+				<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
 					>Cancel</Button>
 				<Button size="small" variant="contained" color="success" onClick={editAPage}
 					>Save</Button>
@@ -200,6 +204,22 @@ const LoreSummaryCard = (props) => {
 		<CardActions>
 		{cardActions}
 		</CardActions>
+
+		<Dialog fullWidth maxWidth='sm' open={mode==="delete"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
+        <DialogTitle>
+			Deleting Lore Page: {props.page.title}</DialogTitle>
+		<DialogContent >
+			<DialogContentText> 
+				This action cannot be undone.</DialogContentText>
+		</DialogContent>
+		<DialogActions >
+		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button variant="contained" color="alert" onClick={() => removeAPage}
+			>Delete Lore Page</Button>
+		</DialogActions>
+        </Dialog>
+
 		</Card>
 
 	)
