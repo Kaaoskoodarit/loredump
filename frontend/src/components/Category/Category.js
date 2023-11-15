@@ -58,7 +58,7 @@ const Category = (props) => {
 			}
 		}
 	}
-	},[url])
+	},[url,catlist])
 	
 	
 	const [loading,setLoading] = useState(false);
@@ -95,6 +95,7 @@ const Category = (props) => {
 	
 	const removeAPage = (id) => {
 		dispatch(removePage(worldid,id));
+
 		changeMode("cancel");
 		return;
 
