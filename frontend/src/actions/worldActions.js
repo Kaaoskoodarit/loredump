@@ -38,7 +38,8 @@ export const getWorldList = () => {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
-				console.log("Failed to fetch world information. No worlds exist!?");
+				dispatch(noWorldsFound());
+				console.log("Failed to fetch world information. No worlds exist!");
 				return;
 			}
 			dispatch(fetchWorldListFailed("Failed to fetch world information. Server responded with a status "+response.status+" "+response.statusText))
@@ -215,30 +216,36 @@ export const updateWorld = (id,update) => {
 
 // Simple functions that return an "action" object, with
 // a "type" parameter, and optionally others as well, as needed
-export const fetchWorldListSuccess = (list) => {
+const fetchWorldListSuccess = (list) => {
 	return {
 		type:actionConstants.FETCH_WORLDLIST_SUCCESS,
 		list:list
 	}
 }
 
-export const fetchWorldListFailed = (error) => {
+const fetchWorldListFailed = (error) => {
 	return {
 		type:actionConstants.FETCH_WORLDLIST_FAILED,
 		error:error
 	}
 }
 
-export const fetchWorldSuccess = (type,page) => {
+const fetchWorldSuccess = (type,page) => {
 	return {
 		type:type,
 		page:page
 	}
 }
 
-export const fetchWorldFailed = (type,error) => {
+const fetchWorldFailed = (type,error) => {
 	return {
 		type:type,
 		error:error
+	}
+}
+
+const noWorldsFound = () => {
+	return {
+		type:actionConstants.NO_WORLDS_FOUND
 	}
 }

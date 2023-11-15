@@ -41,7 +41,8 @@ export const getCategoryList = (worldid) => {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
-				console.log("Failed to fetch category information. No categories exist!?");
+				dispatch(noCategoriesFound());
+				console.log("Failed to fetch category information. No categories exist!");
 				return;
 			}
 			dispatch(fetchCategoryListFailed("Failed to fetch category information. Server responded with a status "+response.status+" "+response.statusText))
@@ -221,30 +222,36 @@ export const updateCategory = (worldid,id,update) => {
 
 // Simple functions that return an "action" object, with
 // a "type" parameter, and optionally others as well, as needed
-export const fetchCategoryListSuccess = (list) => {
+const fetchCategoryListSuccess = (list) => {
 	return {
 		type:actionConstants.FETCH_CATEGORYLIST_SUCCESS,
 		list:list
 	}
 }
 
-export const fetchCategoryListFailed = (error) => {
+const fetchCategoryListFailed = (error) => {
 	return {
 		type:actionConstants.FETCH_CATEGORYLIST_FAILED,
 		error:error
 	}
 }
 
-export const fetchCategorySuccess = (type,page) => {
+const fetchCategorySuccess = (type,page) => {
 	return {
 		type:type,
 		page:page
 	}
 }
 
-export const fetchCategoryFailed = (type,error) => {
+const fetchCategoryFailed = (type,error) => {
 	return {
 		type:type,
 		error:error
+	}
+}
+
+const noCategoriesFound = () => {
+	return {
+		type:actionConstants.NO_CATEGORIES_FOUND
 	}
 }

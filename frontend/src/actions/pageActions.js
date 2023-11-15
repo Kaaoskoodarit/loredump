@@ -40,7 +40,8 @@ export const getList = (worldid) => {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
 				return;
 			} else if (response.status === 404) {
-				console.log("Failed to fetch page information. No lorepages exist!?");
+				dispatch(noPagesFound());
+				console.log("Failed to fetch page information. No lorepages exist!");
 				return;
 			}
 			dispatch(fetchListFailed("Failed to fetch page information. Server responded with a status "+response.status+" "+response.statusText))
@@ -221,30 +222,36 @@ export const updatePage = (worldid, id, update) => {
 
 // Simple functions that return an "action" object, with
 // a "type" parameter, and optionally others as well, as needed
-export const fetchListSuccess = (list) => {
+const fetchListSuccess = (list) => {
 	return {
 		type:actionConstants.FETCH_LIST_SUCCESS,
 		list:list
 	}
 }
 
-export const fetchListFailed = (error) => {
+const fetchListFailed = (error) => {
 	return {
 		type:actionConstants.FETCH_LIST_FAILED,
 		error:error
 	}
 }
 
-export const fetchPageSuccess = (type,page) => {
+const fetchPageSuccess = (type,page) => {
 	return {
 		type:type,
 		page:page
 	}
 }
 
-export const fetchPageFailed = (type,error) => {
+const fetchPageFailed = (type,error) => {
 	return {
 		type:type,
 		error:error
+	}
+}
+
+const noPagesFound = () => {
+	return {
+		type:actionConstants.NO_PAGES_FOUND
 	}
 }

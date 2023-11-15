@@ -69,6 +69,7 @@ const worldReducer = (state = initialState,action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
+		case actionConstants.NO_WORLDS_FOUND:
 		case actionConstants.LOGOUT_SUCCESS:
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {

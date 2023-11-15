@@ -69,6 +69,7 @@ const pageReducer = (state = initialState,action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
+		case actionConstants.NO_PAGES_FOUND:
 		case actionConstants.LOGOUT_SUCCESS:
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {

@@ -69,6 +69,7 @@ const categoryReducer = (state = initialState,action) => {
 			}
 			saveToStorage(tempState);
 			return tempState;
+		case actionConstants.NO_CATEGORIES_FOUND:
 		case actionConstants.LOGOUT_SUCCESS:
 		case actionConstants.LOGOUT_FAILED:
 			tempState = {
