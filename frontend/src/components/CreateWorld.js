@@ -108,7 +108,7 @@ const CreateWorld = (props) => {
 		<Grid item xs={4}>
         <Card elevation={3} sx={{p:2}}>
         <CardMedia image={worldstate.image} sx={{ height:200}} title={"Image for your world!"}	/>
-		<UploadWidget state={worldstate} setState={setWorldstate} />
+		<UploadWidget setState={setWorldstate} />
         </Card>
 		
 		</Grid>

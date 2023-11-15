@@ -138,7 +138,7 @@ const CreateCategory = (props) => {
             <img src={state.image}/>
             </Box>
             <Typography variant="h6">Add Image:</Typography>
-            <UploadWidget state={state} setState={setState} />
+            <UploadWidget setState={setState} />
         </Grid>
 		
 		</Grid>

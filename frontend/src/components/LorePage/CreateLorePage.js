@@ -170,7 +170,7 @@ const CreateLorePage = (props) => {
 
                     <CardMedia sx={{ height:200}} image={state.image}/>                      
                     <Typography variant="h6">Add Image:</Typography>
-                    <UploadWidget state={state} setState={setState} />
+                    <UploadWidget setState={setState} />
                     <Typography variant="h6">Summary:</Typography>
 
                     <TextField id="lore-summary" name="summary" label="Summary" multiline maxRows={4}

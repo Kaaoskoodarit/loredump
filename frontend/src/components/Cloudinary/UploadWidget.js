@@ -1,8 +1,27 @@
 import { useState, useMemo } from "react";
 import Button  from "@mui/material/Button";
 
+const myWidget = (uwConfig,setState) => window.cloudinary.createUploadWidget(
+    uwConfig,
+    (error, result) => {
+        // No error handling....yet?
+        if (!error && result && result.event === "success") {
+            console.log("Done! Here is the image info: ", result.info);
+            // Set state of calling component to have the URL of the uploaded image
+            setState((state) => {
+                return {
+                    ...state,
+                    //image:result.info.url
+                    image:result.info.secure_url
+                }
+            })
+        }
+    }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+);
+
 // Upload Widget component
-function UploadWidget({ state,setState }) {
+function UploadWidget({ setState }) {
     // Configurations for the widget, setUwConfig in case we want
     // to allow changing parameters
     const [uwConfig,setUwConfig] = useState({
@@ -15,31 +34,10 @@ function UploadWidget({ state,setState }) {
         thumbnails:false
     })
 
-
-    // Create the widget
-    const myWidget = useMemo(() => window.cloudinary.createUploadWidget(
-        uwConfig,
-        (error, result) => {
-            // No error handling....yet?
-            if (!error && result && result.event === "success") {
-                console.log("Done! Here is the image info: ", result.info);
-                // Set state of calling component to have the URL of the uploaded image
-                setState((state) => {
-                    return {
-                        ...state,
-                        //image:result.info.url
-                        image:result.info.secure_url
-                    }
-                })
-            }
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    ),[]);
-
     // onClick event handler, opens Widget
     const onClick = (event) => {
         event.preventDefault();
-        myWidget.open();
+        myWidget(uwConfig,setState).open();
     }
 
     return (
