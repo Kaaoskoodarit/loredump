@@ -1,6 +1,6 @@
 import {loading,stopLoading,logoutFailed} from './loginActions';
 import { getWorld } from './worldActions';
-import { getCategoryList } from './categoryActions';
+import { getCategoryList,getCategory } from './categoryActions';
 import * as actionConstants from './actionConstants';
 
 //ASYNC THUNKS
@@ -126,7 +126,7 @@ export const addPage = (worldid, page) => {
 }
 
 // (async) function that dispatches a "remove page" action to the reducer
-export const removePage = (worldid, id) => {
+export const removePage = (worldid, id, categoryid) => {
 	return async (dispatch) => {
 		let request = {
 			"method":"DELETE"
@@ -145,6 +145,9 @@ export const removePage = (worldid, id) => {
 			dispatch(getList(worldid));
 			dispatch(getWorld(worldid));
 			dispatch(getCategoryList(worldid));
+			if (categoryid) {
+				dispatch(getCategory(worldid,categoryid))
+			}
 		} else {
 			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
