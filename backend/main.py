@@ -374,11 +374,14 @@ def get_category(world_id, category_id):
             # Remove lore page from current category
             if "lore_pages" in request.json:
                 for lore_page_id in category.lore_pages:
-                    LorePage.remove_category(lore_page_id, category.id)
+                    lorePage = LorePage.get_by_id(lore_page_id)
+                    lorePage.remove_category(category_id)
                     category.remove_lore_page(lore_page_id)
                     # If edited lore page has no categories, add it to uncategorised category
-                    if LorePage.get_by_id(lore_page_id).categories == []:
-                        LorePage.add_category(lore_page_id, Category.get_by_name("Uncategorised", world_id).id)
+                    lorePage = LorePage.get_by_id(lore_page_id)
+                    if lorePage.categories == []:
+                        print("tulee tänne")
+                        lorePage.add_category("Uncategorised")
                 return jsonify({"success": "Category successfully updated"}), 200
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200
@@ -414,7 +417,8 @@ def get_lore_pages(world_id):
             request.json["categories"] = list(filter(None, request.json["categories"]))
             # If categories list is empty, add uncategorised category
             if not request.json["categories"]:
-                request.json["categories"] = [Category.get_by_name("Uncategorised", world_id).id]
+                request.json["categories"] = [str(Category.get_by_name("Uncategorised", world_id).id)]
+                print(request.json["categories"])
             lore_page = LorePage(
                 id=None,
                 title=request.json["title"],
@@ -428,6 +432,10 @@ def get_lore_pages(world_id):
                 summary=request.json["summary"],
                 connections=request.json["connections"],
             )
+            print(lore_page.categories)
+            # # if categories list is empty, add uncategorised category
+            # if lore_page.categories == []:
+            #     lore_page.categories = [Category.get_by_name("Uncategorised", world_id).id]
             if " " in lore_page.custom_url:
                 return jsonify({"error": "URL can't contain spaces"}), 400
             # Check if URL is in use:
@@ -436,8 +444,8 @@ def get_lore_pages(world_id):
                     jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                     409,
                 )
-            if str(Category.get_by_name("Uncategorised", world_id).id) in lore_page.categories and len(lore_page.categories) > 0:
-                lore_page.categories.remove(str(Category.get_by_name("Uncategorised", world_id).id))
+            # if str(Category.get_by_name("Uncategorised", world_id).id) in lore_page.categories and len(lore_page.categories) > 0:
+            #     lore_page.categories.remove(str(Category.get_by_name("Uncategorised", world_id).id))
             result = lore_page.save()
             return (
                 jsonify({"success": "Lore page successfully created", "id": result}),
