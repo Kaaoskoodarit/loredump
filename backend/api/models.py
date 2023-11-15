@@ -1013,7 +1013,7 @@ class LorePage:
         try:
             result = lorepages_collection.update_one(
                 {"_id": ObjectId(self.id)},
-                {"$push": {"categories": str(Category.get_by_name(category).id)}},
+                {"$push": {"categories": str(Category.get_by_name(category, self.world_id).id)}},
             )
             return result.modified_count == 1
         except Exception as e:
@@ -1034,7 +1034,7 @@ class LorePage:
         try:
             result = lorepages_collection.update_one(
                 {"_id": ObjectId(self.id)},
-                {"$pull": {"categories": str(Category.get_by_name(category).id)}},
+                {"$pull": {"categories": str(Category.get_by_id(category).id)}},
             )
             return result.modified_count == 1
         except Exception as e:

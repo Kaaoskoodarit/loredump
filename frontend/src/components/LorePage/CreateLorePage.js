@@ -5,7 +5,6 @@ import {addPage} from '../../actions/pageActions';
 import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelectChip from './../common/MultipleSelectChip';
-//import ConnectionSelect from './ConnectionSelect';
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';

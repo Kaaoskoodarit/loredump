@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Button  from "@mui/material/Button";
 
 const myWidget = (uwConfig,setState) => window.cloudinary.createUploadWidget(
@@ -17,7 +17,6 @@ const myWidget = (uwConfig,setState) => window.cloudinary.createUploadWidget(
             })
         }
     }
-// eslint-disable-next-line react-hooks/exhaustive-deps
 );
 
 // Upload Widget component
