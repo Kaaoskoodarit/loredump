@@ -382,6 +382,7 @@ def get_category(world_id, category_id):
                     if lorePage.categories == []:
                         print("tulee tänne")
                         lorePage.add_category("Uncategorised")
+                        # NEED TO ALSO ADD PAGE TO UNCATEGORIZED
                 return jsonify({"success": "Category successfully updated"}), 200
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200

@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {addCategory} from '../../actions/categoryActions';
-import {Link as RouterLink} from 'react-router-dom'
+//import {Link as RouterLink} from 'react-router-dom'
 import UploadWidget from '../Cloudinary/UploadWidget';
 
 
