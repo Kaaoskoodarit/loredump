@@ -46,18 +46,17 @@ const Category = (props) => {
 	let {worldurl, url}  = useParams();
 	
 	useEffect(() => {
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	
-	// Get page id based on url:
-	if (catlist) {
-		for (let cat of catlist) {
-			if (cat.custom_url === url) {
-				// If find a match, dispatch getPage to update page state
-				dispatch(getCategory(worldid,cat.id));
-				break;
+		// Get page id based on url:
+		if (catlist) {
+			for (let cat of catlist) {
+				if (cat.custom_url === url) {
+					// If find a match, dispatch getPage to update page state
+					dispatch(getCategory(worldid,cat.id));
+					break;
+				}
 			}
 		}
-	}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[url,catlist])
 	
 	

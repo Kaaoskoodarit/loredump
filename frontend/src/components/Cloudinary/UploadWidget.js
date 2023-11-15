@@ -11,8 +11,10 @@ function UploadWidget({ state,setState }) {
         cropping:true,
         sources:["local","url"],
         multiple:false,
-        maxImageFileSize: 20000000
+        maxImageFileSize: 20000000,
+        thumbnails:false
     })
+
 
     // Create the widget
     const myWidget = useMemo(() => window.cloudinary.createUploadWidget(
