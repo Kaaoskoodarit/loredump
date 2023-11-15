@@ -2,7 +2,63 @@ import { createTheme } from '@mui/material/styles';
 import { amber,orange,pink, } from '@mui/material/colors';
 
 
-const themeLight = createTheme(  {
+const themeBlueBook = createTheme({
+
+  palette: {
+      
+    primary: {main:"#d3986e",},
+    // {
+    //   light: amber[300],
+    //   main: '#d3986e',
+    //   dark: '#021826',
+    //   contrastText: '#000',
+    // },
+
+    secondary:  {main: "#021826",},
+  //   {
+  //     light: orange['A100'],
+  //     main: orange[500],
+  //     dark:"#b22a00",
+  //     contrastText:"#fff"    
+  // },
+  alert:{ main: "#b24c33",},
+  // {
+  //     main: "#6101b5",
+  //     contrastText:"#fff"
+  // },
+  //   {
+  //     light:"#d83219",
+  //     main:"#9e0200",
+  //     dark:"#05645e",
+  //     contrastText:"#fff",
+  //   },
+    
+    background:{
+      paper: "#fffeea",
+      default:"#551f15",
+  },
+  text:{
+      primary:"#000",
+      secondary:"#b22a00",
+      alert:"#6101b5",
+  }
+  },
+
+  typography:{
+    lore: {
+      fontSize: '5rem',
+      color: '#d50000',
+      fontFamily: "'Lovers Quarrel', 'Lucida Handwriting', cursive",
+    },
+    loreSmall: {
+      fontSize: '1.5rem',
+      color: '#d50000',
+      fontFamily: "'Lucida Handwriting', cursive",
+    },
+  }
+})
+
+const themeOrangeBook = createTheme(  {
 
     palette: {
       
@@ -68,4 +124,4 @@ const themeLight = createTheme(  {
       secondary: orange,
     },
   })  
-  export {themeLight, themeDark};
+  export {themeBlueBook, themeOrangeBook, themeDark};

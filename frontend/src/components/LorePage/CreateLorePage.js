@@ -5,8 +5,7 @@ import {addPage} from '../../actions/pageActions';
 import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelectChip from './../common/MultipleSelectChip';
-import AssignCategories from './AssignCategories'
-import ConnectionSelect from './ConnectionSelect';
+//import ConnectionSelect from './ConnectionSelect';
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
@@ -14,7 +13,7 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import TextField from '@mui/material/TextField';
-import { Button, Divider, Paper } from '@mui/material';
+import { Button, Paper } from '@mui/material';
 import { Container } from '@mui/system';
 
 

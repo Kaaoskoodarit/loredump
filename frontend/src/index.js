@@ -11,7 +11,7 @@ import categoryReducer from './reducers/categoryReducer';
 import worldReducer from './reducers/worldReducer';
 import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
-import {themeLight, themeDark} from './theme';
+import {themeBlueBook, themeOrangeBook, themeDark} from './theme';
 
 
 
@@ -37,7 +37,7 @@ root.render(
   <React.StrictMode>
   <BrowserRouter>
   <Provider store={store}>
-    <ThemeProvider theme={themeLight}>
+    <ThemeProvider theme={themeOrangeBook}>
     <CssBaseline enableColorScheme/>
     <App />
     </ThemeProvider>
