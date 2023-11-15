@@ -6,6 +6,7 @@ import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelectChip from './../common/MultipleSelectChip';
 import AssignCategories from './AssignCategories'
+import ConnectionSelect from './ConnectionSelect';
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
@@ -41,7 +42,10 @@ const CreateLorePage = (props) => {
     const worldid = useSelector(state => state.world.page.id);
     const worldurl = useSelector(state => state.world.page.custom_url); 
     const pagestate = useSelector(state => state.lore.page);
-    const categorylist = useSelector(state => state.category.list);
+    const categorylist = useSelector(state => {
+                        let categorylist = [...state.category.list];
+                        categorylist.splice(0,1);
+                        return categorylist  });
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -177,6 +181,7 @@ const CreateLorePage = (props) => {
                     value={state.summary} onChange={onChange}/>
                     <br/>
                     
+                    {/* <ConnectionSelect label={"Connections"} state={state} name="connections" setState={setState}/> */}
                     <Connections state={state} setState={setState}/>
                     </Card  >
                     </Container>
