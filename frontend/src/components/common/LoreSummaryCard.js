@@ -1,21 +1,79 @@
-import { Card,CardMedia,CardContent, CardActions, Typography,Button, CardActionArea } from "@mui/material"
+import { useState } from "react";
+import {useSelector,useDispatch} from 'react-redux';
+import {removePage,editPage} from '../../actions/pageActions';
 
 //import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
+import UploadWidget from "../Cloudinary/UploadWidget";
 //import Link from '@mui/material/Link';
-//import Box from '@mui/material/Box';
+import Box from '@mui/material/Box';
+import { Card,CardMedia,CardContent, CardActions, Typography,Button, CardActionArea, TextField } from "@mui/material"
+import { editCategory } from "../../actions/categoryActions";
 
 
 // Component that shows a normal list entry, with "remove" and "edit" buttons
 const LoreSummaryCard = (props) => {
+
+	const appState = useSelector((state) => {
+        return {
+            worldurl: state.world.page.url,
+            worldid: state.world.page.id
+        }
+    })
+	
 	//console.log("Row: props.page",props.page)
 	// const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
 	//const categories =<p>Categories</p>
 	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
 	const image = (props.page.image!=="")? props.page.image: default_img;
-	const worldurl = props.worldurl
+	const worldurl = appState.worldurl
+	const worldid = appState.worldid
+	const category = props.category
 
-	
+	const dispatch = useDispatch();
+	const [state,setState] = useState("default")
+
+	const [editState,setEditState] = useState({
+		...props.page,
+		title:props.page.title,
+		image:props.page.image,
+		summary:props.page.summary
+	})
+
+
+	const removeAPage = () => {
+		dispatch(removePage(worldid,props.page.id));
+		setState("default");
+		return;
+	}
+
+	const editAPage = () => {
+		dispatch(editPage(worldid,editState));
+		setState("default");
+	}
+
+	const unlinkAPage = () => {
+		let temparr = {...category.lore_pages};
+		let tempCategory ={
+			...category,
+			lore_pages:temparr.splice(props.index,1)
+		} 
+
+		dispatch(editCategory(worldid,tempCategory))
+		//dispatch(unlinkPage(worldid,props.page.id));
+		setState("default");
+	}
+
+	const onChange = (event) => {
+
+        setEditState((editState) => {
+            return {
+                ...editState,
+                [event.target.name]:event.target.value
+            }
+        })
+    }
+
 	//CODE FOR LISTING CATEGORIES FOR EACH LORE
 	
 	//const categorylist = useSelector(state => state.category.list);
@@ -46,12 +104,14 @@ const LoreSummaryCard = (props) => {
 	// 	})
 	// }
 
-	//className="nav-link"
-	return(
-	<Card key={props.page.id} elevation={6} sx={{ p:1, display: 'flex', flexDirection: 'column', alignItems:"center" }}>
+	
+	//CHOOSE WHICH STATE TO SHOW
+	let cardContents; 
+	let cardActions;
 
-
-	{/* <Box  sx={{ display: 'flex', flexDirection: 'column' }}> */}
+	//CONTENT ABOVE THE BUTTONS
+	if (state==="default"||"unlink"||"delete") {
+		cardContents = <>
 		<CardActionArea component={RouterLink} to={"/"+worldurl+"/lorepage/"+props.page.custom_url}>
 		<CardMedia
 		sx={{ height:200, maxWidth:'100%' }}
@@ -60,21 +120,71 @@ const LoreSummaryCard = (props) => {
 		<CardContent sx={{ flex: '1 0 auto' }}>
 			<Typography variant="h5" color="inherit">{props.page.title}</Typography>
 			<Typography variant="body2">{props.page.summary}</Typography>
-
 		</CardContent>
 		</CardActionArea>
+			</>}
 
-		<CardActions>
-			<Button size="small" variant="contained" color="secondary" onClick={() => props.changeMode("edit",props.index)}
+	if (state==="edit"){
+		cardContents = <>
+		<Box sx={{ height:200,width:'100%', display: 'flex', flexDirection: 'column'}} >
+		<CardMedia 
+		sx={{height:150,objectFit: "contain"}}
+		image={editState.image}
+		title={"Image for "+props.page.title}/>
+		<UploadWidget setState={setEditState}>Change Image</UploadWidget>
+		</Box>
+		<CardContent sx={{pb:0,px:0,width:'100%'}}>
+			<TextField id="title" name="title" label="Title" size="small" fullWidth required multiline maxRows={2}
+                value={editState.title} onChange={onChange}/>
+			<br/>				
+			<TextField sx={{mt:1}} id="summary" name="summary" label="Summary" size="small" fullWidth multiline maxRows={2}
+                value={editState.summary} onChange={onChange}/>
+		</CardContent>
+			</>}
+
+	//BUTTONS 
+	if (state==="default"){
+
+	cardActions = <>
+			<Button size="small" variant="contained" color="secondary" onClick={() => setState("edit")}
 				>Edit</Button>
-			<Button size="small" variant="contained" >Links</Button>
-			<Button size="small" variant="contained" color="alert" onClick={() => props.changeMode("remove",props.index)}
+			{category&&category.title!=="Uncategorised"?<Button size="small" variant="contained" onClick={() => setState("unlink")}
+				>Unlink</Button>:""}
+			<Button size="small" variant="contained" color="alert" onClick={() => setState("delete")}
 				>Delete</Button>
-	</CardActions>
-	{/* </Box> */}
+				</>}
 
+	if (state==="unlink"){
+		cardActions = <>
+				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
+					>Cancel</Button>
+				<Button size="small" variant="contained" color="alert" onClick={unlinkAPage}
+					>Unlink from Category</Button>
+					</>}
+					
+	if (state==="delete"){
+		cardActions = <>
+				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
+					>Cancel</Button>
+				<Button size="small" variant="contained" color="alert" onClick={removeAPage}
+					>Delete Lore</Button>
+					</>
+			}
 
+	if (state==="edit"){
+		cardActions = <>
+				<Button size="small" variant="contained" color="secondary" onClick={() => setState("default")}
+					>Cancel</Button>
+				<Button size="small" variant="contained" color="success" onClick={editAPage}
+					>Save</Button>
+					</>}
 
+	return(
+	<Card key={props.page.id} elevation={6} sx={{ p:1, display: 'flex', flexDirection: 'column', alignItems:"center" , minWidth:250,maxWidth:400}}>
+		{cardContents}
+		<CardActions>
+		{cardActions}
+		</CardActions>
 		</Card>
 
 	)

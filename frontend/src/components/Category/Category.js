@@ -137,8 +137,8 @@ const Category = (props) => {
 				)
 			}
 			return(
-				<Grid key={index+page.id} item xs minWidth="240" >
-				<LoreSummaryCard page={page} index={index} changeMode={changeMode}
+				<Grid key={index+page.id} item xs  >
+				<LoreSummaryCard page={page} index={index} category={catpage}
 				worldurl={worldurl}/>
 				</Grid>
 			)

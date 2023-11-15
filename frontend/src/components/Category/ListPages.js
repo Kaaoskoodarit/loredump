@@ -81,7 +81,7 @@ const ListPages = (props) => {
 		}
 		return(
 			<Grid key={index+page.id} item xs minWidth="240">
-			<LoreSummaryCard key={page.id} page={page} index={index} changeMode={changeMode} worldurl={worldurl}/>
+			<LoreSummaryCard page={page} index={index} worldurl={worldurl}/>
 			</Grid>
 
 		)
