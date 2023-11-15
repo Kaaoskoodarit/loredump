@@ -900,6 +900,19 @@ class Category:
             category_urls.append(result["custom_url"])
         return category_urls
 
+    @staticmethod
+    def get_all_names_from_world(world_id):
+        """
+        Returns a list of all category names from the 'categories' collection in the database.
+        """
+        categories_collection = db["categories"]
+        results = categories_collection.find({"world_id": world_id})
+        results_list = list(results)
+        category_names = []
+        for result in results_list:
+            category_names.append(result["title"])
+        return category_names
+
 
 class LorePage:
     # LorePage Schema:

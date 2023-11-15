@@ -327,6 +327,12 @@ def get_categories(world_id):
                     jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                     409,
                 )
+            # Check if title is unique inside the world:
+            if category.title in Category.get_all_names_from_world(world_id):
+                return (
+                    jsonify({"error": "Category title is already in use, it must be unique inside the world"}),
+                    409,
+                )
             result = category.save()
             # World.add_category(world_id, category.id)
             return jsonify({"success": "Category successfully created", "id": result}), 200
