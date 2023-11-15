@@ -351,11 +351,18 @@ def get_category(world_id, category_id):
                 if " " in request.json["custom_url"]:
                     return jsonify({"error": "URL can't contain spaces"}), 400
                 unavailable_urls = Category.get_all_category_urls_from_world(world_id)
+                unavailable_urls.remove(category.custom_url)
                 if request.json["custom_url"] in unavailable_urls:
                     return (
                         jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                         409,
                     )
+            # Remove lore page from current category
+            if "lore_pages" in request.json:
+                for lore_page_id in category.lore_pages:
+                    LorePage.remove_category(lore_page_id, category.id)
+                    category.remove_lore_page(lore_page_id)
+                return jsonify({"success": "Category successfully updated"}), 200
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200
         except Exception as e:
