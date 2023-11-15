@@ -40,6 +40,7 @@ function App() {
 			loading:state.login.loading,
 			user :state.login.user,
 			worldlist:state.world.list,
+			worldpage:state.world.list,
 			worldurl: state.world.page.custom_url
 		}
 	})
@@ -67,7 +68,7 @@ function App() {
 			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[appState.isLogged,appState.worldlist,appState.user])
+	},[appState.isLogged,appState.worldlist.length,appState.user])
 
 	//RENDERING
 	
