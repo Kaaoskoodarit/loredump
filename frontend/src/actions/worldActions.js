@@ -153,7 +153,7 @@ export const removeWorld = (id) => {
 export const editWorld = (world) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"PUT",
+			"method":"PATCH",
 			"headers":{
 				"Content-type":"application/json"
 			},
@@ -179,7 +179,7 @@ export const editWorld = (world) => {
 		}
 	}
 }
-
+/*
 // (async) function that dispatches a "update world" action to the reducer
 export const updateWorld = (id,update) => {
 	return async (dispatch) => {
@@ -211,7 +211,7 @@ export const updateWorld = (id,update) => {
 		}
 	}
 }
-
+*/
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with

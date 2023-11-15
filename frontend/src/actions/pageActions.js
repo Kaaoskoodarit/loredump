@@ -159,7 +159,7 @@ export const removePage = (worldid, id) => {
 export const editPage = (worldid, page) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"PUT",
+			"method":"PATCH",
 			"headers":{
 				"Content-type":"application/json"
 			},
@@ -185,7 +185,7 @@ export const editPage = (worldid, page) => {
 		}
 	}
 }
-
+/*
 // (async) function that dispatches a "update page" action to the reducer
 export const updatePage = (worldid, id, update) => {
 	return async (dispatch) => {
@@ -217,7 +217,7 @@ export const updatePage = (worldid, id, update) => {
 		}
 	}
 }
-
+*/
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with

@@ -159,7 +159,7 @@ export const removeCategory = (worldid,id) => {
 export const editCategory = (worldid,category) => {
 	return async (dispatch) => {
 		let request = {
-			"method":"PUT",
+			"method":"PATCH",
 			"headers":{
 				"Content-type":"application/json"
 			},
@@ -185,7 +185,7 @@ export const editCategory = (worldid,category) => {
 		}
 	}
 }
-
+/*
 // (async) function that dispatches a "update category" action to the reducer
 export const updateCategory = (worldid,id,update) => {
 	return async (dispatch) => {
@@ -217,7 +217,7 @@ export const updateCategory = (worldid,id,update) => {
 		}
 	}
 }
-
+*/
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with
