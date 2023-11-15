@@ -53,7 +53,7 @@ const LoreSummaryCard = (props) => {
 	}
 
 	const unlinkAPage = () => {
-		let temparr = {...category.lore_pages};
+		let temparr = [...category.lore_pages];
 		let tempCategory ={
 			...category,
 			lore_pages:temparr.splice(props.index,1)
