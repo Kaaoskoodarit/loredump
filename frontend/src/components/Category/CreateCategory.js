@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {addCategory} from '../../actions/categoryActions';
 import {Link as RouterLink} from 'react-router-dom'
@@ -28,14 +29,18 @@ const CreateCategory = (props) => {
 		lore_pages:[]            
 	})
 
+    // Add a state to show if a page has been added
+    const [addCount,setAddCount] = useState(0);
+
     // Get token and categorystate from the store
     const worldid = useSelector(state => state.world.page.id);
-    //const worldurl = useSelector(state => state.world.page.custom_url);
-    //const categorystate = useSelector(state => state.category.page);
+    const worldurl = useSelector(state => state.world.page.custom_url);
+    const categorystate = useSelector(state => state.category.page);
     const lorelist = useSelector(state => state.lore.list)
 
     // Use dispatch
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // Handle normal onChange events    
     const onChange = (event) => {
@@ -78,8 +83,16 @@ const CreateCategory = (props) => {
             private_notes:"",
             lore_pages:[]
         })
-
+        setAddCount(1);
     }
+
+    useEffect(() => {
+        if (addCount > 0) {
+            console.log(categorystate.custom_url);
+            navigate("/"+worldurl+"/category/"+categorystate.custom_url);
+        }  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[categorystate]);
 
     //TESTING
     // let testRow = state.lore_pages? state.lore_pages.map((id)=>{<Typography >Lore: {id}</Typography>}):"NA"
