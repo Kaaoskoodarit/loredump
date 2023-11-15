@@ -326,7 +326,7 @@ def get_categories(world_id):
             return jsonify({"error": str(e)}), 400
 
 
-@app.route("/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PUT", "DELETE"])
+@app.route("/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PATCH", "DELETE"])
 def get_category(world_id, category_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
@@ -336,7 +336,7 @@ def get_category(world_id, category_id):
             return jsonify({"error": "Category not found"}), 404
         else:
             return jsonify(category.serialize())
-    elif request.method == "PUT":
+    elif request.method == "PATCH":
         try:
             category = Category.get_by_id(category_id)
             if not category:
@@ -423,7 +423,7 @@ def get_lore_pages(world_id):
 
 @app.route(
     "/api/worlds/<world_id>/lore_pages/<lore_page_id>",
-    methods=["GET", "PUT", "DELETE", "PATCH"],
+    methods=["GET", "DELETE", "PATCH"],
 )
 def get_lore_page(world_id, lore_page_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
