@@ -75,6 +75,7 @@ const CreateCategory = (props) => {
         dispatch(addCategory(worldid,category));
        
         // Reset the state of the page and relationships
+        /*
         setState({
             title:"",
             custom_url:"",
@@ -83,6 +84,7 @@ const CreateCategory = (props) => {
             private_notes:"",
             lore_pages:[]
         })
+        */
         setAddCount(1);
     }
 

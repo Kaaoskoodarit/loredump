@@ -68,6 +68,7 @@ const CreateWorld = (props) => {
         // Redirect to the new World?
 
         // Reset the state of the page and relationships
+        /*
         setWorldstate({
             title:"",
             custom_url:"",         // custom_url = title
@@ -77,6 +78,7 @@ const CreateWorld = (props) => {
             categories:[],            
             lore_pages:[]          
         })
+        */
 
     }
     
