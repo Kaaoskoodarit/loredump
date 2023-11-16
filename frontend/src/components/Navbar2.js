@@ -72,7 +72,7 @@ const Navbar2 = (props) => {
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
 			  <Breadcrumbs aria-label="breadcrumb" color="secondary" separator="|">
-				<Link variant="h4" color="inherit" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
+				<Link variant="h4" color="primary.contrastText" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
 				{allPages}
 				<IconButton
 					size="large"

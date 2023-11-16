@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import { useParams } from 'react-router-dom';
+import {removePage,editPage} from '../../actions/pageActions';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
 import {Link as RouterLink} from 'react-router-dom'
@@ -19,6 +21,12 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import TextField from '@mui/material/TextField';
+import UploadWidget from '../Cloudinary/UploadWidget';
+import MultipleSelectChip from '../common/MultipleSelectChip';
+import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
+import Button from '@mui/material/Button';
+
 
 
 //page: list, page, error
@@ -35,10 +43,19 @@ const LorePage = (props) => {
 			categorylist: state.category.list
 		}
 	})
+	const worldid = appState.worldid
     const page = appState.page
 	const pagelist = appState.pagelist
 	const categorylist = appState.categorylist
 	//const [errorState,setErrorState] = useState(0)
+
+
+	//mode for page's State : default, edit, remove
+	const [mode,setMode] = useState("default")
+	const [editState,setEditState] = useState({
+		...page
+	})
+
 	const [open, setOpen] = useState(false);
 
 	const [tab, setTab] = useState('1');
@@ -94,19 +111,43 @@ const LorePage = (props) => {
 
 	
 	
-    // const removeAPage = (id) => {
-	// 	dispatch(removePage(appState.token,id));
-	// }
-
-    // const editAPage = (page) => {
-	// 	dispatch(editPage(appState.token,page));
-	// }
-
-
-
+	
+	
+	
 	//INSERT CODE FOR REMOVING A CATEGORY
 	const handleDelete = () => {
 		console.log("Insert code for removing category")
+	}
+
+	// Handle normal onChange events    
+	const onChange = (event) => {
+		
+		//custom url can be max 50 characters!
+		if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+			return
+		}
+		setEditState((editState) => {
+			return {
+				...editState,
+				[event.target.name]:event.target.value
+			}
+		})
+	}
+	const removeAPage = () => {
+		dispatch(removePage(worldid,page.id));
+		setMode("default");
+		return;
+	}
+
+	const editAPage = () => {
+		let tempPage = {...editState}
+		//*REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        tempPage.custom_url = tempPage.custom_url === ""? editState.title.slice(0,49).replace(/\s+/g, '_') : tempPage.custom_url.replace(/\s+/g, '_')
+
+		dispatch(editPage(worldid,tempPage));
+		setMode("default");
+
 	}
 
 	const getCategoryData = (id) => {
@@ -164,11 +205,43 @@ const LorePage = (props) => {
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
+		//  change the state of the system, 
+	// changing between "remove", "edit" and "default" mode
+	let actionButtons;
+	
+	if (mode==="remove"){
+		actionButtons = <>
+		<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Category</Button>
+			</>}
+	
+	if(mode === "edit") {
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button size="small" variant="contained" color="success" onClick={editAPage}
+			>Save</Button>
+			</>}
+	
+	if (mode === "default"){
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Category</Button>
+			</>}
+
+
 	
 
 	return(
 		
 	<Paper elevation={3} sx={{ p:2}}>
+		<Stack direction="row" justifyContent="flex-end" spacing={1}>
+			{actionButtons}
+		</Stack>
 	<Grid container spacing={2}>
 	
 	<Grid item xs={8}>
@@ -230,6 +303,20 @@ const LorePage = (props) => {
 	</Grid>
 	</Grid>
 
+	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
+        <DialogTitle>
+			Deleting category: {page.title}</DialogTitle>
+		<DialogContent >
+			<DialogContentText> 
+				This action cannot be undone.</DialogContentText>
+		</DialogContent>
+		<DialogActions >
+		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button variant="contained" color="alert" onClick={removeAPage}
+			>Delete Category</Button>
+		</DialogActions>
+        </Dialog>
 		
     </Paper>
         

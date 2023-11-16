@@ -3,7 +3,7 @@ import { amber,green,orange, cyan,blue } from '@mui/material/colors';
 
 
 const themeBlueBook = createTheme({
-  name:"Muted",
+  name:"Nautical",
 
   palette: {
       
@@ -12,6 +12,7 @@ const themeBlueBook = createTheme({
     secondary: {main:cyan[600],},
 
     alert:{ main: orange[500],},
+    contrast:{main:orange[500],},
 
     
     background:{
@@ -22,6 +23,8 @@ const themeBlueBook = createTheme({
       primary:"#021826",
       secondary:orange[500],
       alert:"#6101b5",
+    contrast:{main:orange[500],},
+
   }
   },
 
@@ -53,7 +56,7 @@ const themeOrangeBook = createTheme(  {
 
       secondary:  {
         light: orange['A100'],
-        main: orange[500],
+        main: orange[900],
         dark:"#b22a00",
         contrastText:"#fff"    
     },
