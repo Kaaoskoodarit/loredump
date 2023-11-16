@@ -46,7 +46,7 @@ jspm_packages/
 
 # Ignor backend, until it's fixed
 #backend/
-#backend_node/
+backend_node/
 old_code
 __pycache__
 

@@ -71,8 +71,8 @@ const Navbar2 = (props) => {
 			
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense">
-			  <Breadcrumbs aria-label="breadcrumb" separator="|">
-				<Link variant="h4" color="inherit" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
+			  <Breadcrumbs aria-label="breadcrumb" color="secondary" separator="|">
+				<Link variant="h4" color="primary.contrastText" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
 				{allPages}
 				<IconButton
 					size="large"
@@ -100,8 +100,8 @@ const Navbar2 = (props) => {
 					<MenuItem disabled onClick={()=>handleClose("E1")}>Categories</MenuItem>
 			  		{catLinks}
 				</Menu>
-				<Link variant="h6" color="success" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
-				<Link variant="h6" color="success" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
+				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
+				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
 
 			  
 			  </Breadcrumbs>

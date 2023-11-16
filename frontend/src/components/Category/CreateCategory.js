@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import MultipleSelectChip from './../common/MultipleSelectChip';
 import Box from '@mui/material/Box';
+import ImageCard from '../common/ImageCard';
 
 
 
@@ -136,9 +137,7 @@ const CreateCategory = (props) => {
             </Container>
 		</Grid>
         <Grid item xs={4}>
-            <Box sx={{ height:200 }}>
-            <img src={state.image}/>
-            </Box>
+            <ImageCard page={state}/>
             <Typography variant="h6">Add Image:</Typography>
             <UploadWidget setState={setState} />
         </Grid>

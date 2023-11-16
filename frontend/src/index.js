@@ -9,9 +9,6 @@ import loginReducer from './reducers/loginReducer';
 import pageReducer from './reducers/pageReducer';
 import categoryReducer from './reducers/categoryReducer';
 import worldReducer from './reducers/worldReducer';
-import CssBaseline from '@mui/material/CssBaseline';
-import {ThemeProvider} from '@mui/material/styles';
-import {themeBlueBook, themeOrangeBook, themeDark} from './theme';
 
 
 
@@ -37,10 +34,7 @@ root.render(
   <React.StrictMode>
   <BrowserRouter>
   <Provider store={store}>
-    <ThemeProvider theme={themeOrangeBook}>
-    <CssBaseline enableColorScheme/>
     <App />
-    </ThemeProvider>
   </Provider>
   </BrowserRouter>
   </React.StrictMode>

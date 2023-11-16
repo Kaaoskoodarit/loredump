@@ -233,7 +233,7 @@ const Category = (props) => {
 			{content}
 		</Grid>
 		
-		<Container>
+		{/* <Container> */}
 
 
 		<br/>
@@ -246,7 +246,7 @@ const Category = (props) => {
 		<Grid container spacing={3} >
 			{pages}
 		</Grid>
-		</Container>
+		{/* </Container> */}
 			
 		<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
         <DialogTitle>

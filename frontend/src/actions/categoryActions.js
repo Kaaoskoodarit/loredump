@@ -187,36 +187,36 @@ export const editCategory = (worldid,category) => {
 }
 /*
 // (async) function that dispatches a "update category" action to the reducer
-export const updateCategory = (worldid,id,update) => {
-	return async (dispatch) => {
-		let tempbody = {"update":update}
-		let request = {
-			"method":"PUT",
-			"headers":{
-				"Content-type":"application/json"
-			},
-			"body":	JSON.stringify(tempbody)
-		}
-		dispatch(loading());
-		const response = await fetch("/api/worlds/"+worldid+"/categories/update/"+id,request);
-		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
-			return;
-		}
-		if(response.ok) {
-			// If fetch succesful, show new list
-			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
-			dispatch(getCategoryList(worldid));
-		} else {
-			if(response.status === 401) {
-				dispatch(logoutFailed("Your session has expired. Logging you out."));
-				return;
-			}
-			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server responded with a status "+response.status+" "+response.statusText))
-		}
-	}
-}
+// export const updateCategory = (worldid,id,update) => {
+// 	return async (dispatch) => {
+// 		let tempbody = {"update":update}
+// 		let request = {
+// 			"method":"PUT",
+// 			"headers":{
+// 				"Content-type":"application/json"
+// 			},
+// 			"body":	JSON.stringify(tempbody)
+// 		}
+// 		dispatch(loading());
+// 		const response = await fetch("/api/worlds/"+worldid+"/categories/update/"+id,request);
+// 		dispatch(stopLoading());
+// 		if(!response) {
+// 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server never responded. Try again later"))
+// 			return;
+// 		}
+// 		if(response.ok) {
+// 			// If fetch succesful, show new list
+// 			dispatch(fetchCategorySuccess(actionConstants.EDIT_CATEGORY_SUCCESS));
+// 			dispatch(getCategoryList(worldid));
+// 		} else {
+// 			if(response.status === 401) {
+// 				dispatch(logoutFailed("Your session has expired. Logging you out."));
+// 				return;
+// 			}
+// 			dispatch(fetchCategoryFailed(actionConstants.EDIT_CATEGORY_FAILED,"Failed to edit category. Server responded with a status "+response.status+" "+response.statusText))
+// 		}
+// 	}
+// }
 */
 //ACTION CREATORS
 

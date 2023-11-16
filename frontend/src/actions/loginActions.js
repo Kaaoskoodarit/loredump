@@ -151,6 +151,11 @@ export const logout = () => {
 	}
 }
 
+export const selectTheme = (theme) => {
+	//TODO: SAVE THEME TO DATABASE
+	return (dispatch) => dispatch(setTheme(theme));
+}
+
 //ACTION CREATORS
 
 // Simple functions that return an "action" object, with
@@ -219,5 +224,12 @@ const setUser = (user,username) => {
 		type:actionConstants.SET_USERNAME,
 		user:user,
 		username:username
+	}
+}
+
+const setTheme = (theme) => {
+	return {
+		type:actionConstants.SET_THEME,
+		theme:theme
 	}
 }

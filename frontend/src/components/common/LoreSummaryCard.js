@@ -18,7 +18,7 @@ const LoreSummaryCard = (props) => {
 
 	const appState = useSelector((state) => {
         return {
-            worldurl: state.world.page.url,
+            worldurl: state.world.page.custom_url,
             worldid: state.world.page.id
         }
     })

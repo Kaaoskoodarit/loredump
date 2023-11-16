@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
+import {removePage,editPage} from '../../actions/pageActions';
+
 import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
 import {Link as RouterLink} from 'react-router-dom'
@@ -19,6 +21,14 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import TextField from '@mui/material/TextField';
+import UploadWidget from '../Cloudinary/UploadWidget';
+import Connections from './Relationships';
+import ImageCard from '../common/ImageCard';
+import MultipleSelectChip from '../common/MultipleSelectChip';
+import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
+import Button from '@mui/material/Button';
+
 
 
 //page: list, page, error
@@ -35,10 +45,19 @@ const LorePage = (props) => {
 			categorylist: state.category.list
 		}
 	})
+	const worldid = appState.worldid
     const page = appState.page
 	const pagelist = appState.pagelist
 	const categorylist = appState.categorylist
 	//const [errorState,setErrorState] = useState(0)
+
+
+	//mode for page's State : default, edit, remove
+	const [mode,setMode] = useState("default")
+	const [editState,setEditState] = useState({
+		...page
+	})
+
 	const [open, setOpen] = useState(false);
 
 	const [tab, setTab] = useState('1');
@@ -56,26 +75,36 @@ const LorePage = (props) => {
 
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	
 	useEffect(() => {
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	
 	// Get page id based on url:
 	if (pagelist) {
+		let found = false;
 		for (let page of pagelist) {
-				if (page.custom_url === url) {
+			if (page.custom_url === url) {
 				// If find a match, dispatch getPage to update page state
 				dispatch(getPage(appState.worldid,page.id));
+				found = true;
 				break;
 			}
 		}
+		if (!found) {
+			navigate("/");
+		}
 	}
-	},[url])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[url,pagelist])
 	
+		
+	//display loading icon if the page is still waiting on server
+	const [loading,setLoading] = useState(false);
 	
-	// if (page.custom_url !== url && loading===false){
-	// 	setLoading (true);
-	// } else if (page.custom_url === url && loading!==false) {setLoading(false)}
+	if (page.custom_url !== url && loading===false){
+		setLoading (true);
+	} else if (page.custom_url === url && loading!==false) {
+		setEditState({...page});
+		setLoading(false)}
 
 	
 	const handleClickOpen = () => {
@@ -92,21 +121,35 @@ const LorePage = (props) => {
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
 
-	
-	
-    // const removeAPage = (id) => {
-	// 	dispatch(removePage(appState.token,id));
-	// }
+	// Handle normal onChange events    
+	const onChange = (event) => {
+		
+		//custom url can be max 50 characters!
+		if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+			return
+		}
+		setEditState((editState) => {
+			return {
+				...editState,
+				[event.target.name]:event.target.value
+			}
+		})
+	}
+	const removeAPage = () => {
+		dispatch(removePage(worldid,page.id));
+		setMode("default");
+		return;
+	}
 
-    // const editAPage = (page) => {
-	// 	dispatch(editPage(appState.token,page));
-	// }
+	const editAPage = () => {
+		let tempPage = {...editState}
+		//*REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        tempPage.custom_url = tempPage.custom_url === ""? editState.title.slice(0,49).replace(/\s+/g, '_') : tempPage.custom_url.replace(/\s+/g, '_')
 
+		dispatch(editPage(worldid,tempPage));
+		setMode("default");
 
-
-	//INSERT CODE FOR REMOVING A CATEGORY
-	const handleDelete = () => {
-		console.log("Insert code for removing category")
 	}
 
 	const getCategoryData = (id) => {
@@ -164,15 +207,42 @@ const LorePage = (props) => {
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
+		//  change the state of the system, 
+	// changing between "remove", "edit" and "default" mode
+	let actionButtons;
 	
+	if (mode==="remove"){
+		actionButtons = <>
+		<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Lore</Button>
+			</>}
+	
+	if(mode === "edit") {
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button size="small" variant="contained" color="success" onClick={editAPage}
+			>Save</Button>
+			</>}
+	
+	if (mode === "default"){
+		actionButtons = <>
+		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
+			>Edit</Button>
+		<Button size="small" variant="contained" color="alert" onClick={() => setMode("remove")}
+			>Delete Lore</Button>
+			</>}
 
-	return(
+
+	//*DEFAULT LAYOUT
+	let content;
+	if (mode==="default"||"delete"){
+		content = <>
 		
-	<Paper elevation={3} sx={{ p:2}}>
-	<Grid container spacing={2}>
-	
-	<Grid item xs={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+	<Grid item xs={12} sm={6} md={8} order={{xs:2, md:1}}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{sm:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
@@ -201,7 +271,11 @@ const LorePage = (props) => {
 
 		</Container>
 	</Grid>
-	<Grid item xs={4}>
+	<Grid item sm={4} order={{xs:1,sm:2}}>
+	<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
+	<br/>
 		<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
 			<CardActionArea onClick={handleClickOpen}>
 			<CardMedia
@@ -210,8 +284,7 @@ const LorePage = (props) => {
 			title={"Image for "+page.title}	
 			/>
 			</CardActionArea>
-		
-		 <Dialog
+			<Dialog
         open={open}
         onClose={handleClose}
         aria-label="image-dialog"
@@ -228,8 +301,73 @@ const LorePage = (props) => {
 		</Grid>
 		</Card>
 	</Grid>
+		</>}
+
+if (mode==="edit"){
+	content = <>
+	<Grid item xs={12} sm={6} md={8} order={{xs:2,sm:1}}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant='loreSmall'>Edit Lore Page</Typography>
+
+		<TextField id="lore-title" size='small' name="title" label="Title" required multiline maxRows={2}
+                value={editState.title} onChange={onChange}/>
+		<br/>
+		<TextField id="lore-description" size='small' name="description" label="Description" multiline maxRows={10}
+                value={editState.description} onChange={onChange}/>
+		<br/>
+		<TextField id="lore-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
+			value={editState.private_notes} onChange={onChange}/>
+		<br/>
+		<TextField id="lore-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
+                value={editState.custom_url} onChange={onChange}/>
+		<br/>
+		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
+		</Container>
+		</Grid>
+		
+		<Grid item xs={4} order={{xs:1,sm:2}} >
+			<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
+			<br/>
+			<ImageCard page={editState}/>
+			
+			<UploadWidget setState={setEditState}/>
+			<br/>
+			<Typography variant="h6">Summary:</Typography>
+
+			<TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
+			value={editState.summary} onChange={onChange}/>
+			<br/>
+			<Connections state={editState} setState={setEditState}/>
+		</Grid>
+	</>}
+
+	return(
+		
+	<Paper elevation={3} sx={{ p:2}}>
+		
+	<Grid container spacing={2}>
+	{content}
+	
+		
+		
 	</Grid>
 
+	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
+        <DialogTitle>
+			Deleting Lore: {page.title}</DialogTitle>
+		<DialogContent >
+			<DialogContentText> 
+				This action cannot be undone.</DialogContentText>
+		</DialogContent>
+		<DialogActions >
+		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
+			>Cancel</Button>
+		<Button variant="contained" color="alert" onClick={removeAPage}
+			>Delete Lore Page</Button>
+		</DialogActions>
+        </Dialog>
 		
     </Paper>
         

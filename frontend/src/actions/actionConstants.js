@@ -13,6 +13,7 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const LOGOUT_FAILED = "LOGOUT_FAILED";
 export const SET_USERNAME = "SET_USERNAME";
 export const SET_LOGIN = "SET_LOGIN";
+export const SET_THEME = "SET_THEME";
 
 //NAVIGATION
 export const NAVIGATING = "NAVIGATING";

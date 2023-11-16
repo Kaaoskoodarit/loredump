@@ -155,11 +155,9 @@ const CreateLorePage = (props) => {
                 {/* </Grid> */}
                 <br/>
                 
-                <Typography variant="h6">Description:</Typography>
                 <TextField id="lore-description" name="description" label="Description" multiline maxRows={10}
                     value={state.description} onChange={onChange}/>
                     <br/>
-                <Typography variant="h6">Notes:</Typography>
                 <TextField id="lore-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
                     value={state.private_notes} onChange={onChange}/>
                 <br/>
@@ -188,7 +186,7 @@ const CreateLorePage = (props) => {
                     </Container>
                 </Grid>
         <Container>
-            <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+            <Button type='submit' color="success" variant='contained' size='xl'>Create new Lore Page</Button>
         </Container>
         </Grid>
         </form>

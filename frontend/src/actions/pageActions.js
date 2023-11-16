@@ -179,6 +179,8 @@ export const editPage = (worldid, page) => {
 			// If fetch succesful, show new list
 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
 			dispatch(getList(worldid));
+			dispatch(getWorld(worldid));
+			dispatch(getCategoryList(worldid));
 		} else {
 			if(response.status === 401) {
 				dispatch(logoutFailed("Your session has expired. Logging you out."));
@@ -190,36 +192,36 @@ export const editPage = (worldid, page) => {
 }
 /*
 // (async) function that dispatches a "update page" action to the reducer
-export const updatePage = (worldid, id, update) => {
-	return async (dispatch) => {
-		let tempbody = {"update":update}
-		let request = {
-			"method":"PUT",
-			"headers":{
-				"Content-type":"application/json"
-			},
-			"body":	JSON.stringify(tempbody)
-		}
-		dispatch(loading());
-		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/update/" + id, request);
-		dispatch(stopLoading());
-		if(!response) {
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
-			return;
-		}
-		if(response.ok) {
-			// If fetch succesful, show new list
-			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
-			dispatch(getList(worldid));
-		} else {
-			if(response.status === 401) {
-				dispatch(logoutFailed("Your session has expired. Logging you out."));
-				return;
-			}
-			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
-		}
-	}
-}
+// export const updatePage = (worldid, id, update) => {
+// 	return async (dispatch) => {
+// 		let tempbody = {"update":update}
+// 		let request = {
+// 			"method":"PUT",
+// 			"headers":{
+// 				"Content-type":"application/json"
+// 			},
+// 			"body":	JSON.stringify(tempbody)
+// 		}
+// 		dispatch(loading());
+// 		const response = await fetch("/api/worlds/" + worldid + "/lore_pages/update/" + id, request);
+// 		dispatch(stopLoading());
+// 		if(!response) {
+// 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server never responded. Try again later"))
+// 			return;
+// 		}
+// 		if(response.ok) {
+// 			// If fetch succesful, show new list
+// 			dispatch(fetchPageSuccess(actionConstants.EDIT_PAGE_SUCCESS));
+// 			dispatch(getList(worldid));
+// 		} else {
+// 			if(response.status === 401) {
+// 				dispatch(logoutFailed("Your session has expired. Logging you out."));
+// 				return;
+// 			}
+// 			dispatch(fetchPageFailed(actionConstants.EDIT_PAGE_FAILED,"Failed to edit page. Server responded with a status "+response.status+" "+response.statusText))
+// 		}
+// 	}
+// }
 */
 //ACTION CREATORS
 

@@ -88,7 +88,7 @@ return(
     
     <br/>
 
-    <Link sx={{p:2}} variant="subtitle" color="link" underline="hover" component={RouterLink} to={"/"+worldurl}>View All Pages</Link>
+    <Link sx={{p:2}} variant="subtitle" underline="hover" component={RouterLink} to={"/"+worldurl}>View All Pages</Link>
         
 
 </Paper>
