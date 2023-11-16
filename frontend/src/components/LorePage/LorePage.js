@@ -248,8 +248,8 @@ const LorePage = (props) => {
 	if (mode==="default"||"delete"){
 		content = <>
 		
-	<Grid item xs={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+	<Grid item sm={12} md={8}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{xs:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
@@ -278,7 +278,10 @@ const LorePage = (props) => {
 
 		</Container>
 	</Grid>
-	<Grid item xs={4}>
+	<Grid item sm={4} order={{xs:1,md:2}}>
+	<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
 	<br/>
 		<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
 			<CardActionArea onClick={handleClickOpen}>
@@ -309,7 +312,7 @@ const LorePage = (props) => {
 
 if (mode==="edit"){
 	content = <>
-	<Grid item xs={12} sm={8}>
+	<Grid item xs={12} sm={8} order={{xs:2,md:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant='loreSmall'>Edit Lore Page</Typography>
 
@@ -329,7 +332,10 @@ if (mode==="edit"){
 		</Container>
 		</Grid>
 		
-		<Grid item xs >
+		<Grid item xs={4} order={{xs:1,md:2}} >
+			<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
 			<br/>
 			<ImageCard page={editState}/>
 			
@@ -347,9 +353,7 @@ if (mode==="edit"){
 	return(
 		
 	<Paper elevation={3} sx={{ p:2}}>
-		<Stack direction="row" justifyContent="flex-end" spacing={1}>
-			{actionButtons}
-		</Stack>
+		
 	<Grid container spacing={2}>
 	{content}
 	
