@@ -661,7 +661,7 @@ class Category:
             }
         )
         addCat = World.get_by_id(ObjectId(self.world_id))
-        addCat.add_category(self.id)
+        addCat.add_category(result.inserted_id)
         return str(result.inserted_id)
 
     # Add Uncategorised to database
@@ -761,6 +761,7 @@ class Category:
             removeLore = LorePage.get_by_id(ObjectId(lore_page))
             removeLore.remove_category(self.id)
             # If LorePage has no categories, add to "Uncategorised"
+            removeLore = LorePage.get_by_id(ObjectId(lore_page))
             if len(removeLore.categories) == 0:
                 removeLore.add_category("Uncategorised")
         if result.deleted_count == 1:
@@ -912,6 +913,25 @@ class Category:
         for result in results_list:
             category_names.append(result["title"])
         return category_names
+
+    @staticmethod
+    def remove_category_from_all_lore_pages(category_id):
+        """
+        Removes a category from all lore pages in the database.
+
+        Args:
+            category_id (str): The ID of the category to remove.
+
+        Returns:
+            bool: True if the category was removed successfully, False otherwise.
+        """
+        categories_collection = db["categories"]
+        try:
+            result = categories_collection.update_many({}, {"$pull": {"categories": str(category_id)}})
+            return result.modified_count == 1
+        except Exception as e:
+            print(e)
+            return False
 
 
 class LorePage:
@@ -1109,7 +1129,6 @@ class LorePage:
         lorepages_collection = db["lorepages"]
         lorepage = lorepages_collection.find_one({"_id": ObjectId(id)})
         if lorepage:
-            print(lorepage)
             return LorePage(
                 str(lorepage["_id"]),
                 lorepage["creator_id"],

@@ -334,6 +334,10 @@ def get_categories(world_id):
                     409,
                 )
             result = category.save()
+            if "lore_pages" in request.json:
+                for lore_page_id in request.json["lore_pages"]:
+                    lorePage = LorePage.get_by_id(lore_page_id)
+                    lorePage.add_category(request.json["title"])
             # World.add_category(world_id, category.id)
             return jsonify({"success": "Category successfully created", "id": result}), 200
         except Exception as e:
@@ -372,7 +376,7 @@ def get_category(world_id, category_id):
                         409,
                     )
             # Remove lore page from current category
-            if "lore_pages" in request.json:
+            if "lore_pages" in request.json and "unlink_lore_page" in request.json:
                 for lore_page_id in category.lore_pages:
                     lorePage = LorePage.get_by_id(lore_page_id)
                     lorePage.remove_category(category_id)
@@ -380,9 +384,11 @@ def get_category(world_id, category_id):
                     # If edited lore page has no categories, add it to uncategorised category
                     lorePage = LorePage.get_by_id(lore_page_id)
                     if lorePage.categories == []:
-                        print("tulee tänne")
                         lorePage.add_category("Uncategorised")
-                        # NEED TO ALSO ADD PAGE TO UNCATEGORIZED
+                        # NEED TO ALSO ADD PAGE TO UNCATEGORIZED CATEGORY
+                        # Add lore page to new category
+                        addCat = Category.get_by_name("Uncategorised", world_id)
+                        addCat.add_lore_page(lore_page_id)
                 return jsonify({"success": "Category successfully updated"}), 200
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200
@@ -396,6 +402,8 @@ def get_category(world_id, category_id):
             if category.title == "Uncategorised":
                 return jsonify({"error": "Can't delete uncategorised category"}), 400
             category.delete()
+            # Delete category from all lore pages
+            category.remove_category_from_all_lore_pages(category_id)
             return jsonify({"success": "Category successfully deleted"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -419,7 +427,6 @@ def get_lore_pages(world_id):
             # If categories list is empty, add uncategorised category
             if not request.json["categories"]:
                 request.json["categories"] = [str(Category.get_by_name("Uncategorised", world_id).id)]
-                print(request.json["categories"])
             lore_page = LorePage(
                 id=None,
                 title=request.json["title"],
@@ -433,7 +440,6 @@ def get_lore_pages(world_id):
                 summary=request.json["summary"],
                 connections=request.json["connections"],
             )
-            print(lore_page.categories)
             # # if categories list is empty, add uncategorised category
             # if lore_page.categories == []:
             #     lore_page.categories = [Category.get_by_name("Uncategorised", world_id).id]
@@ -490,6 +496,14 @@ def get_lore_page(world_id, lore_page_id):
                         409,
                     )
             lore_page.update()
+            lore_page = LorePage.get_by_id(lore_page_id)
+            if lore_page.categories == []:
+                lore_page.add_category("Uncategorised")
+                addCat = Category.get_by_name("Uncategorised", world_id)
+                addCat.add_lore_page(lore_page_id)
+            if len(lore_page.categories) > 1 and str(Category.get_by_name("Uncategorised", world_id).id) in lore_page.categories:
+                print(f"Tulee tännepäin: {lore_page.categories}")
+                lore_page.remove_category(str(Category.get_by_name("Uncategorised", world_id).id))
             return jsonify({"success": "Lore page successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
