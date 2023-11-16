@@ -53,7 +53,7 @@ function App() {
 	})
 
 	//*SELECT THEME
-	const [theme,setTheme] = useState(themeOrangeBook);
+	const [theme,setTheme] = useState(themeDark);
 
 	useEffect(()=>{
 	switch (appState.theme){

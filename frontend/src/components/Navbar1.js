@@ -2,18 +2,18 @@ import {Link as RouterLink} from 'react-router-dom'
 import { useState } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {logout, selectTheme} from '../actions/loginActions';
-import {themeBlueBook,themeOrangeBook,themeDark} from '../theme';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-// import Switch from '@mui/material/Switch';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { Divider } from '@mui/material';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Check from '@mui/icons-material/Check';
 
  
 
@@ -50,6 +50,10 @@ const Navbar1 = (props) => {
 		dispatch(selectTheme(theme));
 		handleClose();
 	}
+
+	const selected =   <ListItemIcon>
+						<Check />
+						</ListItemIcon>
 	
 	//REPLACE TREASURE TROVE... WITH CURRENT WORLD NAME
 	return(
@@ -91,10 +95,22 @@ const Navbar1 = (props) => {
 					open={Boolean(anchorEl)}
 					onClose={()=>handleClose("E1")}
 				>
-					<MenuItem disabled>Change Theme. Current: {state.theme?state.theme.name:"Orange"}</MenuItem>
-					<MenuItem onClick={()=>handleThemeChange("Orange")} >Orange</MenuItem>
-					<MenuItem onClick={()=>handleThemeChange("Muted")} >Muted</MenuItem>
-					<MenuItem onClick={()=>handleThemeChange("Dark")} >Dark</MenuItem>
+					<MenuItem disabled>Change Theme</MenuItem>
+					<MenuItem onClick={()=>handleThemeChange("Dark")} >
+						{state.theme==="Dark"&&selected} 
+						<ListItemText inset={state.theme!=="Dark"}>Dark</ListItemText>
+						</MenuItem>
+
+					<MenuItem onClick={()=>handleThemeChange("Orange")} >
+						{state.theme==="Orange"&&selected} 
+						<ListItemText inset={state.theme!=="Orange"}>Orange</ListItemText>
+						</MenuItem>
+
+					<MenuItem onClick={()=>handleThemeChange("Muted")} >
+						{state.theme==="Muted"&&selected}
+						<ListItemText inset={state.theme!=="Muted"}>Muted</ListItemText>
+						</MenuItem>
+					<Divider/>
 					<MenuItem onClick={()=>{
 						handleClose("E1");
 						dispatch(logout())}} component={RouterLink} to={"/"}>

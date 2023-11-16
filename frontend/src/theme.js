@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { amber,green,orange } from '@mui/material/colors';
+import { amber,green,orange, cyan,blue } from '@mui/material/colors';
 
 
 const themeBlueBook = createTheme({
@@ -120,15 +120,15 @@ const themeOrangeBook = createTheme(  {
     palette: {
         mode: "dark",
       primary: {
-        main: '#ffd54f',
-        light:"#e2cab5",
-        dark: "#472e18",
+        main: cyan[600],
+        light: cyan[400],
+        dark: cyan[900],
         contrastText:"#fff"
       },
       secondary: {
-        light:green[300],
-        main:green[600],
-        dark:green[900],
+        light:blue[300],
+        main:blue[700],
+        dark:blue[900],
         contrastText:"#fff"
       },
       background:{
@@ -137,10 +137,10 @@ const themeOrangeBook = createTheme(  {
       },
       text:{
         primary:"#fff",
-        secondary:"#b22a00",
-        alert:"#6101b5",
+        secondary:cyan[400],
+        alert:"d50000",
     },
-    alert:{ main: "#b24c33",},
+    alert:{ main: "#d50000",},
 
     },
     typography:{
