@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {useSelector,useDispatch} from 'react-redux';
 import {removePage,editPage} from '../../actions/pageActions';
-import { editCategory } from "../../actions/categoryActions";
+// import { editCategory } from "../../actions/categoryActions";
 
 //import {useSelector} from 'react-redux';
 import {Link as RouterLink} from 'react-router-dom'
@@ -23,9 +23,8 @@ const LoreSummaryCard = (props) => {
         }
     })
 	
-	//console.log("Row: props.page",props.page)
-	// const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
-	//const categories =<p>Categories</p>
+	// // const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
+	// //const categories =<p>Categories</p>
 	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
 	const image = (props.page.image!=="")? props.page.image: default_img;
 	const worldurl = appState.worldurl
@@ -56,14 +55,18 @@ const LoreSummaryCard = (props) => {
 
 	const unlinkAPage = () => {
 		//REMOVE THIS PAGE FROM THE CATEGORY
-		let temparr = [...category.lore_pages];
-		temparr.splice(props.index,1);
-		let updateCat ={
-			...category,
-			//Remove just the index entry from array
-			lore_pages:temparr,
-		} 
-		dispatch(editCategory(worldid,updateCat))
+		// // let temparr = [...category.lore_pages];
+		// // temparr.splice(props.index,1);
+		// // let updateCat ={
+		// // 	...category,
+		// // 	//Remove just the index entry from array
+		// // 	lore_pages:temparr,
+		// // } 
+		// // dispatch(editCategory(worldid,updateCat))
+		let unlink ={
+				unlink_lore_page:true,
+				lore_pages:props.page.id,
+			} 
 
 		//REMOVE THE CATEGORY FROM THIS PAGE
 		let catIndex = props.page.categories.map((id,index)=>{
@@ -93,33 +96,33 @@ const LoreSummaryCard = (props) => {
 
 	//CODE FOR LISTING CATEGORIES FOR EACH LORE
 	
-	//const categorylist = useSelector(state => state.category.list);
+	// //const categorylist = useSelector(state => state.category.list);
 
-	// const getCategoryTitle = (id) => {
-	// 	for (const category of categorylist){
-	// 		if (category.id === id) return category.title
-	// 	}
-	// 	return id;
-	// }
+	// // const getCategoryTitle = (id) => {
+	// // 	for (const category of categorylist){
+	// // 		if (category.id === id) return category.title
+	// // 	}
+	// // 	return id;
+	// // }
 
-	// const getCategoryUrl = (id) => {
-	// 	for (const category of categorylist){
-	// 		if (category.id === id) return category.custom_url
-	// 	}
-	// 	return id;
-	// }
+	// // const getCategoryUrl = (id) => {
+	// // 	for (const category of categorylist){
+	// // 		if (category.id === id) return category.custom_url
+	// // 	}
+	// // 	return id;
+	// // }
 
-	// let categories_listed;
-	// if(props.page.categories){
-	// 	categories_listed = props.page.categories.map((id,index)=>{
-	// 		let categoryTitle = getCategoryTitle(id)
-	// 		let categoryUrl = getCategoryUrl(id)
-	// 		return (
-	// 		<Link key={index+id} color="alert" underline="hover" component={RouterLink}
-	// 		to={"/"+worldurl+"/category/"+categoryUrl}>{categoryTitle}</Link>
-	// 		)
-	// 	})
-	// }
+	// // let categories_listed;
+	// // if(props.page.categories){
+	// // 	categories_listed = props.page.categories.map((id,index)=>{
+	// // 		let categoryTitle = getCategoryTitle(id)
+	// // 		let categoryUrl = getCategoryUrl(id)
+	// // 		return (
+	// // 		<Link key={index+id} color="alert" underline="hover" component={RouterLink}
+	// // 		to={"/"+worldurl+"/category/"+categoryUrl}>{categoryTitle}</Link>
+	// // 		)
+	// // 	})
+	// // }
 
 	
 	//CHOOSE WHICH STATE TO SHOW
@@ -215,7 +218,7 @@ const LoreSummaryCard = (props) => {
 		<DialogActions >
 		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
 			>Cancel</Button>
-		<Button variant="contained" color="alert" onClick={() => removeAPage}
+		<Button variant="contained" color="alert" onClick={removeAPage}
 			>Delete Lore Page</Button>
 		</DialogActions>
         </Dialog>

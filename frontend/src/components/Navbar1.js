@@ -7,7 +7,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-// import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 // import Switch from '@mui/material/Switch';
 // import FormControlLabel from '@mui/material/FormControlLabel';
@@ -85,7 +84,7 @@ const Navbar1 = (props) => {
 					open={Boolean(anchorEl)}
 					onClose={()=>handleClose("E1")}
 				>
-					{/* <MenuItem onClick={()=>handleClose("E1")}>{state.username}</MenuItem> */}
+					<MenuItem onClick={()=>handleClose("E1")}>{state.username}</MenuItem>
 					<MenuItem onClick={()=>handleClose("E1")}>
 					<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
 					</MenuItem>

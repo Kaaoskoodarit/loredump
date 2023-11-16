@@ -3,6 +3,8 @@ import LoreSummaryCard from './../common/LoreSummaryCard';
 import { useParams, useNavigate } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import { getCategory,editCategory, removeCategory} from '../../actions/categoryActions';
+
+//MATERIAL UI IMPORTS
 import ImageCard from '../common/ImageCard';
 import Button from '@mui/material/Button';
 import { Grid, Typography, Paper, Divider, Stack, DialogActions, DialogTitle, DialogContentText } from '@mui/material';
@@ -10,6 +12,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import UploadWidget from '../Cloudinary/UploadWidget';
+import MultipleSelectChip from '../common/MultipleSelectChip';
 
 
 
@@ -26,13 +31,15 @@ const Category = (props) => {
     const catlist = useSelector(state => state.category.list);
     const lorelist = useSelector(state => state.lore.list);
 	
-
-
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	
+
+	//mode for page's State : default, edit, remove
 	const [mode,setMode] = useState("default")
+	const [editState,setEditState] = useState({
+		...catpage
+	})
 	
 	
 	//ID RECIEVED FROM ROUTER URL
@@ -56,26 +63,49 @@ const Category = (props) => {
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[url,catlist])
+
 	
-	
+	//display loading icon if the page is still waiting on server
 	const [loading,setLoading] = useState(false);
 
 	if (catpage.custom_url !== url && loading===false){
 		setLoading (true);
-	} else if (catpage.custom_url === url && loading === true) {setLoading(false)}
+	} else if (catpage.custom_url === url && loading === true) {
+		setEditState({...catpage});
+		setLoading(false)}
 	
 	
+	 // Handle normal onChange events    
+	 const onChange = (event) => {
+
+        //custom url can be max 50 characters!
+        if (event.target.name === "custom_url"&&event.target.value.length === 50) {
+            return
+        }
+        setEditState((editState) => {
+            return {
+                ...editState,
+                [event.target.name]:event.target.value
+            }
+        })
+    }
 
 
-	
+	//HANDLE DELETING THE ENTIRE CATEGORY
 	const removeCat = () => {
 		dispatch(removeCategory(worldid,catpage.id));
 		setMode("default");
 		return;
 	}
 	
+	//HANDLE SAVING THE EDIT OF CATEGORY
 	const editCat = () => {
-		dispatch(editCategory(worldid,catpage));
+		let tempCategory = {...editState}
+		//*REPLACE SPACES WITH UNDERLINE, MAKE THE TITLE AS URL IF NONE SPECIFIED
+        //custom url can be max 50 characters! (thus, the SLICE command)
+        tempCategory.custom_url = tempCategory.custom_url === ""? editState.title.slice(0,49).replace(/\s+/g, '_') : tempCategory.custom_url.replace(/\s+/g, '_')
+
+		dispatch(editCategory(worldid,tempCategory));
 		setMode("default");
 	}
 
@@ -99,7 +129,7 @@ const Category = (props) => {
 			>Save</Button>
 			</>}
 	
-	if (mode === "default"){
+	if (mode === "default"&&catpage.title!=="Uncategorised"){
 		actionButtons = <>
 		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
 			>Edit</Button>
@@ -117,7 +147,7 @@ const Category = (props) => {
 		return "Lost Link";
 	}
 
-	//LIST THE PAGES IN THIS CATEGORY
+	//*LIST THE PAGES IN THIS CATEGORY
 	let pages = <Typography sx={{p:2}} variant="body1">No Lore pages linked yet.</Typography>
 
 	//if category has at least one link to a lore saved:
@@ -139,15 +169,11 @@ const Category = (props) => {
 	//Display the loading icon if state is loading
 	pages = loading===false ? pages :<CircularProgress color="inherit" /> ;
 
-
-	return(
-		<Paper elevation={3} sx={{ p:2}}>
-		<Stack direction="row" justifyContent="flex-end" spacing={1}>
-			{actionButtons}
-		</Stack>
-		<Grid container spacing={2} >
-	
-
+	//*DEFAULT LAYOUT
+	let content;
+	if (mode==="default"||"delete"){
+		content = 
+		<>
 		<Grid item xs={12} sm={8}>
 		<Typography variant="lore">{catpage.title}</Typography>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -162,10 +188,51 @@ const Category = (props) => {
 		
 		<Grid item xs >
 			<br/>
-		<ImageCard page={catpage}/>
+			<ImageCard page={catpage}/>
+		</Grid>
+			</>
+	}
+
+	//*LAYOUT IN EDIT MODE
+	if (mode === "edit"){
+		content = 
+		<>
+		<Grid item xs={12} sm={8}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant='loreSmall'>Edit Category</Typography>
+
+		<TextField id="category-title" size='small' name="title" label="Title" required multiline maxRows={2}
+                value={editState.title} onChange={onChange}/>
+		<br/>
+		<TextField id="category-description" size='small' name="description" label="Description" multiline maxRows={10}
+                value={editState.description} onChange={onChange}/>
+		<br/>
+		<TextField id="category-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
+			value={editState.private_notes} onChange={onChange}/>
+		<br/>
+		<TextField id="category-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
+                value={editState.custom_url} onChange={onChange}/>
+		<br/>
+		<MultipleSelectChip list={lorelist} label={"Lore"} state={editState} name="lore_pages" setState={setEditState}/>
+		</Container>
 		</Grid>
 		
+		<Grid item xs >
+			<br/>
+			<ImageCard page={editState}/>
+			<UploadWidget setState={setEditState}/>
 		</Grid>
+			</>
+	}
+	return(
+		<Paper elevation={3} sx={{ p:2}}>
+		<Stack direction="row" justifyContent="flex-end" spacing={1}>
+			{actionButtons}
+		</Stack>
+		<Grid container spacing={2} >
+			{content}
+		</Grid>
+		
 		<Container>
 
 
