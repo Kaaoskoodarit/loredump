@@ -223,7 +223,7 @@ const LorePage = (props) => {
 		<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
 			>Edit</Button>
 		<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("remove")}
-			>Delete Category</Button>
+			>Delete Lore</Button>
 			</>}
 	
 	if(mode === "edit") {
@@ -239,7 +239,7 @@ const LorePage = (props) => {
 		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
 			>Edit</Button>
 		<Button size="small" variant="contained" color="alert" onClick={() => setMode("remove")}
-			>Delete Category</Button>
+			>Delete Lore</Button>
 			</>}
 
 
@@ -316,8 +316,6 @@ if (mode==="edit"){
 		<TextField id="lore-title" size='small' name="title" label="Title" required multiline maxRows={2}
                 value={editState.title} onChange={onChange}/>
 		<br/>
-		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
-		<br/>
 		<TextField id="lore-description" size='small' name="description" label="Description" multiline maxRows={10}
                 value={editState.description} onChange={onChange}/>
 		<br/>
@@ -327,6 +325,7 @@ if (mode==="edit"){
 		<TextField id="lore-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
                 value={editState.custom_url} onChange={onChange}/>
 		<br/>
+		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
 		</Container>
 		</Grid>
 		
@@ -360,7 +359,7 @@ if (mode==="edit"){
 
 	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
         <DialogTitle>
-			Deleting category: {page.title}</DialogTitle>
+			Deleting Lore: {page.title}</DialogTitle>
 		<DialogContent >
 			<DialogContentText> 
 				This action cannot be undone.</DialogContentText>
@@ -369,7 +368,7 @@ if (mode==="edit"){
 		<Button autoFocus  variant="contained" color="secondary" onClick={() => setMode("default")}
 			>Cancel</Button>
 		<Button variant="contained" color="alert" onClick={removeAPage}
-			>Delete Category</Button>
+			>Delete Lore Page</Button>
 		</DialogActions>
         </Dialog>
 		
