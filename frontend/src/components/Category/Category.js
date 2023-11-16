@@ -1,6 +1,6 @@
 import {useState,useEffect} from 'react';
 import LoreSummaryCard from './../common/LoreSummaryCard';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import { getCategory,editCategory, removeCategory} from '../../actions/categoryActions';
 import ImageCard from '../common/ImageCard';
@@ -30,6 +30,7 @@ const Category = (props) => {
 
 	// Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	
 	const [mode,setMode] = useState("default")
 	
@@ -40,12 +41,17 @@ const Category = (props) => {
 	useEffect(() => {
 		// Get page id based on url:
 		if (catlist) {
+			let found = false;
 			for (let cat of catlist) {
 				if (cat.custom_url === url) {
 					// If find a match, dispatch getPage to update page state
 					dispatch(getCategory(worldid,cat.id));
+					found = true;
 					break;
 				}
+			}
+			if (!found) {
+				navigate("/");
 			}
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
