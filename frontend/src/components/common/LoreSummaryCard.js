@@ -63,22 +63,26 @@ const LoreSummaryCard = (props) => {
 		// // 	lore_pages:temparr,
 		// // } 
 		// // dispatch(editCategory(worldid,updateCat))
-		let unlink ={
-				unlink_lore_page:true,
-				lore_pages:props.page.id,
-			} 
+		// let unlink ={
+		// 		unlink_lore_page:true,
+		// 		lore_pages:props.page.id,
+		// 	} 
 
-		//REMOVE THE CATEGORY FROM THIS PAGE
-		let catIndex = props.page.categories.map((id,index)=>{
-			if (category.id === id) return index })
+		// //REMOVE THE CATEGORY FROM THIS PAGE
+		// let catIndex = props.page.categories.map((id,index)=>{
+		// 	if (category.id === id) return index })
 		
+
 		//make a shallow copy
-		let tempCats = [...props.page.categories];
-		tempCats.splice(catIndex,1);
+		// let tempCats = [...props.page.categories];
+		// tempCats.splice(catIndex,1);
 		//Remove just the index entry from array
+
+		//SEND A REQUEST TO UNLINK PAGE FROM CATEGORY:ID
 		let updatePage = {
+			unlink_lore_page:true,
 			id: props.page.id,
-			categories : tempCats,
+			categories : category.id,
 		}
 		dispatch(editPage(worldid,updatePage))
 
