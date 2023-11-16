@@ -68,7 +68,7 @@ def get_id():
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
-        return jsonify({"id": session["user_id"],"username": session["username"]}), 200
+        return jsonify({"id": session["user_id"], "username": session["username"]}), 200
 
 
 # Routes for User model
@@ -403,8 +403,6 @@ def get_category(world_id, category_id):
             if category.title == "Uncategorised":
                 return jsonify({"error": "Can't delete uncategorised category"}), 400
             category.delete()
-            # Delete category from all lore pages
-            category.remove_category_from_all_lore_pages(category_id)
             return jsonify({"success": "Category successfully deleted"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400

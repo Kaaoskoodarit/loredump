@@ -662,6 +662,14 @@ class Category:
         )
         addCat = World.get_by_id(ObjectId(self.world_id))
         addCat.add_category(result.inserted_id)
+        # Delete "Uncategorised" from lore pages this category was inserted to
+        for lore_page in self.lore_pages:
+            if Category.get_id_of_uncategorised(self.world_id) in LorePage.get_by_id(ObjectId(lore_page)).categories:
+                removeLore = LorePage.get_by_id(ObjectId(lore_page))
+                removeLore.remove_category(self.get_id_of_uncategorised(self.world_id))
+                # Remove lore page from Uncategorised
+                removeLore = Category.get_by_id(self.get_id_of_uncategorised(self.world_id))
+                removeLore.remove_lore_page(lore_page)
         return str(result.inserted_id)
 
     # Add Uncategorised to database
@@ -932,6 +940,24 @@ class Category:
         except Exception as e:
             print(e)
             return False
+
+    @staticmethod
+    def get_id_of_uncategorised(world_id):
+        """
+        Returns the ID of the "Uncategorised" category of the given world.
+
+        Args:
+            world_id (str): The ID of the world whose "Uncategorised" category ID to retrieve.
+
+        Returns:
+            str: The ID of the "Uncategorised" category.
+        """
+        categories_collection = db["categories"]
+        result = categories_collection.find_one({"world_id": world_id, "title": "Uncategorised"})
+        if result:
+            return str(result["_id"])
+        else:
+            return None
 
 
 class LorePage:
