@@ -23,6 +23,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TextField from '@mui/material/TextField';
 import UploadWidget from '../Cloudinary/UploadWidget';
+import Connections from './Relationships';
 import ImageCard from '../common/ImageCard';
 import MultipleSelectChip from '../common/MultipleSelectChip';
 import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
@@ -278,6 +279,7 @@ const LorePage = (props) => {
 		</Container>
 	</Grid>
 	<Grid item xs={4}>
+	<br/>
 		<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
 			<CardActionArea onClick={handleClickOpen}>
 			<CardMedia
@@ -311,26 +313,35 @@ if (mode==="edit"){
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant='loreSmall'>Edit Lore Page</Typography>
 
-		<TextField id="category-title" size='small' name="title" label="Title" required multiline maxRows={2}
+		<TextField id="lore-title" size='small' name="title" label="Title" required multiline maxRows={2}
                 value={editState.title} onChange={onChange}/>
 		<br/>
-		<TextField id="category-description" size='small' name="description" label="Description" multiline maxRows={10}
+		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
+		<br/>
+		<TextField id="lore-description" size='small' name="description" label="Description" multiline maxRows={10}
                 value={editState.description} onChange={onChange}/>
 		<br/>
-		<TextField id="category-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
+		<TextField id="lore-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
 			value={editState.private_notes} onChange={onChange}/>
 		<br/>
-		<TextField id="category-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
+		<TextField id="lore-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
                 value={editState.custom_url} onChange={onChange}/>
 		<br/>
-		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
 		</Container>
 		</Grid>
 		
 		<Grid item xs >
 			<br/>
 			<ImageCard page={editState}/>
+			
 			<UploadWidget setState={setEditState}/>
+			<br/>
+			<Typography variant="h6">Summary:</Typography>
+
+			<TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
+			value={editState.summary} onChange={onChange}/>
+			<br/>
+			<Connections state={editState} setState={setEditState}/>
 		</Grid>
 	</>}
 
