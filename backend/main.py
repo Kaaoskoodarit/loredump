@@ -17,7 +17,7 @@ load_dotenv()
 
 uri = os.getenv("DOMAIN")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/", template_folder="../frontend/build")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 if os.getenv("LOCAL") == "True":
@@ -630,4 +630,7 @@ def add_fake_data():
 
 
 if __name__ == "__main__":
-    app.run("127.0.0.1", port=3001, debug=True)
+    if os.getenv("DEBUG") == "True":
+        app.run("127.0.0.1", port=3001, debug=True)
+    else:
+        app.run("127.0.0.1", port=3001, debug=False)
