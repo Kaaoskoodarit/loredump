@@ -25,7 +25,7 @@ const LoreSummaryCard = (props) => {
 	
 	// // const categories = props.page.categories.map((category,i)=><p key={props.page.title+i+category}>{category}</p>)
 	// //const categories =<p>Categories</p>
-	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
+	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
 	const image = (props.page.image!=="")? props.page.image: default_img;
 	const worldurl = appState.worldurl
 	const worldid = appState.worldid

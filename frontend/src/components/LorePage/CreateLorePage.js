@@ -51,7 +51,7 @@ const CreateLorePage = (props) => {
     const navigate = useNavigate();
 
     // Create preview image:
-    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
+    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
 	const image = (state.image !== 'error.jpg' && state.image !== "") ? state.image : default_img
 
    
@@ -171,7 +171,7 @@ const CreateLorePage = (props) => {
 
                     <Card elevation={3} sx={{ p:1, maxWidth:300,display: 'flex', flexDirection: 'column'  }}>
 
-                    <CardMedia sx={{ height:200}} image={state.image}/>                      
+                    <CardMedia sx={{ height:200}} image={image}/>                      
                     <Typography variant="h6">Add Image:</Typography>
                     <UploadWidget setState={setState} />
                     <Typography variant="h6">Summary:</Typography>

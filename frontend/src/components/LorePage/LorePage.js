@@ -117,7 +117,7 @@ const LorePage = (props) => {
 	
 
 	//IMAGES
-	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
+	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
 
@@ -201,9 +201,9 @@ const LorePage = (props) => {
 			} else {return ("")}	
 		})	
 	}
-
-	// // IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	if (!page.connections){
+	
+	// IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
+	 if (!page.connections||page.connections[0].target_id===""){
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
@@ -244,14 +244,14 @@ const LorePage = (props) => {
 	<Grid item xs={12} sm={6} md={8} order={{xs:2, md:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{sm:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
-		<Typography variant="subtitle">Categories:</Typography>
+		<Typography variant="h6">Categories:</Typography>
 		<Grid container spacing={1}>
 		{categories_listed}
 		</Grid>
 		<br/>
-		<Typography variant="h6">Description:</Typography>
+		{page.description&&<Typography variant="h6">Description:</Typography>}
 		<Typography variant="body1">{page.description}</Typography>
-		<Typography variant="h6">Notes:</Typography>
+		{page.private_notes&&<Typography variant="h6">Notes:</Typography>}
 		<Typography variant="body1">{page.private_notes}</Typography>
 
 			<TabContext value={tab}>
@@ -293,8 +293,8 @@ const LorePage = (props) => {
 			<img height='100%' width='100%' src={image} alt={"Image for "+page.title}/>
 		</DialogContent>
 	  </Dialog>
-		<Typography variant="h6">Summary:</Typography>
-		<Typography color="secondary.dark" variant="body1">{page.summary}</Typography>
+		{page.summary&&<Typography variant="h6">Summary:</Typography>}
+		<Typography color="secondary" variant="body1">{page.summary}</Typography>
 		<Typography variant="h6">Connections:</Typography>
 		<Grid container spacing={1}>
 		{connections_listed}

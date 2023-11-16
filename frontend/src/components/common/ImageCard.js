@@ -18,7 +18,7 @@ const handleClickOpen = () => {
   };
 
   //HANDLE DEFAULT IMAGE
-  const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
+  const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
   const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img  
 
 
