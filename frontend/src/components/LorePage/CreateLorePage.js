@@ -41,9 +41,10 @@ const CreateLorePage = (props) => {
     const worldurl = useSelector(state => state.world.page.custom_url); 
     const pagestate = useSelector(state => state.lore.page);
     const categorylist = useSelector(state => {
-                        let categorylist = [...state.category.list];
-                        categorylist.splice(0,1);
-                        return categorylist  });
+        let categorylist = [...state.category.list];
+        categorylist.splice(0,1);
+        return categorylist  
+    });
 
     // Use dispatch and navigate
     const dispatch = useDispatch();
@@ -106,6 +107,7 @@ const CreateLorePage = (props) => {
         //dispatch(getPage(worldid,pagestate.id));
 
         // Reset the state of the page and relationships
+        /* 
         setState({
             title:"",
             custom_url:"",
@@ -119,6 +121,7 @@ const CreateLorePage = (props) => {
             }],
             private_notes:""
         })
+        */
         setAddCount(1);
     }
 
