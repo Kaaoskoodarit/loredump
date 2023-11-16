@@ -9,7 +9,6 @@ import loginReducer from './reducers/loginReducer';
 import pageReducer from './reducers/pageReducer';
 import categoryReducer from './reducers/categoryReducer';
 import worldReducer from './reducers/worldReducer';
-import CssBaseline from '@mui/material/CssBaseline';
 
 
 
@@ -35,7 +34,6 @@ root.render(
   <React.StrictMode>
   <BrowserRouter>
   <Provider store={store}>
-    <CssBaseline enableColorScheme/>
     <App />
   </Provider>
   </BrowserRouter>

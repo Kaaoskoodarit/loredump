@@ -11,6 +11,7 @@ import ListPages from './components/Category/ListPages';
 import World from './components/World';
 
 //*IMPORTS FOR WORLD THEME
+import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
 import {themeBlueBook, themeOrangeBook, themeDark} from './theme';
 
@@ -106,6 +107,7 @@ function App() {
 	if(appState.isLogged&&appState.worldlist&&appState.worldlist.length>0) {
 		return (
 			<ThemeProvider theme={theme}>
+		    <CssBaseline enableColorScheme/>
 
 			<Container>
 				<Navbar1/>
@@ -136,6 +138,8 @@ function App() {
 	} else if (appState.isLogged&&appState.worldlist.length===0) {
 		return (
 			<ThemeProvider theme={theme}>
+    		<CssBaseline enableColorScheme/>
+			
 
 
 			<Container>
@@ -156,6 +160,8 @@ function App() {
 		// Otherwise show Navbar, "message" and LoginPage
 		return (
 			<ThemeProvider theme={theme}>
+	    <CssBaseline enableColorScheme/>
+
 			<Container>
 				<Navbar1 />
 				<div style={{height:35,textAlign:"center"}}>
