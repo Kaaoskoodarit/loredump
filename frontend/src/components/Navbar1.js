@@ -59,6 +59,7 @@ const Navbar1 = (props) => {
 			</Typography>
 			{isLogged && (
 				<div>
+					{/* <Typography>Welcome, {state.username}</Typography> */}
 				<IconButton
 					size="large"
 					aria-label="account of current user"
@@ -69,12 +70,11 @@ const Navbar1 = (props) => {
 				>
 					<AccountCircle />
 				</IconButton>
-				<Typography>{state.username}</Typography>
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}
 					anchorOrigin={{
-					vertical: 'top',
+					vertical: 'bottom',
 					horizontal: 'right',
 					}}
 					keepMounted
@@ -85,7 +85,7 @@ const Navbar1 = (props) => {
 					open={Boolean(anchorEl)}
 					onClose={()=>handleClose("E1")}
 				>
-					<MenuItem onClick={()=>handleClose("E1")}></MenuItem>
+					{/* <MenuItem onClick={()=>handleClose("E1")}>{state.username}</MenuItem> */}
 					<MenuItem onClick={()=>handleClose("E1")}>
 					<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
 					</MenuItem>
