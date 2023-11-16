@@ -23,6 +23,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TextField from '@mui/material/TextField';
 import UploadWidget from '../Cloudinary/UploadWidget';
+import ImageCard from '../common/ImageCard';
 import MultipleSelectChip from '../common/MultipleSelectChip';
 import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
 import Button from '@mui/material/Button';
@@ -241,16 +242,11 @@ const LorePage = (props) => {
 			</>}
 
 
-	
-
-	return(
+	//*DEFAULT LAYOUT
+	let content;
+	if (mode==="default"||"delete"){
+		content = <>
 		
-	<Paper elevation={3} sx={{ p:2}}>
-		<Stack direction="row" justifyContent="flex-end" spacing={1}>
-			{actionButtons}
-		</Stack>
-	<Grid container spacing={2}>
-	
 	<Grid item xs={8}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{page.title}</Typography>
@@ -290,8 +286,7 @@ const LorePage = (props) => {
 			title={"Image for "+page.title}	
 			/>
 			</CardActionArea>
-		
-		 <Dialog
+			<Dialog
         open={open}
         onClose={handleClose}
         aria-label="image-dialog"
@@ -308,6 +303,48 @@ const LorePage = (props) => {
 		</Grid>
 		</Card>
 	</Grid>
+		</>}
+
+if (mode==="edit"){
+	content = <>
+	<Grid item xs={12} sm={8}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant='loreSmall'>Edit Lore Page</Typography>
+
+		<TextField id="category-title" size='small' name="title" label="Title" required multiline maxRows={2}
+                value={editState.title} onChange={onChange}/>
+		<br/>
+		<TextField id="category-description" size='small' name="description" label="Description" multiline maxRows={10}
+                value={editState.description} onChange={onChange}/>
+		<br/>
+		<TextField id="category-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
+			value={editState.private_notes} onChange={onChange}/>
+		<br/>
+		<TextField id="category-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
+                value={editState.custom_url} onChange={onChange}/>
+		<br/>
+		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
+		</Container>
+		</Grid>
+		
+		<Grid item xs >
+			<br/>
+			<ImageCard page={editState}/>
+			<UploadWidget setState={setEditState}/>
+		</Grid>
+	</>}
+
+	return(
+		
+	<Paper elevation={3} sx={{ p:2}}>
+		<Stack direction="row" justifyContent="flex-end" spacing={1}>
+			{actionButtons}
+		</Stack>
+	<Grid container spacing={2}>
+	{content}
+	
+		
+		
 	</Grid>
 
 	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
