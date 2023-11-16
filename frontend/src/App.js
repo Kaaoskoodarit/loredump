@@ -58,7 +58,7 @@ function App() {
 	useEffect(()=>{
 	switch (appState.theme){
 		case "Orange": setTheme(themeOrangeBook); return
-		case "Muted": setTheme(themeBlueBook); return
+		case "Nautical": setTheme(themeBlueBook); return
 		case "Dark": setTheme(themeDark); return
 		
 	}

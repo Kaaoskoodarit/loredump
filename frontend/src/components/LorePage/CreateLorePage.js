@@ -188,7 +188,7 @@ const CreateLorePage = (props) => {
                     </Container>
                 </Grid>
         <Container>
-            <Button type='submit' variant='contained' size='xl'>Create new Lore Page</Button>
+            <Button type='submit' color="success" variant='contained' size='xl'>Create new Lore Page</Button>
         </Container>
         </Grid>
         </form>

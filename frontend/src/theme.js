@@ -7,40 +7,20 @@ const themeBlueBook = createTheme({
 
   palette: {
       
-    primary: {main:"#d3986e",},
-    // {
-    //   light: amber[300],
-    //   main: '#d3986e',
-    //   dark: '#021826',
-    //   contrastText: '#000',
-    // },
+    primary:  {main: "#021826",},
 
-    secondary:  {main: "#021826",},
-  //   {
-  //     light: orange['A100'],
-  //     main: orange[500],
-  //     dark:"#b22a00",
-  //     contrastText:"#fff"    
-  // },
-  alert:{ main: "#b24c33",},
-  // {
-  //     main: "#6101b5",
-  //     contrastText:"#fff"
-  // },
-  //   {
-  //     light:"#d83219",
-  //     main:"#9e0200",
-  //     dark:"#05645e",
-  //     contrastText:"#fff",
-  //   },
+    secondary: {main:cyan[600],},
+
+    alert:{ main: orange[500],},
+
     
     background:{
       paper: "#fffeea",
-      default:"#551f15",
+      default:"#1b383d",
   },
   text:{
-      primary:"#000",
-      secondary:"#b22a00",
+      primary:"#021826",
+      secondary:orange[500],
       alert:"#6101b5",
   }
   },
@@ -48,12 +28,12 @@ const themeBlueBook = createTheme({
   typography:{
     lore: {
       fontSize: '5rem',
-      color: '#d50000',
+      color: '#84185b',
       fontFamily: "'Lovers Quarrel', 'Lucida Handwriting', cursive",
     },
     loreSmall: {
       fontSize: '1.5rem',
-      color: '#d50000',
+      color: '#84185b',
       fontFamily: "'Lucida Handwriting', cursive",
     },
   }

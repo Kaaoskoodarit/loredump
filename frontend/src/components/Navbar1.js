@@ -7,13 +7,16 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { Divider } from '@mui/material';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Check from '@mui/icons-material/Check';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import AnchorIcon from '@mui/icons-material/Anchor';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
  
 
@@ -54,6 +57,14 @@ const Navbar1 = (props) => {
 	const selected =   <ListItemIcon>
 						<Check />
 						</ListItemIcon>
+	const icon =()=>{
+		switch (state.theme){
+			case "Dark" : return <DarkModeIcon/>
+			case "Nautical" : return <AnchorIcon/>
+			case "Orange" : return <MenuBookIcon/>
+			default: return <AccountCircle/>
+				}
+	}
 	
 	//REPLACE TREASURE TROVE... WITH CURRENT WORLD NAME
 	return(
@@ -78,7 +89,7 @@ const Navbar1 = (props) => {
 					onClick={(e)=>handleMenu(e)}
 					color="inherit"
 				>
-					<AccountCircle />
+					{icon()}
 				</IconButton>
 				<Menu
 					id="menu-appbar"
@@ -106,9 +117,9 @@ const Navbar1 = (props) => {
 						<ListItemText inset={state.theme!=="Orange"}>Orange</ListItemText>
 						</MenuItem>
 
-					<MenuItem onClick={()=>handleThemeChange("Muted")} >
-						{state.theme==="Muted"&&selected}
-						<ListItemText inset={state.theme!=="Muted"}>Muted</ListItemText>
+					<MenuItem onClick={()=>handleThemeChange("Nautical")} >
+						{state.theme==="Nautical"&&selected}
+						<ListItemText inset={state.theme!=="Nautical"}>Nautical</ListItemText>
 						</MenuItem>
 					<Divider/>
 					<MenuItem onClick={()=>{
