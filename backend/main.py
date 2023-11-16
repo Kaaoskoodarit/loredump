@@ -68,7 +68,7 @@ def get_id():
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
-        return jsonify({"id": session["user_id"]}), 200
+        return jsonify({"id": session["user_id"],"username": session["username"]}), 200
 
 
 # Routes for User model
