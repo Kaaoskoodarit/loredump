@@ -26,7 +26,8 @@ function UploadWidget({ setState }) {
     const [uwConfig,setUwConfig] = useState({
         cloudName:"kaaoskoodarit",
         uploadPreset:"upload_widget",
-        cropping:true,
+        //cropping:true,
+        resourceType: "image",
         sources:["local","url"],
         multiple:false,
         maxImageFileSize: 20000000,
