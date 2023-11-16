@@ -495,6 +495,21 @@ def get_lore_page(world_id, lore_page_id):
                         jsonify({"error": "URL is already in use, it must be unique inside the world"}),
                         409,
                     )
+
+            # Remove lore page from current category
+            if "categories" in request.json and "unlink_lore_page" in request.json:
+                lorePage = LorePage.get_by_id(lore_page_id)
+                lorePage.remove_category(request.json["categories"])
+                category = Category.get_by_id(request.json["categories"])
+                category.remove_lore_page(lore_page_id)
+                # If edited lore page has no categories, add it to uncategorised category
+                lorePage = LorePage.get_by_id(lore_page_id)
+                if lorePage.categories == []:
+                    lorePage.add_category("Uncategorised")
+                    addCat = Category.get_by_name("Uncategorised", world_id)
+                    addCat.add_lore_page(lore_page_id)
+                return jsonify({"success": "Category successfully updated"}), 200
+
             lore_page.update()
             lore_page = LorePage.get_by_id(lore_page_id)
             if lore_page.categories == []:
