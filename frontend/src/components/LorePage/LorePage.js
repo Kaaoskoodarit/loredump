@@ -78,13 +78,11 @@ const LorePage = (props) => {
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	
 	// Get page id based on url:
 	if (pagelist) {
 		let found = false;
 		for (let page of pagelist) {
-				if (page.custom_url === url) {
+			if (page.custom_url === url) {
 				// If find a match, dispatch getPage to update page state
 				dispatch(getPage(appState.worldid,page.id));
 				found = true;
