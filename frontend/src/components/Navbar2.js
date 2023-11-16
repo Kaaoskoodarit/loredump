@@ -52,6 +52,7 @@ const Navbar2 = (props) => {
 	};
 	
 	const catLinks = categorylist? categorylist.map((cat) => {
+		if(cat.title==="Uncategorised"&&cat.lore_pages.length===0){return;}
 		return(
 		<MenuItem key={cat.id} onClick={()=>handleClose("E1")} component={RouterLink} 
 		to={"/"+worldurl+"/category/"+cat.custom_url}>
@@ -70,18 +71,21 @@ const Navbar2 = (props) => {
 			<Box sx={{ flexGrow: 1 }}>
 			
 			<AppBar position="static" color="primary">
-			  <Toolbar variant="dense">
+			  <Toolbar variant="dense" 	>
 			  <Breadcrumbs aria-label="breadcrumb" color="secondary" separator="|">
+
 				<Link variant="h4" color="primary.contrastText" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
 				{allPages}
+				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
+				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
+			  </Breadcrumbs>
 				<IconButton
 					size="large"
 					aria-haspopup="true"
 					onClick={(e)=>handleMenu(e,"E1")}
 					color="inherit">
 					<MenuIcon />
-				</IconButton>
-
+				</IconButton>	  
 				<Menu
 					id="menu-appbar"
 					anchorEl={anchorEl}
@@ -100,11 +104,6 @@ const Navbar2 = (props) => {
 					<MenuItem disabled onClick={()=>handleClose("E1")}>Categories</MenuItem>
 			  		{catLinks}
 				</Menu>
-				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
-				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
-
-			  
-			  </Breadcrumbs>
 			  </Toolbar>
 			</AppBar>
 		  </Box>

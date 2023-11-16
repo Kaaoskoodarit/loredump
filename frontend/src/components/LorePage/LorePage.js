@@ -3,7 +3,6 @@ import {useSelector,useDispatch} from 'react-redux';
 import { useParams,useNavigate } from 'react-router-dom';
 import {removePage,editPage} from '../../actions/pageActions';
 
-import CircularProgress from '@mui/material/CircularProgress';
 import { getPage } from '../../actions/pageActions';
 import {Link as RouterLink} from 'react-router-dom'
 //import Link from '@mui/material/Link';
@@ -117,7 +116,7 @@ const LorePage = (props) => {
 	
 
 	//IMAGES
-	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
+	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700154823/book-with-glasses_gfbjmm.png'
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
 
@@ -242,7 +241,7 @@ const LorePage = (props) => {
 		content = <>
 		
 	<Grid item xs={12} sm={6} md={8} order={{xs:2, md:1}}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{sm:2,md:1}}>
+		<Container order={{sm:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="h6">Categories:</Typography>
 		<Grid container spacing={1}>
@@ -308,7 +307,7 @@ if (mode==="edit"){
 	<Grid item xs={12} sm={6} md={8} order={{xs:2,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant='loreSmall'>Edit Lore Page</Typography>
-
+		<br/>
 		<TextField id="lore-title" size='small' name="title" label="Title" required multiline maxRows={2}
                 value={editState.title} onChange={onChange}/>
 		<br/>
@@ -334,9 +333,8 @@ if (mode==="edit"){
 			
 			<UploadWidget setState={setEditState}/>
 			<br/>
-			<Typography variant="h6">Summary:</Typography>
 
-			<TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
+			<TextField id="lore-summary" fullWidth size='small' name="summary" label="Summary" multiline maxRows={4}
 			value={editState.summary} onChange={onChange}/>
 			<br/>
 			<Connections state={editState} setState={setEditState}/>
@@ -347,7 +345,7 @@ if (mode==="edit"){
 		
 	<Paper elevation={3} sx={{ p:2}}>
 		
-	<Grid container spacing={2}>
+	<Grid container rowSpacing={2}>
 	{content}
 	
 		

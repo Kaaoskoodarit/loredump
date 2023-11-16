@@ -115,7 +115,7 @@ const CreateCategory = (props) => {
 		<Paper elevation={3} sx={{ p:2}}>
              <form onSubmit={onSubmit}>
             
-		<Grid container spacing={1}>
+		<Grid container rowSpacing={2}>
             <Container>
             <Typography variant='lore'>Create a new Category</Typography>
             </Container>

@@ -33,6 +33,7 @@ const World = (props) => {
 
 
     const catLinks = categorylist? categorylist.map((cat) => {
+        if(cat.title==="Uncategorised"&&cat.lore_pages.length===0){return;}
 		return(
             <TableRow key={cat.id}>
             <TableCell>

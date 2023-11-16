@@ -7,7 +7,7 @@ import { getCategory,editCategory, removeCategory} from '../../actions/categoryA
 //MATERIAL UI IMPORTS
 import ImageCard from '../common/ImageCard';
 import Button from '@mui/material/Button';
-import { Grid, Typography, Paper, Divider, Stack, DialogActions, DialogTitle, DialogContentText } from '@mui/material';
+import { Box, Grid, Typography, Paper, Divider, Stack, DialogActions, DialogTitle, DialogContentText } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Dialog from '@mui/material/Dialog';
@@ -171,22 +171,42 @@ const Category = (props) => {
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"delete"){
+	if (mode==="default"||"delete"&&catpage.title!=="Uncategorised"){
 		content = 
 		<>
-		<Grid item xs={12} sm={8}>
-		<Typography variant="lore">{catpage.title}</Typography>
+		<Grid xs={12} sm={8} order={{xs:2,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+		<Typography variant="lore">{catpage.title}</Typography>
 
-		<Typography variant="h6">Description:</Typography>
+		{/* DONT WRITE EMPTY HEADERS */}
+		{catpage.description&&<Typography variant="h6">Description:</Typography>}
 		<Typography variant="body1">{catpage.description}</Typography>
-		<Typography variant="h6">Notes:</Typography>
+		{catpage.private_notes&&<Typography variant="h6">Notes:</Typography>}
 		<Typography variant="body1">{catpage.private_notes}</Typography>
 		
 		</Container>
 		</Grid>
 		
-		<Grid item xs >
+		<Grid item xs  order={{xs:1,sm:2}} >
+			<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
+			<br/>
+			<ImageCard page={catpage}/>
+		</Grid>
+			</>
+	}
+	if(catpage.title==="Uncategorised"){
+		content = 
+		<>
+		<Grid item xs={12} sm={8} order={{xs:2,sm:1}}>
+		<Typography variant="lore">Uncategorised Lore</Typography>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
+			<br/>
+		<Typography variant="h5" color="secondary"><em>This is where all your Lore missing a category will be found.</em></Typography>
+		</Container>
+		</Grid>
+		<Grid item xs={4} order={{xs:1,sm:2}} >
 			<br/>
 			<ImageCard page={catpage}/>
 		</Grid>
@@ -197,7 +217,7 @@ const Category = (props) => {
 	if (mode === "edit"){
 		content = 
 		<>
-		<Grid item xs={12} sm={8}>
+		<Grid item xs={12} sm={8} order={{xs:1,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant='loreSmall'>Edit Category</Typography>
 
@@ -216,20 +236,23 @@ const Category = (props) => {
 		<MultipleSelectChip list={lorelist} label={"Lore"} state={editState} name="lore_pages" setState={setEditState}/>
 		</Container>
 		</Grid>
-		
-		<Grid item xs >
+		<Grid  item  xs order={{xs:2,sm:2}} >
+			<Box alignContent="flex-end">
+
+			<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{actionButtons}
+			</Stack>
 			<br/>
 			<ImageCard page={editState}/>
 			<UploadWidget setState={setEditState}/>
+			</Box>
 		</Grid>
 			</>
 	}
 	return(
 		<Paper elevation={3} sx={{ p:2}}>
-		<Stack direction="row" justifyContent="flex-end" spacing={1}>
-			{actionButtons}
-		</Stack>
-		<Grid container spacing={2} >
+	
+		<Grid container  rowSpacing={2} >
 			{content}
 		</Grid>
 		

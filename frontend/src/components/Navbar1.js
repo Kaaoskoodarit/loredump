@@ -75,12 +75,12 @@ const Navbar1 = (props) => {
 			<Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
 				LoreDump
 			</Typography>
-			<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+			<Typography variant="h6" component="div" sx={{ flexGrow: 1,display:{xs:'none',sm:'flex'} }}>
 			Treasure trove for all your Worldbuilding Lore
 			</Typography>
 			{isLogged && (
 				<>
-					<Typography>Welcome, {state.username}</Typography>
+					<Typography sx={{display:{xs:'none', sm:'none', md:'flex'}} }>Welcome, {state.username}</Typography>
 				<IconButton
 					size="large"
 					aria-label="account of current user"

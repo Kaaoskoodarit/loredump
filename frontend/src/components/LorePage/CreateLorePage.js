@@ -14,6 +14,7 @@ import CardMedia from '@mui/material/CardMedia';
 import TextField from '@mui/material/TextField';
 import { Button, Paper } from '@mui/material';
 import { Container } from '@mui/system';
+import ImageCard from '../common/ImageCard';
 
 
 const CreateLorePage = (props) => {
@@ -51,7 +52,7 @@ const CreateLorePage = (props) => {
     const navigate = useNavigate();
 
     // Create preview image:
-    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700153026/book-composition-with-open-book_23-2147690555_llklvg.jpg'
+    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700154823/book-with-glasses_gfbjmm.png'
 	const image = (state.image !== 'error.jpg' && state.image !== "") ? state.image : default_img
 
    
@@ -167,23 +168,17 @@ const CreateLorePage = (props) => {
 
                 </Grid>
                 <Grid item xs>
-                    <Container>
-
-                    <Card elevation={3} sx={{ p:1, maxWidth:300,display: 'flex', flexDirection: 'column'  }}>
-
-                    <CardMedia sx={{ height:200}} image={image}/>                      
+                    <ImageCard page={state}/>
                     <Typography variant="h6">Add Image:</Typography>
                     <UploadWidget setState={setState} />
                     <Typography variant="h6">Summary:</Typography>
 
-                    <TextField id="lore-summary" name="summary" label="Summary" multiline maxRows={4}
+                    <TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
                     value={state.summary} onChange={onChange}/>
                     <br/>
                     
                     {/* <ConnectionSelect label={"Connections"} state={state} name="connections" setState={setState}/> */}
                     <Connections state={state} setState={setState}/>
-                    </Card  >
-                    </Container>
                 </Grid>
         <Container>
             <Button type='submit' color="success" variant='contained' size='xl'>Create new Lore Page</Button>
