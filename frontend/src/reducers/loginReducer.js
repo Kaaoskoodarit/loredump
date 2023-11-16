@@ -80,7 +80,8 @@ const loginReducer = (state = initialState,action) => {
 				loading:false,
 				error:"",
 				username:"",
-				user:""
+				user:"",
+				theme:themeOrangeBook
 			}
 			saveToStorage(tempState);
 			return tempState;
@@ -98,7 +99,8 @@ const loginReducer = (state = initialState,action) => {
 				loading:false,
 				error:action.error,
 				username:"",
-				user:""
+				user:"",
+				theme:themeOrangeBook
 			}
 			saveToStorage(tempState);
 			return tempState;		
