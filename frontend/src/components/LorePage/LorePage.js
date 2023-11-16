@@ -98,10 +98,15 @@ const LorePage = (props) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[url,pagelist])
 	
+		
+	//display loading icon if the page is still waiting on server
+	const [loading,setLoading] = useState(false);
 	
-	// if (page.custom_url !== url && loading===false){
-	// 	setLoading (true);
-	// } else if (page.custom_url === url && loading!==false) {setLoading(false)}
+	if (page.custom_url !== url && loading===false){
+		setLoading (true);
+	} else if (page.custom_url === url && loading!==false) {
+		setEditState({...page});
+		setLoading(false)}
 
 	
 	const handleClickOpen = () => {
@@ -117,16 +122,6 @@ const LorePage = (props) => {
 	const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1699876476/user_uploads/skrd5vixnpy7jcc0flrh.jpg'
 	const image = (page.image !== 'error.jpg' && page.image !== "") ? page.image : default_img
 
-
-	
-	
-	
-	
-	
-	//INSERT CODE FOR REMOVING A CATEGORY
-	const handleDelete = () => {
-		console.log("Insert code for removing category")
-	}
 
 	// Handle normal onChange events    
 	const onChange = (event) => {
@@ -248,8 +243,8 @@ const LorePage = (props) => {
 	if (mode==="default"||"delete"){
 		content = <>
 		
-	<Grid item sm={12} md={8}>
-		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{xs:2,md:1}}>
+	<Grid item xs={12} sm={6} md={8} order={{xs:2, md:1}}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }} order={{sm:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="subtitle">Categories:</Typography>
 		<Grid container spacing={1}>
@@ -278,7 +273,7 @@ const LorePage = (props) => {
 
 		</Container>
 	</Grid>
-	<Grid item sm={4} order={{xs:1,md:2}}>
+	<Grid item sm={4} order={{xs:1,sm:2}}>
 	<Stack direction="row" justifyContent="flex-end" spacing={1}>
 				{actionButtons}
 			</Stack>
@@ -312,7 +307,7 @@ const LorePage = (props) => {
 
 if (mode==="edit"){
 	content = <>
-	<Grid item xs={12} sm={8} order={{xs:2,md:1}}>
+	<Grid item xs={12} sm={6} md={8} order={{xs:2,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant='loreSmall'>Edit Lore Page</Typography>
 
@@ -332,7 +327,7 @@ if (mode==="edit"){
 		</Container>
 		</Grid>
 		
-		<Grid item xs={4} order={{xs:1,md:2}} >
+		<Grid item xs={4} order={{xs:1,sm:2}} >
 			<Stack direction="row" justifyContent="flex-end" spacing={1}>
 				{actionButtons}
 			</Stack>
