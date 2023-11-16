@@ -1,7 +1,8 @@
-import {Link} from 'react-router-dom'
+import {Link as RouterLink} from 'react-router-dom'
 import { useState } from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import {logout} from '../actions/loginActions';
+import {logout, selectTheme} from '../actions/loginActions';
+import {themeBlueBook,themeOrangeBook,themeDark} from '../theme';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -24,6 +25,7 @@ const Navbar1 = (props) => {
 			isLogged:state.login.isLogged,
 			user:state.login.user,
 			username:state.login.username,
+			theme:state.login.theme
 			//world:state.world.title
 		}
 	})
@@ -43,6 +45,11 @@ const Navbar1 = (props) => {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+
+	const handleThemeChange = (theme) =>{
+		dispatch(selectTheme(theme));
+		handleClose();
+	}
 	
 	//REPLACE TREASURE TROVE... WITH CURRENT WORLD NAME
 	return(
@@ -57,14 +64,14 @@ const Navbar1 = (props) => {
 			Treasure trove for all your Worldbuilding Lore
 			</Typography>
 			{isLogged && (
-				<div>
-					{/* <Typography>Welcome, {state.username}</Typography> */}
+				<>
+					<Typography>Welcome, {state.username}</Typography>
 				<IconButton
 					size="large"
 					aria-label="account of current user"
 					aria-controls="menu-appbar"
 					aria-haspopup="true"
-					onClick={(e)=>handleMenu(e,"E1")}
+					onClick={(e)=>handleMenu(e)}
 					color="inherit"
 				>
 					<AccountCircle />
@@ -84,12 +91,18 @@ const Navbar1 = (props) => {
 					open={Boolean(anchorEl)}
 					onClose={()=>handleClose("E1")}
 				>
-					<MenuItem onClick={()=>handleClose("E1")}>{state.username}</MenuItem>
-					<MenuItem onClick={()=>handleClose("E1")}>
-					<Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link>
+					<MenuItem disabled>Change Theme. Current: {state.theme?state.theme.name:"Orange"}</MenuItem>
+					<MenuItem onClick={()=>handleThemeChange("Orange")} >Orange</MenuItem>
+					<MenuItem onClick={()=>handleThemeChange("Muted")} >Muted</MenuItem>
+					<MenuItem onClick={()=>handleThemeChange("Dark")} >Dark</MenuItem>
+					<MenuItem onClick={()=>{
+						handleClose("E1");
+						dispatch(logout())}} component={RouterLink} to={"/"}>
+					Logout
 					</MenuItem>
+					{/* <Link className="nav-link" to="/" onClick={() => dispatch(logout())}>Logout</Link> */}
 				</Menu>
-				</div>
+				</>
 			)}
 			</Toolbar>
 		</AppBar>

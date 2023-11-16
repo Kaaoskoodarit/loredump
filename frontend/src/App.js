@@ -3,18 +3,23 @@ import Navbar2 from './components/Navbar2';
 import LoginPage from './components/LoginPage';
 import {Route,Routes,Navigate} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import CreateLorePage from './components/LorePage/CreateLorePage';
 import Category from './components/Category/Category';
 import LorePage from './components/LorePage/LorePage';
 import ListPages from './components/Category/ListPages';
 import World from './components/World';
+
+//*IMPORTS FOR WORLD THEME
+import {ThemeProvider} from '@mui/material/styles';
+import {themeBlueBook, themeOrangeBook, themeDark} from './theme';
+
 // Temp until we get user page!
 import {getList} from './actions/pageActions';
 import {getCategoryList} from './actions/categoryActions';
 import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
-import { Container } from '@mui/material';
+import { Container} from '@mui/material';
 import CreateCategory from './components/Category/CreateCategory';
 import CreateWorld from './components/CreateWorld';
 import LoadingIndicator from './components/common/LoadingIndicator';
@@ -39,12 +44,25 @@ function App() {
 			error:error,
 			loading:state.login.loading,
 			user :state.login.user,
+			theme:state.login.theme,
 			worldlist:state.world.list,
 			worldpage:state.world.list,
 			worldurl: state.world.page.custom_url
 		}
 	})
 
+	//*SELECT THEME
+	const [theme,setTheme] = useState(themeOrangeBook);
+
+	useEffect(()=>{
+	switch (appState.theme){
+		case "Orange": setTheme(themeOrangeBook); return
+		case "Muted": setTheme(themeBlueBook); return
+		case "Dark": setTheme(themeDark); return
+		
+	}
+		
+	},[appState.theme])
 
 	const dispatch = useDispatch();
 
@@ -87,6 +105,8 @@ function App() {
 	// depending on the URL accessed. Routes are available paths.
 	if(appState.isLogged&&appState.worldlist&&appState.worldlist.length>0) {
 		return (
+			<ThemeProvider theme={theme}>
+
 			<Container>
 				<Navbar1/>
 				<Navbar2 worldurl={appState.worldurl}/>
@@ -110,13 +130,14 @@ function App() {
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</Container>
-			// <div className="App" color='primary.dark'>
-				
-			// </div>
+			</ThemeProvider>
 		);
 		//OTHERWISE, IF THERE IS NO WORLDS YET, SHOW CREATE WORLD PAGE
 	} else if (appState.isLogged&&appState.worldlist.length===0) {
 		return (
+			<ThemeProvider theme={theme}>
+
+
 			<Container>
 				<Navbar1/>
 				<p>No worlds yet.</p>
@@ -129,10 +150,12 @@ function App() {
 				</Routes>
 				</div>
 			</Container>
+			</ThemeProvider>
 			);
 		} else {
 		// Otherwise show Navbar, "message" and LoginPage
 		return (
+			<ThemeProvider theme={theme}>
 			<Container>
 				<Navbar1 />
 				<div style={{height:35,textAlign:"center"}}>
@@ -143,6 +166,7 @@ function App() {
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</Container>
+			</ThemeProvider>
 			
 		);		
 		
