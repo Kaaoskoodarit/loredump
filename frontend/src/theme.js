@@ -1,8 +1,9 @@
 import { createTheme } from '@mui/material/styles';
-import { amber,orange,pink, } from '@mui/material/colors';
+import { amber,orange } from '@mui/material/colors';
 
 
 const themeBlueBook = createTheme({
+  name:"Muted",
 
   palette: {
       
@@ -59,6 +60,7 @@ const themeBlueBook = createTheme({
 })
 
 const themeOrangeBook = createTheme(  {
+  name:"Orange",
 
     palette: {
       
@@ -113,6 +115,7 @@ const themeOrangeBook = createTheme(  {
   })
 
   const themeDark = createTheme(  {
+    name:"Dark",
 
     palette: {
         mode: "dark",
@@ -122,6 +125,27 @@ const themeOrangeBook = createTheme(  {
         dark: "#472e18",
       },
       secondary: orange,
+      background:{
+        paper: "#111",
+        default:"#000",
+      },
+      text:{
+        primary:"#fff",
+        secondary:"#b22a00",
+        alert:"#6101b5",
+    }
     },
+    typography:{
+      lore: {
+        fontSize: '5rem',
+        color: '#d50000',
+        fontFamily: "'Lovers Quarrel', 'Lucida Handwriting', cursive",
+      },
+      loreSmall: {
+        fontSize: '1.5rem',
+        color: '#d50000',
+        fontFamily: "'Lucida Handwriting', cursive",
+      },
+    }
   })  
   export {themeBlueBook, themeOrangeBook, themeDark};
