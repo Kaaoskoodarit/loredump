@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import {removePage,editPage} from '../../actions/pageActions';
 
 import CircularProgress from '@mui/material/CircularProgress';
@@ -73,21 +73,28 @@ const LorePage = (props) => {
 
     // Use dispatcer from react-redux
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	
 	useEffect(() => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	
 	// Get page id based on url:
 	if (pagelist) {
+		let found = false;
 		for (let page of pagelist) {
 				if (page.custom_url === url) {
 				// If find a match, dispatch getPage to update page state
 				dispatch(getPage(appState.worldid,page.id));
+				found = true;
 				break;
 			}
 		}
+		if (!found) {
+			navigate("/");
+		}
 	}
-	},[url])
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[url,pagelist])
 	
 	
 	// if (page.custom_url !== url && loading===false){
