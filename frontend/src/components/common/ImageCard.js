@@ -3,6 +3,7 @@ import { Card, CardMedia, CardActionArea } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 
+//* DEFAULT COMPONENT FOR DISPLAYING IMAGES
 const ImageCard = ({page}) => {
 
 
