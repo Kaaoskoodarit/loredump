@@ -60,7 +60,7 @@ function App() {
 		case "Orange": setTheme(themeOrangeBook); return
 		case "Nautical": setTheme(themeBlueBook); return
 		case "Dark": setTheme(themeDark); return
-		
+		default: setTheme(themeDark); return
 	}
 		
 	},[appState.theme])
