@@ -60,6 +60,7 @@ function App() {
 		case "Orange": setTheme(themeOrangeBook); return
 		case "Nautical": setTheme(themeBlueBook); return
 		case "Dark": setTheme(themeDark); return
+		default: setTheme(themeDark); return
 		
 	}
 		
@@ -123,12 +124,9 @@ function App() {
 					<Route path="/:worldurl/category" element={<Category/>}/>
 					<Route path="/:worldurl/category/undefined" element={<ListPages/>}/>
 					<Route path="/:worldurl/category/:url" element={<Category/>}/>
-					{/* <Route path="/category/*" element={<Category />}/> */}
 					<Route path="/:worldurl/lorepage" element={<ListPages />}/>
 					<Route path="/:worldurl/lorepage/undefined" element={<ListPages/>}/>
 					<Route path="/:worldurl/lorepage/:url" element={<LorePage/>}/>
-					{/* <Route path={"/lorepage/"+id} element={<LorePage id={id}/>}/> */}
-					{/* <Route path="/lorepage/*" element={<LorePage/>}/> */}
 					<Route path="*" element={<Navigate to="/"/>}/>
 				</Routes>
 			</Container>

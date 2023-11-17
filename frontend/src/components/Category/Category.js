@@ -171,7 +171,7 @@ const Category = (props) => {
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"delete"&&catpage.title!=="Uncategorised"){
+	if ((mode==="default"||"delete")&&catpage.title!=="Uncategorised"){
 		content = 
 		<>
 		<Grid xs={12} sm={8} order={{xs:2,sm:1}}>
@@ -187,7 +187,7 @@ const Category = (props) => {
 		</Container>
 		</Grid>
 		
-		<Grid item xs  order={{xs:1,sm:2}} >
+		<Grid item xs order={{xs:1,sm:2}} >
 			<Stack direction="row" justifyContent="flex-end" spacing={1}>
 				{actionButtons}
 			</Stack>

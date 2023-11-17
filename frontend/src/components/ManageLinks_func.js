@@ -2,23 +2,27 @@ import {useSelector,useDispatch} from 'react-redux';
 import { updateCategory, getCategoryList } from '../actions/categoryActions';
 
 
-    // console.log("ManageLinks says Hi!",mode)
-    // const token = useSelector(state => state.login.token);
-    // const links = useSelector(state => state.category.page.links);
+//!THIS COMPONENT IS NOT IN USE
+
+//functionality moved to backend
+
+    // // console.log("ManageLinks says Hi!",mode)
+    // // const token = useSelector(state => state.login.token);
+    // // const links = useSelector(state => state.category.page.links);
     
 
-	// const dispatch = useDispatch();
-    // dispatch(getCategoryList(token,"verbose"))
+	// // const dispatch = useDispatch();
+    // // dispatch(getCategoryList(token,"verbose"))
 
-    //FUNCTION SELECTED BASED ON MODE IN SWITCH CASE BELOW
+    // //FUNCTION SELECTED BASED ON MODE IN SWITCH CASE BELOW
 
-    // const editCategories = (editfunction) => {
-    //     // iterate through categories in the list
-    //     for (let thiscategory of categorylist)
-    //         if (page.categories.includes(thiscategory.id)) {
-    //             editfunction(thiscategory);
-    //         }
-    // }
+    // // const editCategories = (editfunction) => {
+    // //     // iterate through categories in the list
+    // //     for (let thiscategory of categorylist)
+    // //         if (page.categories.includes(thiscategory.id)) {
+    // //             editfunction(thiscategory);
+    // //         }
+    // // }
 
     export const addLinkToCategory = (token, page) => { 
         console.log("Adding page: ",page)

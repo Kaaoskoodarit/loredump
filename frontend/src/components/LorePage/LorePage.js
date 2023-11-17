@@ -240,7 +240,7 @@ const LorePage = (props) => {
 	if (mode==="default"||"delete"){
 		content = <>
 		
-	<Grid item xs={12} sm={6} md={8} order={{xs:2, md:1}}>
+	<Grid item xs={12} sm={8} order={{xs:2, md:1}}>
 		<Container order={{sm:2,md:1}}>
 		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="h6">Categories:</Typography>
@@ -270,7 +270,7 @@ const LorePage = (props) => {
 
 		</Container>
 	</Grid>
-	<Grid item sm={4} order={{xs:1,sm:2}}>
+	<Grid item xs order={{xs:1,sm:2}}>
 	<Stack direction="row" justifyContent="flex-end" spacing={1}>
 				{actionButtons}
 			</Stack>

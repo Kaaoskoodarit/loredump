@@ -51,7 +51,9 @@ const Navbar2 = (props) => {
 		setAnchorEl(null) ;
 	};
 	
+
 	const catLinks = categorylist? categorylist.map((cat) => {
+		//If Uncategorised category is empty, don't display it 
 		if(cat.title==="Uncategorised"&&cat.lore_pages.length===0){return;}
 		return(
 		<MenuItem key={cat.id} onClick={()=>handleClose("E1")} component={RouterLink} 
@@ -61,6 +63,7 @@ const Navbar2 = (props) => {
 		)
 		}): "" ;	
 	
+		//if more than 0 lore pages, link to ALL PAGES 
 	const allPages = lore&&lore.length>0 ?
 		<Link variant="h6" color="inherit" underline="hover" component={RouterLink} to={"/"+worldurl}>All Pages</Link>
 	 	: ""

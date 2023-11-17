@@ -1,7 +1,9 @@
 import {useSelector,useDispatch} from 'react-redux';
 import { updateCategory, getCategoryList } from '../actions/categoryActions';
 
+//!THIS COMPONENT IS NOT IN USE
 
+//functionality moved to backend
 
 export const ManageLinks = ({mode, page, categoryPage}) => {
     console.log("ManageLinks says Hi!",mode)

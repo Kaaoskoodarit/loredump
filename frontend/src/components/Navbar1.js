@@ -34,17 +34,14 @@ const Navbar1 = (props) => {
 	})
 	const isLogged = state.isLogged
 
-	//const [auth, setAuth] = useState(true);
+	//ANCHOR EL
 	const [anchorEl, setAnchorEl] = useState(null);
-  
-	// const handleChange = (event) => {
-	//   setAuth(event.target.checked);
-	// };
   
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
   
+	//Close the menu (anchor EL)
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
@@ -54,9 +51,9 @@ const Navbar1 = (props) => {
 		handleClose();
 	}
 
-	const selected =   <ListItemIcon>
-						<Check />
-						</ListItemIcon>
+	//Icon for selcted theme
+	const selected =   <ListItemIcon><Check /></ListItemIcon>
+	//Icon for "profile", changes depending on theme
 	const icon =()=>{
 		switch (state.theme){
 			case "Dark" : return <DarkModeIcon/>
