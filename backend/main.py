@@ -3,7 +3,7 @@ import datetime, os  # , jwt
 from random import Random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from flask import Flask, Response, jsonify, request, session
+from flask import Flask, Response, jsonify, render_template, request, session
 import pytz
 from api.models import User, World, Category, LorePage
 from pprint import pprint
@@ -17,7 +17,11 @@ load_dotenv()
 
 uri = os.getenv("DOMAIN")
 
-app = Flask(__name__, static_folder="../frontend/build", static_url_path="/", template_folder="../frontend/build")
+current_dir = os.path.dirname(os.path.abspath(__file__))
+static_folder_path = os.path.join(current_dir, '../frontend/build')
+template_folder_path = os.path.join(current_dir, '../frontend/build')
+app = Flask(__name__, static_folder=static_folder_path, static_url_path="", template_folder=template_folder_path)
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 if os.getenv("LOCAL") == "True":
@@ -47,18 +51,25 @@ except Exception as e:
 
 fake = Faker()
 
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file("index.html")
 
-@app.route("/", methods=["GET"])
-def index():
-    if request.method == "GET":
-        if session["ttl"] < datetime.datetime.utcnow():
-            # Reset session Time-To-Live
-            session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=ttl)
-        else:
-            # Delete session
-            session.clear()
-            return jsonify({"error": "Session expired"}), 401
-        return jsonify({"message": "Welcome to LoreDump!"})
+@app.route('/')
+def home():
+    return app.send_static_file('index.html')
+
+# @app.route("/", methods=["GET"])
+# def index():
+#     if request.method == "GET":
+#         if session["ttl"] < datetime.datetime.utcnow():
+#             # Reset session Time-To-Live
+#             session["ttl"] = datetime.datetime.utcnow() + datetime.timedelta(minutes=ttl)
+#         else:
+#             # Delete session
+#             session.clear()
+#             return jsonify({"error": "Session expired"}), 401
+#         return jsonify({"message": "Welcome to LoreDump!"})
 
 
 # Get currently logged in user's ID:
@@ -195,7 +206,7 @@ def before_request():
     This function is executed before each request to the server.
     It checks if the user is logged in and if the session has expired.
     """
-    if request.endpoint in ["register", "login", "add_fake_data"]:
+    if request.endpoint in ["register", "login", "add_fake_data", "index", "home", "static"]:
         return
     if "user_id" not in session:
         return jsonify({"error": "User not logged in"}), 401
