@@ -171,7 +171,7 @@ const Category = (props) => {
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"delete"&&catpage.title!=="Uncategorised"){
+	if ((mode==="default"||"delete")&&catpage.title!=="Uncategorised"){
 		content = 
 		<>
 		<Grid xs={12} sm={8} order={{xs:2,sm:1}}>
