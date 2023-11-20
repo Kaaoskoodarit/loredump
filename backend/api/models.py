@@ -734,6 +734,52 @@ class Category:
         except Exception as e:
             print(e)
             return False
+        
+    def update_lorepages(self,lorepage_list):
+        """
+        Adds/removes category to/from the lorepages it is/was in
+
+        Args:
+            lorepage_list (str): list of lorepages in the patch request
+
+        Returns:
+            bool: True if the category was removed successfully, False otherwise.
+        """
+        lorepages_collection = db["lorepages"]
+        old_lorepages = self.lore_pages
+        temp_lore_list = lorepage_list
+        # Remove all lorepages that are in both lists since they didn't change
+        old_lorepages = [lore for lore in old_lorepages if lore not in temp_lore_list]
+        temp_lore_list = [lore for lore in temp_lore_list if lore not in self.lore_pages]
+        print(old_lorepages,temp_lore_list)
+        # add/remove LorePage to/from Category
+        for lorepage in old_lorepages:
+            try:
+                result = lorepages_collection.update_one({"_id": ObjectId(lorepage)}, {"$pull": {"categories": str(self.id)}})
+                lore_page = LorePage.get_by_id(lorepage)
+                if lore_page.categories == []:
+                    lore_page.add_category("Uncategorised")
+                    # NEED TO ALSO ADD PAGE TO UNCATEGORIZED CATEGORY
+                    # Add lore page to new category
+                    addCat = Category.get_by_name("Uncategorised", self.world_id)
+                    addCat.add_lore_page(lorepage)
+                return result.modified_count == 1
+            except Exception as e:
+                print(e)
+                return False 
+        for lorepage in temp_lore_list:
+            try:
+                result = lorepages_collection.update_one({"_id": ObjectId(lorepage)}, {"$push": {"categories": str(self.id)}})
+                lore_page = LorePage.get_by_id(lorepage)
+                if len(lore_page.categories) > 1 and str(Category.get_by_name("Uncategorised", self.world_id).id) in lore_page.categories:
+                    print(f"Tulee tännepäin: {lore_page.categories}")
+                    lore_page.remove_category(str(Category.get_by_name("Uncategorised", self.world_id).id))
+                    remCat = Category.get_by_name("Uncategorised", self.world_id)
+                    remCat.remove_lore_page(lore_page.id)
+                return result.modified_count == 1
+            except Exception as e:
+                print(e)
+                return False
 
     # Remove one lore page from all categories. Used when deleting a lore page.
     @staticmethod
@@ -1088,17 +1134,37 @@ class LorePage:
             return False
         
     def update_categories(self,category_list):
+        """
+        Adds/removes lorepage to/from the categories it is/was in
+
+        Args:
+            category_list (str): list of categories in the patch request
+
+        Returns:
+            bool: True if the category was removed successfully, False otherwise.
+        """
         categories_collection = db["categories"]
         old_cats = self.categories
         temp_cat_list = category_list
+        # Remove all categories that are in both lists since they didn't change
         old_cats = [cat for cat in old_cats if cat not in temp_cat_list]
         temp_cat_list = [cat for cat in temp_cat_list if cat not in self.categories]
         print(old_cats,temp_cat_list)
         # add/remove LorePage to/from Category
         for category in old_cats:
-            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$pull": {"lore_pages": str(self.id)}})
+            try:
+                result = categories_collection.update_one({"_id": ObjectId(category)}, {"$pull": {"lore_pages": str(self.id)}})
+                return result.modified_count == 1
+            except Exception as e:
+                print(e)
+                return False 
         for category in temp_cat_list:
-            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
+            try:
+                result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
+                return result.modified_count == 1
+            except Exception as e:
+                print(e)
+                return False
 
     def add_private_note(self):
         lorepages_collection = db["lorepages"]

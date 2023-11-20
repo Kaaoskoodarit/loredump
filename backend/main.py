@@ -391,6 +391,10 @@ def get_category(world_id, category_id):
                         addCat = Category.get_by_name("Uncategorised", world_id)
                         addCat.add_lore_page(lore_page_id)
                 return jsonify({"success": "Category successfully updated"}), 200
+            # Update all lorepages that need to be updated for normal edits
+            elif "lore_pages" in request.json:
+                catPage = Category.get_by_id(category_id)
+                catPage.update_lorepages(request.json["lore_pages"])
             category.update()
             return jsonify({"success": "Category successfully updated"}), 200
         except Exception as e:
@@ -509,6 +513,7 @@ def get_lore_page(world_id, lore_page_id):
                     addCat = Category.get_by_name("Uncategorised", world_id)
                     addCat.add_lore_page(lore_page_id)
                 return jsonify({"success": "Category successfully updated"}), 200
+            # Update all categories that need to be updated for normal edits
             elif "categories" in request.json:
                 lorePage = LorePage.get_by_id(lore_page_id)
                 lorePage.update_categories(request.json["categories"])
