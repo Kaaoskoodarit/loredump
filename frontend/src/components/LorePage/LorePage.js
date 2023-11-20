@@ -27,6 +27,7 @@ import ImageCard from '../common/ImageCard';
 import MultipleSelectChip from '../common/MultipleSelectChip';
 import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
 import Button from '@mui/material/Button';
+import ConnectionSelect from './ConnectionSelect';
 
 
 
@@ -336,6 +337,8 @@ if (mode==="edit"){
 
 			<TextField id="lore-summary" fullWidth size='small' name="summary" label="Summary" multiline maxRows={4}
 			value={editState.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
+			<br/>
+			<ConnectionSelect state={editState} setState={setEditState}/>
 			<br/>
 			<Connections state={editState} setState={setEditState}/>
 		</Grid>

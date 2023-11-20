@@ -34,30 +34,69 @@ function getStyles(page, options, theme) {
     };
   }
 
+  //? THIS COMPONENT IS FOR SELECTING CONNECTIONS TO ADD TO LORE PAGE.
+  //? THE CONNECTIONS ARE MEANT TO BE ONE-WAY
+
 const ConnectionSelect =(props) => {
     //const fullList = props.list 
-    const label = props.label
     const theme = useTheme();
-    //const [options, setOptions] = useState([]);
-    const options = props.state[props.name];
+    const options = props.state.connections;
+    // const dropdownOptions = props.state.connections.map((conn)=>conn.target_id);
     const fullList = useSelector(state => state.lore.list);
 
-  
-    const handleChange = (event) => {
-      const {
-        target: { value },
-      } = event;
-      // On autofill we get a stringified value.
-      let tempValue = typeof value === 'string' ? value.split(',') : value;
 
-      props.setState(() => {
-        return {
-            ...props.state,
-            [props.name]:tempValue,
-        }
-      });
-      //setOptions(tempValue);
-    };
+    //*CONSTRUCT A DROPDOWN LIST STATE THAT WILL BE UPDATED WITH TYPE NAMES
+    const [dropDownList, setDropDownList] = useState(() => {
+      //get a list of ids for already established connections (RUNS ONCE AT START)
+      let initIds = options.map((option) => option.target_id);
+      
+      let initData = fullList.map((page)=>{
+        //finds the index of current iter of page in list of establised connections
+        let index = initIds.indexOf(page.id);
+        
+        //The default data to start the dropdownlist State off with:
+        
+        //index is -1 if no match was found, //array[-1] is "undefined" not last entry
+        if (index!==-1){
+          return options[index]
+        } else return {
+          type: "",
+          target_id:page.id}
+        })
+      console.log("Initdata: ",initData)
+      return(initData)
+    });
+    const handleChange = (event) => {
+
+        //Below is the same code functionality as
+        const connections = event.target.value
+        // // const {
+        //   //   target: { value },
+        //   // } = event;
+        //*value = array of ids [id,id,id...]
+
+        
+        props.setState(() => {
+          return {
+              ...props.state,
+              connections:connections,
+          }
+        });
+      };
+
+    const handleTypeChange = (event,index) => {
+      //Separate onChange function for handling connection.type
+
+      const value = event.target.value
+
+      let templist = [...dropDownList]
+      templist[index].type=value
+
+      //UPDATE THE STATE THAT LISTS ALL CONNECTION TARGETS AND THEIR TYPES IN CURRENT EDITOR
+      setDropDownList(templist)
+
+     };
+
 
     const getTitle = (id) => {
       for (const page of fullList){
@@ -66,50 +105,62 @@ const ConnectionSelect =(props) => {
       return id;
     }
 
+
+    const getIndex = (id) => {
+      for (let i=0; i<dropDownList.length; i++) {
+        if (id === dropDownList[i].target_id) {
+          return i
+        }
+      }
+    }
+
     return (
-        <FormControl >
-          {/* <InputLabel id="demo-multiple-chip-label">{label}</InputLabel> */}              
+        <FormControl >        
           <Select sx={{ width: 300 }}
-            labelId="multiple-select-chip-label"
-            id="multiple-chip"
+            labelId="connections-select"
+            id="connections-select"
             multiple
             displayEmpty
             value={options}
             onChange={handleChange}
-            input={<OutlinedInput id="select-multiple-chip" />}
+            input={<OutlinedInput id="connections-select" />}
+                        
             renderValue={(selected)=> {
                 if (selected.length === 0) {
-                    return <InputLabel id="multiple-chip-label">Select {label}</InputLabel>;
+                    return <InputLabel id="connections-select-label">Add Connections</InputLabel>;
                 } 
-                return <InputLabel id="multiple-chip-label">{selected.length} {label} selected</InputLabel> 
+                return <InputLabel id="connections-select-label">{selected.length} Connections</InputLabel> 
             }}
 
             MenuProps={MenuProps}
           >
-            {fullList.map((page) => (
-              <MenuItem
-                key={page.id}
-                value={page.id}
-                name={page.title}
-                style={getStyles(page, options, theme)}
-                >
-                 <Checkbox checked={options.indexOf(page.id) > -1} />
-                <ListItemText primary={page.title} />
-                
-              </MenuItem>
-            ))}
-          </Select>
+            {   fullList.map((page,index) => (
+        
+        <MenuItem
+        key={page.id}
+        value={dropDownList[index]}
+        name={page.title}
+        style={getStyles(dropDownList[index], options, theme)}
+        >
+           <Checkbox checked={options.indexOf(dropDownList[index]) > -1} />
+          <ListItemText primary={page.title} />
+          
+        </MenuItem>
+        
+      ))}
+    </Select>
           <br/>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-           {options.map((id,index) => {
-                let title = getTitle(id);
+          <Box alignItems="center" sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+           {options.map((connection) => {
+                let title = getTitle(connection.target_id);
+                let index = getIndex(connection.target_id)
                 return  (
-                    <>
-                    <TextField name="type" label="Connection type"
-                        value={props.state.connections[index].type} onChange={handleChange}/>
-                    <Chip key={id} label={title} color='primary'/>
+                    < >
+                    <TextField key={"type"+connection.target_id} name="type" label="Connection type"
+                        value={dropDownList[index].type} onChange={(e)=>handleTypeChange(e,index)}/>
+                    <Chip key={"target"+connection.target_id} label={title} color='primary'/>
                     <br/>
-                    </>
+                        </>
                 )
                     
                 })}

@@ -5,6 +5,7 @@ import {addPage} from '../../actions/pageActions';
 import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelectChip from './../common/MultipleSelectChip';
+import ConnectionSelect from './ConnectionSelect';
 import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
@@ -27,10 +28,11 @@ const CreateLorePage = (props) => {
 		image:"",
         summary:"",
         description:"",
-        connections:[{
-            type:"",             // Change names reltype -> connection
-            target_id:""            // ----> change everywhere!!!!!!!!!
-        }],
+        connections:[],
+        // {
+        //     type:"",             // Change names reltype -> connection
+        //     target_id:""            // ----> change everywhere!!!!!!!!!
+        // }
         private_notes:""            // notes -> private_notes
 	})    
 
@@ -146,7 +148,11 @@ const CreateLorePage = (props) => {
                 <Container sx={{ display: 'flex', flexDirection: 'column' }}>
                 {/* <Typography variant="lore">{page.title}</Typography> */}
                     <TextField id="lore-title" name="title" label="Title" required multiline maxRows={2}
+<<<<<<< Updated upstream
                     value={state.title} onChange={onChange} inputProps={{maxLength: 50}}/>
+=======
+                    value={state.title} onChange={onChange}  inputProps={{maxLength: 50}}/>
+>>>>>>> Stashed changes
 
                 {/* <Grid container spacing={1}> */}
                 <br/>
@@ -177,7 +183,7 @@ const CreateLorePage = (props) => {
                     value={state.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
                     <br/>
                     
-                    {/* <ConnectionSelect label={"Connections"} state={state} name="connections" setState={setState}/> */}
+                    <ConnectionSelect state={state} setState={setState}/>
                     <Connections state={state} setState={setState}/>
                 </Grid>
         <Container>
