@@ -31,7 +31,8 @@ function getStyles(page, options, theme) {
   }
 
 const MultipleSelectChip =(props) => {
-    const fullList = props.list 
+    //Filter out the uncategorised category from showing up as selectable
+    const fullList = props.list.filter(option=>(props.name!=="categories")||(props.name ==="categories"&&option.title!=="Uncategorised")) 
     const label = props.label
     const theme = useTheme();
     //const [options, setOptions] = useState([]);

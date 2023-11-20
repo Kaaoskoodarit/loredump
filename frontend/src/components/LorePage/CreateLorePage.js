@@ -1,12 +1,11 @@
 import {useState, useEffect} from 'react';
 import {useSelector,useDispatch} from 'react-redux';
 import {addPage} from '../../actions/pageActions';
-//import {editCategory,getCategoryList} from '../../actions/categoryActions';
-import Connections from './Relationships';
 import { useNavigate } from 'react-router-dom';
 import MultipleSelectChip from './../common/MultipleSelectChip';
 import ConnectionSelect from './ConnectionSelect';
 import UploadWidget from '../Cloudinary/UploadWidget';
+
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -29,11 +28,7 @@ const CreateLorePage = (props) => {
         summary:"",
         description:"",
         connections:[],
-        // {
-        //     type:"",             // Change names reltype -> connection
-        //     target_id:""            // ----> change everywhere!!!!!!!!!
-        // }
-        private_notes:""            // notes -> private_notes
+        private_notes:""            
 	})    
 
     // Add a state to show if a page has been added
@@ -53,10 +48,6 @@ const CreateLorePage = (props) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Create preview image:
-    const default_img = 'https://res.cloudinary.com/kaaoskoodarit/image/upload/v1700154823/book-with-glasses_gfbjmm.png'
-	const image = (state.image !== 'error.jpg' && state.image !== "") ? state.image : default_img
-
    
     // Handle normal onChange events    
     const onChange = (event) => {
@@ -72,22 +63,7 @@ const CreateLorePage = (props) => {
             }
         })
     }
-
-    //OnChange function specifically for Categories
-    const onCatChange = (event) => {
-
-        let tempArr =state.categories
-        //event target = Select html element, ID HAS to be the index of the row
-        tempArr[event.target.id] = event.target.value
-        setState(() => {
-            return{ 
-                ...state,
-                [event.target.name]:tempArr
-               }
-            })
-
-    }
-    
+   
     
     // Handle onSubmit event
     const onSubmit = (event) => {
@@ -144,22 +120,14 @@ const CreateLorePage = (props) => {
             <Container>
             <Typography variant="lore">Create a new Lore Page</Typography>
             </Container>
-            <Grid item sm={12} md={8}>
+            <Grid item xs={12} sm={12} md={8}>
                 <Container sx={{ display: 'flex', flexDirection: 'column' }}>
-                {/* <Typography variant="lore">{page.title}</Typography> */}
                     <TextField id="lore-title" name="title" label="Title" required multiline maxRows={2}
-<<<<<<< Updated upstream
                     value={state.title} onChange={onChange} inputProps={{maxLength: 50}}/>
-=======
-                    value={state.title} onChange={onChange}  inputProps={{maxLength: 50}}/>
->>>>>>> Stashed changes
 
-                {/* <Grid container spacing={1}> */}
                 <br/>
                 <MultipleSelectChip list={categorylist} label={"Categories"} state={state} name="categories" setState={setState}/>
 
-                {/* <AssignCategories state={state} setState={setState} onChange={onCatChange}/> */}
-                {/* </Grid> */}
                 <br/>
                 
                 <TextField id="lore-description" name="description" label="Description" multiline maxRows={10}
@@ -182,9 +150,9 @@ const CreateLorePage = (props) => {
                     <TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
                     value={state.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
                     <br/>
+                    <br/>
                     
                     <ConnectionSelect state={state} setState={setState}/>
-                    <Connections state={state} setState={setState}/>
                 </Grid>
         <Container>
             <Button type='submit' color="success" variant='contained' size='xl'>Create new Lore Page</Button>
