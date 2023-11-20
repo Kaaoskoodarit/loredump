@@ -6,13 +6,20 @@ import {removePage,editPage} from '../../actions/pageActions';
 import { getPage } from '../../actions/pageActions';
 import {Link as RouterLink} from 'react-router-dom'
 //import Link from '@mui/material/Link';
+//custom components:
+import UploadWidget from '../Cloudinary/UploadWidget';
+import ConnectionSelect from './ConnectionSelect';
+import ImageCard from '../common/ImageCard';
+import MultipleSelectChip from '../common/MultipleSelectChip';
+
+//MUI components:
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import { Card, Paper, Container, CardActionArea } from '@mui/material';
+import { Card, Paper, Container, CardActionArea, AppBar, Toolbar } from '@mui/material';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
-//import Box from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 //import Tabs from '@mui/material/Tabs';
@@ -21,13 +28,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TextField from '@mui/material/TextField';
-import UploadWidget from '../Cloudinary/UploadWidget';
-import Connections from './Relationships';
-import ImageCard from '../common/ImageCard';
-import MultipleSelectChip from '../common/MultipleSelectChip';
 import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
 import Button from '@mui/material/Button';
-import ConnectionSelect from './ConnectionSelect';
 
 
 
@@ -185,14 +187,13 @@ const LorePage = (props) => {
 	let connections_listed;
 	if(page.connections){
 		connections_listed = page.connections.map((connection,index)=>{
-			if(connection.target_id!==""&&connection.type!==""){
+			if(connection.target_id!==""){
 				let lore = getConnectionData(connection.target_id)
 				return (
-					<Grid item key={index+":"+connection.target_id}>
-						<Stack direction='row' alignItems="center" spacing={0.5}>
-						<Typography variant='body2'>
-						{connection.type+":"}
-						</Typography>
+					<Grid item xs key={index+":"+connection.target_id}>
+						<Stack  key={index+":"+connection.target_id} direction='row' alignItems="center" spacing={0.5}>
+						<Typography variant='body2'> 
+						{connection.type&&connection.type+":"}</Typography>
 						<Chip color="primary" label={lore.title} component={RouterLink} to={"/"+worldurl+"/lorepage/"+lore.custom_url} 
 						clickable />
 						</Stack>
@@ -207,43 +208,26 @@ const LorePage = (props) => {
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
-		//  change the state of the system, 
-	// changing between "remove", "edit" and "default" mode
-	let actionButtons;
-	
-	if (mode==="remove"){
-		actionButtons = <>
-		<Button size="small" disabled variant="contained" color="secondary" onClick={() => setMode("edit")}
-			>Edit</Button>
-		<Button size="small" disabled variant="contained" color="alert" onClick={() => setMode("remove")}
-			>Delete Lore</Button>
-			</>}
-	
-	if(mode === "edit") {
-		actionButtons = <>
-		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
-			>Cancel</Button>
-		<Button size="small" variant="contained" color="success" onClick={editAPage}
-			>Save</Button>
-			</>}
-	
-	if (mode === "default"){
-		actionButtons = <>
-		<Button size="small" variant="contained" color="secondary" onClick={() => setMode("edit")}
-			>Edit</Button>
-		<Button size="small" variant="contained" color="alert" onClick={() => setMode("remove")}
-			>Delete Lore</Button>
-			</>}
-
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"delete"){
+	if (mode==="default"||"remove"){
 		content = <>
-		
+
+		<Grid item xs={12} justifyContent="space-around" >
+			<Stack direction="row" justifyContent="space-between">
+
+			<Typography variant="lore">{page.title}</Typography>
+			<Box>
+			<Button size="small" disabled={mode==="remove"} variant="contained" color="secondary" onClick={() => setMode("edit")}
+				>Edit</Button>
+			<Button size="small" disabled={mode==="remove"} variant="contained" color="alert" onClick={() => setMode("remove")}
+				>Delete Lore</Button>
+				</Box>
+			</Stack>
+		</Grid>
 	<Grid item xs={12} sm={8} order={{xs:2, md:1}}>
 		<Container order={{sm:2,md:1}}>
-		<Typography variant="lore">{page.title}</Typography>
 		<Typography variant="h6">Categories:</Typography>
 		<Grid container spacing={1}>
 		{categories_listed}
@@ -272,10 +256,6 @@ const LorePage = (props) => {
 		</Container>
 	</Grid>
 	<Grid item xs order={{xs:1,sm:2}}>
-	<Stack direction="row" justifyContent="flex-end" spacing={1}>
-				{actionButtons}
-			</Stack>
-	<br/>
 		<Card elevation={3} sx={{ p:1, maxWidth:300 }}>
 			<CardActionArea onClick={handleClickOpen}>
 			<CardMedia
@@ -327,7 +307,10 @@ if (mode==="edit"){
 		
 		<Grid item xs={4} order={{xs:1,sm:2}} >
 			<Stack direction="row" justifyContent="flex-end" spacing={1}>
-				{actionButtons}
+				<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
+				>Cancel</Button>
+				<Button size="small" variant="contained" color="success" onClick={editAPage}
+				>Save</Button>
 			</Stack>
 			<br/>
 			<ImageCard page={editState}/>
@@ -338,9 +321,9 @@ if (mode==="edit"){
 			<TextField id="lore-summary" fullWidth size='small' name="summary" label="Summary" multiline maxRows={4}
 			value={editState.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
 			<br/>
+			<br/>
 			<ConnectionSelect state={editState} setState={setEditState}/>
 			<br/>
-			<Connections state={editState} setState={setEditState}/>
 		</Grid>
 	</>}
 
@@ -351,8 +334,6 @@ if (mode==="edit"){
 	<Grid container rowSpacing={2}>
 	{content}
 	
-		
-		
 	</Grid>
 
 	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
