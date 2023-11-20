@@ -38,9 +38,12 @@ const MultipleSelectChip =(props) => {
     const options = props.state[props.name];
   
     const handleChange = (event) => {
+      //Below is the same code functionality as
+      // const value = event.target.value
       const {
         target: { value },
       } = event;
+      
       // On autofill we get a stringified value.
       let tempValue = typeof value === 'string' ? value.split(',') : value;
 

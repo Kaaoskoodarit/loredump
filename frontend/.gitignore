@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 #old code
-/frontend\src\components-old
+/frontend\src\old-code
 # dependencies
 /node_modules
 /.pnp
