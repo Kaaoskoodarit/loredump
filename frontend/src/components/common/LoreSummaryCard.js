@@ -159,10 +159,10 @@ const LoreSummaryCard = (props) => {
 		</Box>
 		<CardContent sx={{pb:0,px:0,width:'100%'}}>
 			<TextField id="title" name="title" label="Title" size="small" fullWidth required multiline maxRows={2}
-                value={editState.title} onChange={onChange}/>
+                value={editState.title} onChange={onChange} inputProps={{maxLength: 50}}/>
 			<br/>				
 			<TextField sx={{mt:1}} id="summary" name="summary" label="Summary" size="small" fullWidth multiline maxRows={2}
-                value={editState.summary} onChange={onChange}/>
+                value={editState.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
 		</CardContent>
 			</>}
 

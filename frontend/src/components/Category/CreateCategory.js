@@ -124,16 +124,16 @@ const CreateCategory = (props) => {
 		<Grid item xs={12} sm={8}>
             <Container sx={{ display: 'flex', flexDirection: 'column' }}>
             <TextField id="category-title" name="title" label="Title" required multiline maxRows={2}
-                value={state.title} onChange={onChange}/>
+                value={state.title} onChange={onChange} inputProps={{maxLength: 50}}/>
                 <br/>
             <TextField id="category-description" name="description" label="Description" multiline maxRows={10}
-                value={state.description} onChange={onChange}/>
+                value={state.description} onChange={onChange} inputProps={{maxLength: 10000}}/>
             <br/>
             <TextField id="category-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
-                value={state.private_notes} onChange={onChange}/>
+                value={state.private_notes} onChange={onChange} inputProps={{maxLength: 10000}}/>
             <br/>
             <TextField id="category-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
-                value={state.custom_url} onChange={onChange}/>
+                value={state.custom_url} onChange={onChange} inputProps={{maxLength: 50}}/>
             </Container>
 		</Grid>
         <Grid item xs={4}>

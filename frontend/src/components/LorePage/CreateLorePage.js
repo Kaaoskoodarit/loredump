@@ -146,7 +146,7 @@ const CreateLorePage = (props) => {
                 <Container sx={{ display: 'flex', flexDirection: 'column' }}>
                 {/* <Typography variant="lore">{page.title}</Typography> */}
                     <TextField id="lore-title" name="title" label="Title" required multiline maxRows={2}
-                    value={state.title} onChange={onChange}/>
+                    value={state.title} onChange={onChange} inputProps={{maxLength: 50}}/>
 
                 {/* <Grid container spacing={1}> */}
                 <br/>
@@ -157,13 +157,13 @@ const CreateLorePage = (props) => {
                 <br/>
                 
                 <TextField id="lore-description" name="description" label="Description" multiline maxRows={10}
-                    value={state.description} onChange={onChange}/>
+                    value={state.description} onChange={onChange} inputProps={{maxLength: 10000}}/>
                     <br/>
                 <TextField id="lore-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
-                    value={state.private_notes} onChange={onChange}/>
+                    value={state.private_notes} onChange={onChange} inputProps={{maxLength: 10000}}/>
                 <br/>
                 <TextField id="lore-custom_url" name="custom_url" label="Display URL as:" multiline maxRows={4}
-                value={state.custom_url} onChange={onChange}/>
+                value={state.custom_url} onChange={onChange} inputProps={{maxLength: 50}}/>
                 </Container>
 
                 </Grid>
@@ -174,7 +174,7 @@ const CreateLorePage = (props) => {
                     <Typography variant="h6">Summary:</Typography>
 
                     <TextField id="lore-summary" fullWidth name="summary" label="Summary" multiline maxRows={4}
-                    value={state.summary} onChange={onChange}/>
+                    value={state.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
                     <br/>
                     
                     {/* <ConnectionSelect label={"Connections"} state={state} name="connections" setState={setState}/> */}

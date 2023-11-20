@@ -79,7 +79,7 @@ const LoginPage = (props) => {
 <Card elevation={6} >
 <form id="login">
 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-<TextField label="Username" value={state.username} name="username" onChange={(event)=>onChange(event)} />		
+<TextField label="Username" value={state.username} name="username" onChange={(event)=>onChange(event)} inputProps={{maxLength: 20}}/>		
 </FormControl>
 
 <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
@@ -105,6 +105,7 @@ const LoginPage = (props) => {
 	name="password"
 	value={state.password}
 	onChange={(event)=>onChange(event)}
+	inputProps={{maxLength: 40}}
   />
 </FormControl>
 

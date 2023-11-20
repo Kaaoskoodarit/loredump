@@ -309,16 +309,16 @@ if (mode==="edit"){
 		<Typography variant='loreSmall'>Edit Lore Page</Typography>
 		<br/>
 		<TextField id="lore-title" size='small' name="title" label="Title" required multiline maxRows={2}
-                value={editState.title} onChange={onChange}/>
+                value={editState.title} onChange={onChange} inputProps={{maxLength: 50}}/>
 		<br/>
 		<TextField id="lore-description" size='small' name="description" label="Description" multiline maxRows={10}
-                value={editState.description} onChange={onChange}/>
+                value={editState.description} onChange={onChange} inputProps={{maxLength: 10000}}/>
 		<br/>
 		<TextField id="lore-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
-			value={editState.private_notes} onChange={onChange}/>
+			value={editState.private_notes} onChange={onChange} inputProps={{maxLength: 10000}}/>
 		<br/>
 		<TextField id="lore-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
-                value={editState.custom_url} onChange={onChange}/>
+                value={editState.custom_url} onChange={onChange} inputProps={{maxLength: 50}}/>
 		<br/>
 		<MultipleSelectChip list={categorylist} label={"Categories"} state={editState} name="categories" setState={setEditState}/>
 		</Container>
@@ -335,7 +335,7 @@ if (mode==="edit"){
 			<br/>
 
 			<TextField id="lore-summary" fullWidth size='small' name="summary" label="Summary" multiline maxRows={4}
-			value={editState.summary} onChange={onChange}/>
+			value={editState.summary} onChange={onChange} inputProps={{maxLength: 200}}/>
 			<br/>
 			<Connections state={editState} setState={setEditState}/>
 		</Grid>

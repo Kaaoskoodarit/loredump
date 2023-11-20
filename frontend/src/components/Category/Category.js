@@ -222,16 +222,16 @@ const Category = (props) => {
 		<Typography variant='loreSmall'>Edit Category</Typography>
 
 		<TextField id="category-title" size='small' name="title" label="Title" required multiline maxRows={2}
-                value={editState.title} onChange={onChange}/>
+                value={editState.title} onChange={onChange} inputProps={{maxLength: 50}}/>
 		<br/>
 		<TextField id="category-description" size='small' name="description" label="Description" multiline maxRows={10}
-                value={editState.description} onChange={onChange}/>
+                value={editState.description} onChange={onChange} inputProps={{maxLength: 2000}}/>
 		<br/>
 		<TextField id="category-private_notes" size='small' name="private_notes" label="Private Notes" multiline maxRows={4}
-			value={editState.private_notes} onChange={onChange}/>
+			value={editState.private_notes} onChange={onChange} inputProps={{maxLength: 2000}}/>
 		<br/>
 		<TextField id="category-custom_url" size='small' name="custom_url" label="Display URL as:" multiline maxRows={4}
-                value={editState.custom_url} onChange={onChange}/>
+                value={editState.custom_url} onChange={onChange} inputProps={{maxLength: 50}}/>
 		<br/>
 		<MultipleSelectChip list={lorelist} label={"Lore"} state={editState} name="lore_pages" setState={setEditState}/>
 		</Container>
