@@ -519,6 +519,8 @@ def get_lore_page(world_id, lore_page_id):
             if len(lore_page.categories) > 1 and str(Category.get_by_name("Uncategorised", world_id).id) in lore_page.categories:
                 print(f"Tulee tännepäin: {lore_page.categories}")
                 lore_page.remove_category(str(Category.get_by_name("Uncategorised", world_id).id))
+                remCat = Category.get_by_name("Uncategorised", world_id)
+                remCat.remove_lore_page(lore_page_id)
             return jsonify({"success": "Lore page successfully updated"}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
