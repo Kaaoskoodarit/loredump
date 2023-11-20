@@ -1086,6 +1086,19 @@ class LorePage:
         except Exception as e:
             print(e)
             return False
+        
+    def update_categories(self,category_list):
+        categories_collection = db["categories"]
+        old_cats = self.categories
+        temp_cat_list = category_list
+        old_cats = [cat for cat in old_cats if cat not in temp_cat_list]
+        temp_cat_list = [cat for cat in temp_cat_list if cat not in self.categories]
+        print(old_cats,temp_cat_list)
+        # add/remove LorePage to/from Category
+        for category in old_cats:
+            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$pull": {"lore_pages": str(self.id)}})
+        for category in temp_cat_list:
+            result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
 
     def add_private_note(self):
         lorepages_collection = db["lorepages"]

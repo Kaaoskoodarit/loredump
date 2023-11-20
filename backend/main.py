@@ -509,6 +509,9 @@ def get_lore_page(world_id, lore_page_id):
                     addCat = Category.get_by_name("Uncategorised", world_id)
                     addCat.add_lore_page(lore_page_id)
                 return jsonify({"success": "Category successfully updated"}), 200
+            elif "categories" in request.json:
+                lorePage = LorePage.get_by_id(lore_page_id)
+                lorePage.update_categories(request.json["categories"])
 
             lore_page.update()
             lore_page = LorePage.get_by_id(lore_page_id)
