@@ -804,12 +804,12 @@ class Category:
             return False
 
     def delete(self):
-        categories_collection = db["categories"]
-        result = categories_collection.delete_one({"_id": ObjectId(self.id)})
+        categories_collection = db["categories"]      
         # TODO: Remove category from world and lore pages
         # Remove deleted category from world:
         removeCat = World.get_by_id(ObjectId(self.world_id))
         removeCat.remove_category(self.id)
+        print("World removed!")
         # Remove deleted category from lore pages and add to "Uncategorised":
         for lore_page in self.lore_pages:
             removeLore = LorePage.get_by_id(ObjectId(lore_page))
@@ -818,6 +818,9 @@ class Category:
             removeLore = LorePage.get_by_id(ObjectId(lore_page))
             if len(removeLore.categories) == 0:
                 removeLore.add_category("Uncategorised")
+                addCat = Category.get_by_name("Uncategorised", self.world_id)
+                addCat.add_lore_page(lore_page)
+        result = categories_collection.delete_one({"_id": ObjectId(self.id)})
         if result.deleted_count == 1:
             return True
         else:
@@ -1128,6 +1131,7 @@ class LorePage:
                 {"_id": ObjectId(self.id)},
                 {"$pull": {"categories": str(Category.get_by_id(category).id)}},
             )
+            print("Removed category!")
             return result.modified_count == 1
         except Exception as e:
             print(e)
