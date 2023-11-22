@@ -1,5 +1,4 @@
 import * as actionConstants from '../actions/actionConstants';
-import {themeOrangeBook} from './../theme';
 
 
 // Check if we have a state stored in sessionStorage

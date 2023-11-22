@@ -7,6 +7,7 @@ import UploadWidget from './Cloudinary/UploadWidget';
 import { Button, Grid, Typography, Paper } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
+import ImageCard from './common/ImageCard';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 
@@ -87,18 +88,16 @@ const CreateWorld = (props) => {
             <form onSubmit={onSubmit}>
             
         <Typography variant='lore'>Create a new World</Typography>
-		<Grid container spacing={2}>
+		<Grid container rowSpacing={2}>
 		
 
-		<Grid item xs={8}>
-		<Container sx={{ p:0, display: 'flex', flexDirection: 'column' }}>
+		<Grid item xs={12} sm={8}>
+		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
         <TextField id="world-title" name="title" label="Title" required multiline maxRows={2}
             value={worldstate.title} onChange={onChange} inputProps={{maxLength: 50}}/>
             <br/>
-		{/* <Typography variant="h6">Description:</Typography> */}
         <TextField id="world-description" name="description" label="Description" multiline maxRows={10}
             value={worldstate.description} onChange={onChange} inputProps={{maxLength: 2000}}/>
-		{/* <Typography variant="h6">Private Notes:</Typography> */}
         <br/>
         <TextField id="world-private_notes" name="private_notes" label="Private Notes" multiline maxRows={4}
             value={worldstate.private_notes} onChange={onChange} inputProps={{maxLength: 2000}}/>
@@ -107,12 +106,10 @@ const CreateWorld = (props) => {
             value={worldstate.custom_url} onChange={onChange} inputProps={{maxLength: 50}}/>
 		</Container>
 		</Grid>
-		<Grid item xs={4}>
-        <Card elevation={3} sx={{p:2}}>
-        <CardMedia image={worldstate.image} sx={{ height:200}} title={"Image for your world!"}	/>
-		<UploadWidget setState={setWorldstate} />
-        </Card>
-		
+		<Grid item xs={4} >
+            <ImageCard page={worldstate} />
+            <UploadWidget setState={setWorldstate} />
+            
 		</Grid>
 		</Grid>
 		<br/>
