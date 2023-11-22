@@ -174,7 +174,7 @@ const Category = (props) => {
 	if ((mode==="default"||"delete")&&catpage.title!=="Uncategorised"){
 		content = 
 		<>
-		<Grid xs={12} sm={8} order={{xs:2,sm:1}}>
+		<Grid item xs={12} sm={8} order={{xs:2,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
 		<Typography variant="lore">{catpage.title}</Typography>
 

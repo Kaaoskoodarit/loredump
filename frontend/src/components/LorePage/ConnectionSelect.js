@@ -3,6 +3,7 @@ import {useSelector} from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -63,7 +64,7 @@ const ConnectionSelect =(props) => {
           type: "",
           target_id:page.id}
         })
-      console.log("Initdata: ",initData)
+      //console.log("Initdata: ",initData)
       return(initData)
     });
     const handleChange = (event) => {
@@ -155,12 +156,12 @@ const ConnectionSelect =(props) => {
                 let title = getTitle(connection.target_id);
                 let index = getIndex(connection.target_id)
                 return  (
-                    < >
-                    <TextField key={"type"+connection.target_id} name="type" label="Connection type"
+                    <Stack direction="row" alignItems="center" key={connection.target_id}>
+                    <TextField name="type" label="Connection type" inputProps={{maxLength: 50}}
                         value={dropDownList[index].type} onChange={(e)=>handleTypeChange(e,index)}/>
-                    <Chip key={"target"+connection.target_id} label={title} color='primary'/>
+                    <Chip label={title} color='primary'/>
                     <br/>
-                        </>
+                        </Stack>
                 )
                     
                 })}

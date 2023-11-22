@@ -35,6 +35,7 @@ const MultipleSelectChip =(props) => {
     const fullList = props.list.filter(option=>(props.name!=="categories")||(props.name ==="categories"&&option.title!=="Uncategorised")) 
     const label = props.label
     const theme = useTheme();
+    const uncategorisedID = props.name ==="categories"&&props.list[0].id
     //const [options, setOptions] = useState([]);
     const options = props.state[props.name];
   
@@ -63,12 +64,13 @@ const MultipleSelectChip =(props) => {
       }
       return id;
     }
-
+    
     return (
-        <FormControl >
+      <FormControl >
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
            {options.map((id) => {
-                let title = getTitle(id);
+             if (id===uncategorisedID) return;
+             let title = getTitle(id);
                 return  <Chip key={id} label={title} color='primary'/>
                 })}
               </Box>
@@ -86,7 +88,9 @@ const MultipleSelectChip =(props) => {
               if (selected.length === 0) {
               return <InputLabel id="multiple-chip-label">Select {label}</InputLabel>;
             } 
-            return <InputLabel id="multiple-chip-label">{selected.length} {label} selected</InputLabel> 
+            return <InputLabel id="multiple-chip-label">
+              {/* if there is an uncategorised id, say the selected amount is one less */}
+              {uncategorisedID?selected.length-1:selected.length} {label} selected</InputLabel> 
           }}
 
             MenuProps={MenuProps}
