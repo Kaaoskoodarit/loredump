@@ -16,7 +16,7 @@ import MultipleSelectChip from '../common/MultipleSelectChip';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import { Card, Paper, Container, CardActionArea, AppBar, Toolbar } from '@mui/material';
+import { Card, Paper, Container, CardActionArea } from '@mui/material';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -204,14 +204,14 @@ const LorePage = (props) => {
 	}
 	
 	// IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	 if (!page.connections||page.connections[0].target_id===""){
+	 if (!page.connections||page.connections.length===0){
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"remove"){
+	if (mode==="default"||mode==="remove"){
 		content = <>
 
 		<Grid item xs={12} justifyContent="space-around" >
