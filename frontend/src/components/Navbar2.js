@@ -13,7 +13,7 @@ import Toolbar from '@mui/material/Toolbar';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Link from '@mui/material/Link';
-import { Breadcrumbs } from '@mui/material';
+import { Breadcrumbs, Button, SliderMark, Typography } from '@mui/material';
 
  
 
@@ -76,18 +76,20 @@ const Navbar2 = (props) => {
 			<AppBar position="static" color="primary">
 			  <Toolbar variant="dense" 	>
 			  <Breadcrumbs aria-label="breadcrumb" color="secondary" separator="|">
-
-				<Link variant="h4" color="primary.contrastText" underline="hover" component={RouterLink} to={"/"}>{worldTitle}</Link>
+				<Button size="large" color="contrast" component={RouterLink} to={"/"}>{worldTitle}</Button>
 				{allPages}
 				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-page"}>Create a new Lore Page</Link>
 				<Link variant="h6" color="secondary" underline="hover" component={RouterLink} to={"/"+worldurl+"/new-category"}>Create a new Category</Link>
-			  </Breadcrumbs>
-				<IconButton
-					size="large"
-					aria-haspopup="true"
-					onClick={(e)=>handleMenu(e,"E1")}
-					color="inherit">
-					<MenuIcon />
+				</Breadcrumbs>
+			  	<Button
+				sx={{ textTransform: 'none',}}
+				aria-haspopup="true"
+				onClick={(e)=>handleMenu(e,"E1")}
+				color="contrast">
+				  <Typography variant="h6" color="inherit" display={{xs:'none', sm:'none', md:'inline'}}>Categories </Typography>
+				  <MenuIcon />
+				  </Button>
+				<IconButton>
 				</IconButton>	  
 				<Menu
 					id="menu-appbar"

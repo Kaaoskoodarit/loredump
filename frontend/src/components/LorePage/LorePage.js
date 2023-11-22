@@ -159,7 +159,7 @@ const LorePage = (props) => {
 			if (category.id === id) return category
 		}
 		//MATCH WAS NOT FOUND
-		return "Lost Link";
+		return "Not found";
 	}
 
 	let categories_listed;
@@ -169,7 +169,7 @@ const LorePage = (props) => {
 			let category = getCategoryData(id)
 			return (
 				<Grid item key={index+":"+id}>
-				<Chip color="primary" label={category.title} component={RouterLink} to={"/"+worldurl+"/category/"+category.custom_url} 
+				<Chip color="primary" label={category.title||"Lost Link"} component={RouterLink} to={"/"+worldurl+"/category/"+category.custom_url} 
 				clickable />
 				</Grid>
 			)

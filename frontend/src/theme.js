@@ -64,6 +64,8 @@ const themeOrangeBook = createTheme(  {
         main: "#6101b5",
         contrastText:"#fff"
     },
+    
+    contrast:{main:'#6101b5',},
     //   {
     //     light:"#d83219",
     //     main:"#9e0200",
@@ -124,6 +126,8 @@ const themeOrangeBook = createTheme(  {
         alert:"d50000",
     },
     alert:{ main: "#d50000",},
+    
+    contrast:{main: "#d50000",},
 
     },
     typography:{
