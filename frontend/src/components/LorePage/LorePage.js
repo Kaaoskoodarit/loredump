@@ -30,6 +30,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import TextField from '@mui/material/TextField';
 import {DialogActions, DialogTitle, DialogContentText }  from '@mui/material';
 import Button from '@mui/material/Button';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 
 
@@ -154,6 +155,12 @@ const LorePage = (props) => {
 
 	}
 
+	const clearEdits = () => {
+		setEditState({...page});
+		setMode("edit");
+		return;
+	}
+
 	const getCategoryData = (id) => {
 		for (const category of categorylist){
 			if (category.id === id) return category
@@ -204,14 +211,14 @@ const LorePage = (props) => {
 	}
 	
 	// IF CONNECTIONS LISTED RETURNED A BLANK LIST, WRITE NONE
-	 if (!page.connections||page.connections[0].target_id===""){
+	 if (!page.connections||page.connections.length===0){
 		connections_listed=<Grid item key="None">None</Grid>
 	}
 
 
 	//*DEFAULT LAYOUT
 	let content;
-	if (mode==="default"||"remove"){
+	if (mode==="default"||mode==="remove"){
 		content = <>
 
 		<Grid item xs={12} justifyContent="space-around" >
@@ -283,7 +290,7 @@ const LorePage = (props) => {
 	</Grid>
 		</>}
 
-if (mode==="edit"){
+if (mode==="edit"||mode==="clear"){
 	content = <>
 	<Grid item xs={12} sm={6} md={8} order={{xs:2,sm:1}}>
 		<Container sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -307,6 +314,9 @@ if (mode==="edit"){
 		
 		<Grid item xs={4} order={{xs:1,sm:2}} >
 			<Stack direction="row" justifyContent="flex-end" spacing={1}>
+				{/* <Button size="small" variant="contained" color="alert" onClick={() => setMode("clear")}
+				>Clear Changes</Button> */}
+				{/* Clear changes functionality Has bugs... */}
 				<Button size="small" variant="contained" color="secondary" onClick={() => setMode("default")}
 				>Cancel</Button>
 				<Button size="small" variant="contained" color="success" onClick={editAPage}
@@ -335,6 +345,11 @@ if (mode==="edit"){
 	{content}
 	
 	</Grid>
+
+	<ConfirmationDialog open={mode==="clear"} confirm={clearEdits} cancel={()=>setMode("edit")}
+		text="Are you sure you want to reset your editing progress? This action cannot be undone.">
+		Clearing all changes made in Edit
+			</ConfirmationDialog>
 
 	<Dialog fullWidth maxWidth='sm' open={mode==="remove"} onClose={()=>setMode("default")} aria-label="confirm-delete-dialog">
         <DialogTitle>
