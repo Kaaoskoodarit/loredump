@@ -34,10 +34,11 @@ class User:
     required_fields = ["username", "password"]
     unique_fields = ["username"]
 
-    def __init__(self, id, username, password):
+    def __init__(self, id, username, password, theme="Dark"):
         self.id = id
         self.username = username
         self.password = password
+        self.theme = theme
 
     def serialize(self):
         """
@@ -86,7 +87,7 @@ class User:
 
         # Hash the password before saving
         hashed_password = generate_password_hash(self.password)
-        user_data = {"username": self.username, "password": hashed_password}
+        user_data = {"username": self.username, "password": hashed_password, "theme": "Dark"}
 
         users_collection.insert_one(user_data)
 
@@ -196,7 +197,7 @@ class User:
         users_collection = db["users"]
         # Hash the password before saving
         self.password = generate_password_hash(self.password)
-        user_data = {"username": self.username, "password": self.password}
+        user_data = {"username": self.username, "password": self.password, "theme": self.theme}
         users_collection.update_one({"_id": ObjectId(self.id)}, {"$set": user_data})
 
     def check_password(self, password):
@@ -675,6 +676,15 @@ class Category:
     # Add Uncategorised to database
     @staticmethod
     def add_uncategorised(world_id):
+        """
+        Add an uncategorised category to the specified world.
+
+        Args:
+            world_id (str): The ID of the world to add the uncategorised category to.
+
+        Returns:
+            bool: True if the uncategorised category was successfully added, False otherwise.
+        """
         categories_collection = db["categories"]
         result = categories_collection.insert_one(
             {
@@ -734,8 +744,8 @@ class Category:
         except Exception as e:
             print(e)
             return False
-        
-    def update_lorepages(self,lorepage_list):
+
+    def update_lorepages(self, lorepage_list):
         """
         Adds/removes category to/from the lorepages it is/was in
 
@@ -751,7 +761,7 @@ class Category:
         # Remove all lorepages that are in both lists since they didn't change
         old_lorepages = [lore for lore in old_lorepages if lore not in temp_lore_list]
         temp_lore_list = [lore for lore in temp_lore_list if lore not in self.lore_pages]
-        print(old_lorepages,temp_lore_list)
+        print(old_lorepages, temp_lore_list)
         # add/remove LorePage to/from Category
         for lorepage in old_lorepages:
             try:
@@ -766,7 +776,7 @@ class Category:
                 return result.modified_count == 1
             except Exception as e:
                 print(e)
-                return False 
+                return False
         for lorepage in temp_lore_list:
             try:
                 result = lorepages_collection.update_one({"_id": ObjectId(lorepage)}, {"$push": {"categories": str(self.id)}})
@@ -804,7 +814,7 @@ class Category:
             return False
 
     def delete(self):
-        categories_collection = db["categories"]      
+        categories_collection = db["categories"]
         # TODO: Remove category from world and lore pages
         # Remove deleted category from world:
         removeCat = World.get_by_id(ObjectId(self.world_id))
@@ -1136,8 +1146,8 @@ class LorePage:
         except Exception as e:
             print(e)
             return False
-        
-    def update_categories(self,category_list):
+
+    def update_categories(self, category_list):
         """
         Adds/removes lorepage to/from the categories it is/was in
 
@@ -1153,7 +1163,7 @@ class LorePage:
         # Remove all categories that are in both lists since they didn't change
         old_cats = [cat for cat in old_cats if cat not in temp_cat_list]
         temp_cat_list = [cat for cat in temp_cat_list if cat not in self.categories]
-        print(old_cats,temp_cat_list)
+        print(old_cats, temp_cat_list)
         # add/remove LorePage to/from Category
         for category in old_cats:
             try:
@@ -1161,7 +1171,7 @@ class LorePage:
                 return result.modified_count == 1
             except Exception as e:
                 print(e)
-                return False 
+                return False
         for category in temp_cat_list:
             try:
                 result = categories_collection.update_one({"_id": ObjectId(category)}, {"$push": {"lore_pages": str(self.id)}})
