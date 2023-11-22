@@ -1,5 +1,4 @@
 import * as actionConstants from '../actions/actionConstants';
-import {themeOrangeBook} from './../theme';
 
 
 // Check if we have a state stored in sessionStorage
@@ -15,7 +14,7 @@ const getInitialState = () => {
 			error:"",
 			username:"",
 			user:"",
-			theme:themeOrangeBook
+			theme:"Dark"
 		}
 	}
 }
@@ -81,7 +80,7 @@ const loginReducer = (state = initialState,action) => {
 				error:"",
 				username:"",
 				user:"",
-				theme:themeOrangeBook
+				theme:"Dark"
 			}
 			saveToStorage(tempState);
 			return tempState;
@@ -100,7 +99,7 @@ const loginReducer = (state = initialState,action) => {
 				error:action.error,
 				username:"",
 				user:"",
-				theme:themeOrangeBook
+				theme:"Dark"
 			}
 			saveToStorage(tempState);
 			return tempState;		
