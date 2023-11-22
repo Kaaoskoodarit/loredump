@@ -15,7 +15,7 @@ const getInitialState = () => {
 			error:"",
 			username:"",
 			user:"",
-			theme:themeOrangeBook
+			theme:"Dark"
 		}
 	}
 }
@@ -70,7 +70,8 @@ const loginReducer = (state = initialState,action) => {
 				...state,
 				isLogged:true,
 				user:action.user,
-				username:action.username
+				username:action.username,
+				theme:action.theme
 			}
 			saveToStorage(tempState);
 			return tempState;
@@ -81,10 +82,11 @@ const loginReducer = (state = initialState,action) => {
 				error:"",
 				username:"",
 				user:"",
-				theme:themeOrangeBook
+				theme:"Dark"
 			}
 			saveToStorage(tempState);
 			return tempState;
+		case actionConstants.SET_THEME_FAILED:
 		case actionConstants.REGISTER_FAILED:
 		case actionConstants.LOGIN_FAILED:
 			tempState = {
@@ -100,7 +102,7 @@ const loginReducer = (state = initialState,action) => {
 				error:action.error,
 				username:"",
 				user:"",
-				theme:themeOrangeBook
+				theme:"Dark"
 			}
 			saveToStorage(tempState);
 			return tempState;		
@@ -108,11 +110,12 @@ const loginReducer = (state = initialState,action) => {
 			tempState = {
 				...state,
 				user:action.user,
-				username:action.username
+				username:action.username,
+				theme:action.theme
 			}
 			saveToStorage(tempState);
 			return tempState;
-		case actionConstants.SET_THEME:
+		case actionConstants.SET_THEME_SUCCESS:
 			tempState = {
 				...state,
 				theme:action.theme

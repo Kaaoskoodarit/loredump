@@ -68,7 +68,8 @@ def get_id():
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
-        return jsonify({"id": session["user_id"], "username": session["username"]}), 200
+        user = User.get_by_id(session["user_id"])
+        return jsonify({"id": session["user_id"], "username": session["username"], "theme":user.theme}), 200
 
 
 # Routes for User model
@@ -92,10 +93,10 @@ def user():
                 return jsonify({"error": "User not logged in"}), 401
             user = User.get_by_id(session["user_id"])
             # user.username = request.json['username']
-            if "password" in request.json:
-                user.password = request.json["password"]
-            else:
-                user.password = user.password
+            #if "password" in request.json:
+            #    user.password = request.json["password"]
+            #else:
+            #    user.password = user.password
             if "theme" in request.json:
                 user.theme = request.json["theme"]
             else:

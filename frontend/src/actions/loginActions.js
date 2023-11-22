@@ -60,7 +60,7 @@ export const checkLogin = () => {
 				return;
 			}
 			// If data parsed, set current user
-			dispatch(setLogin(data.id,data.username));
+			dispatch(setLogin(data.id,data.username,data.theme));
 		} else {
 			console.log("User not logged in!");
 		}
@@ -89,7 +89,7 @@ export const getUser = () => {
 				return;
 			}
 			// If data parsed, set current user
-			dispatch(setUser(data.id,data.username));
+			dispatch(setUser(data.id,data.username,data.theme));
 		} else {
 			dispatch(loginFailed("Login failed. Server responded with a status "+response.status+" "+response.statusText))
 		}
@@ -140,7 +140,7 @@ export const logout = () => {
 		const response = await fetch("/logout",request);
 		dispatch(stopLoading());
 		if(!response) {
-			dispatch(logoutFailed("Server never responded. Logging you out"))
+			dispatch(loginFailed("Server never responded. Logging you out"))
 			return;
 		}
 		if(response.ok) {
@@ -152,8 +152,28 @@ export const logout = () => {
 }
 
 export const selectTheme = (theme) => {
-	//TODO: SAVE THEME TO DATABASE
-	return (dispatch) => dispatch(setTheme(theme));
+	return async (dispatch) => {
+		const newtheme = {"theme": theme}
+		let request = {
+			"method":"PATCH",
+			"headers":{
+				"Content-Type":"application/json"
+			},
+			"body":JSON.stringify(newtheme)
+		}
+		dispatch(loading());
+		const response = await fetch("/api/user",request);
+		dispatch(stopLoading());
+		if(!response) {
+			dispatch(themeChangeFailed("Theme change failed. Server never responded. Try again later"))
+			return;
+		}
+		if(response.ok) {
+			dispatch(setTheme(theme));
+		} else {
+			dispatch(themeChangeFailed("Theme change failed. Server responded with a status "+response.status+" "+response.statusText))
+		}
+	}
 }
 
 //ACTION CREATORS
@@ -191,11 +211,12 @@ const loginSuccess = () => {
 	}
 }
 
-const setLogin = (user,username) => {
+const setLogin = (user,username,theme) => {
 	return {
 		type:actionConstants.SET_LOGIN,
 		user:user,
-		username:username
+		username:username,
+		theme:theme
 	}
 }
 
@@ -219,17 +240,25 @@ export const logoutFailed = (error) => {
 	}
 }
 
-const setUser = (user,username) => {
+const setUser = (user,username,theme) => {
 	return {
 		type:actionConstants.SET_USERNAME,
 		user:user,
-		username:username
+		username:username,
+		theme:theme
 	}
 }
 
 const setTheme = (theme) => {
 	return {
-		type:actionConstants.SET_THEME,
+		type:actionConstants.SET_THEME_SUCCESS,
 		theme:theme
+	}
+}
+
+const themeChangeFailed = (error) => {
+	return {
+		type:actionConstants.SET_THEME_FAILED,
+		error:error
 	}
 }

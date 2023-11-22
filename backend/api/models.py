@@ -64,6 +64,7 @@ class User:
             "worlds": worlds,
             "categories": categories,
             "lore_pages": lore_pages,
+            "theme": self.theme
         }
 
     def register(self):
@@ -168,6 +169,7 @@ class User:
                 id=str(user_data["_id"]),
                 username=user_data["username"],
                 password=user_data["password"],
+                theme=user_data["theme"]
             )
         else:
             return None
@@ -196,7 +198,7 @@ class User:
         """
         users_collection = db["users"]
         # Hash the password before saving
-        self.password = generate_password_hash(self.password)
+        # self.password = generate_password_hash(self.password)
         user_data = {"username": self.username, "password": self.password, "theme": self.theme}
         users_collection.update_one({"_id": ObjectId(self.id)}, {"$set": user_data})
 
