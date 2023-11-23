@@ -1,14 +1,11 @@
 import os
 import pprint
-from flask import current_app, jsonify, request, session
+from flask import jsonify, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pytz
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-import jwt
-from jwt import encode
-import secrets
 
 from dotenv import load_dotenv
 
@@ -602,7 +599,7 @@ class Category:
         self.id = id
         self.creator_id = creator_id
         self.title = title
-        self.custom_url = custom_url  # Change to be set separately!!!!!!
+        self.custom_url = custom_url
         self.world_id = world_id
         self.image = image
         self.description = description

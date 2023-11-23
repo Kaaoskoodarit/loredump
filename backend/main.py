@@ -1,13 +1,9 @@
-from collections import OrderedDict
-import datetime, os  # , jwt
+import datetime, os
 from random import Random
 from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from flask import Flask, Response, jsonify, request, session
+from flask import Flask, jsonify, request, session
 import pytz
 from api.models import User, World, Category, LorePage
-from pprint import pprint
-import requests
 from faker import Faker
 from bson import ObjectId
 
@@ -249,7 +245,7 @@ def before_request():
     else:
         # Delete session
         session.clear()
-        return jsonify({"error": "Session expired"}), 401
+        return jsonify({"error": "Session expired, logging you out"}), 401
 
 
 @app.route("/logout", methods=["POST"])
@@ -461,10 +457,6 @@ def get_category(world_id, category_id):
 
         If the user is not authorized, returns a JSON error message with status code 401.
     """
-    # Function code here
-
-
-def get_category(world_id, category_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
