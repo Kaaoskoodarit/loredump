@@ -20,7 +20,7 @@ import {getList} from './actions/pageActions';
 import {getCategoryList} from './actions/categoryActions';
 import { getWorld,getWorldList } from './actions/worldActions';
 import {useDispatch} from 'react-redux';
-import { Container} from '@mui/material';
+import { Container, Typography} from '@mui/material';
 import CreateCategory from './components/Category/CreateCategory';
 import CreateWorld from './components/CreateWorld';
 import LoadingIndicator from './components/common/LoadingIndicator';
@@ -40,7 +40,7 @@ function App() {
 			user :state.login.user,
 			theme:state.login.theme,
 			worldlist:state.world.list,
-			worldpage:state.world.list,
+			//worldpage:state.world.page,
 			worldurl: state.world.page.custom_url
 		}
 	})
@@ -94,7 +94,7 @@ function App() {
 		message = <LoadingIndicator open={appState.loading}/>
 	}
 	if(appState.error) {
-		message = <h4>{appState.error}</h4>
+		message = <Typography color="alert" variant='h6'>{appState.error}</Typography>
 	}
 	// If user is logged in, show Navbar, "message" and content
 	// depending on the URL accessed. Routes are available paths.

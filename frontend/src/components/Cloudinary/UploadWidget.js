@@ -20,7 +20,7 @@ const myWidget = (uwConfig,setState) => window.cloudinary.createUploadWidget(
 );
 
 // Upload Widget component
-function UploadWidget({ setState }) {
+function UploadWidget({ setState,children }) {
     // Configurations for the widget, setUwConfig in case we want
     // to allow changing parameters
     const [uwConfig,setUwConfig] = useState({
@@ -43,7 +43,7 @@ function UploadWidget({ setState }) {
     return (
         <div>
             <Button id="cloudinary-upload-widget" variant="contained" onClick={onClick}>
-                Upload
+                {children||"Upload"}
             </Button>
         </div>
     );

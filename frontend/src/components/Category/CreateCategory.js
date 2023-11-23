@@ -2,7 +2,6 @@ import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {addCategory} from '../../actions/categoryActions';
-//import {Link as RouterLink} from 'react-router-dom'
 import UploadWidget from '../Cloudinary/UploadWidget';
 
 
@@ -11,7 +10,6 @@ import { Button, Grid, Typography, Paper, Divider } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import MultipleSelectChip from './../common/MultipleSelectChip';
-import Box from '@mui/material/Box';
 import ImageCard from '../common/ImageCard';
 
 
@@ -96,20 +94,7 @@ const CreateCategory = (props) => {
         }  
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[categorystate]);
-
-    //TESTING
-    // let testRow = state.lore_pages? state.lore_pages.map((id)=>{<Typography >Lore: {id}</Typography>}):"NA"
-    // let testData = 
-    // <>
-    //     <Typography>Title {state.title}</Typography>
-    //     <Typography>Url {state.custom_url}</Typography>
-    //     <Typography>Img {state.image}</Typography>
-    //     <Typography>Desc {state.description}</Typography>
-    //     <Typography>Notes {state.private_notes}</Typography>
-    //     {testRow}
-    // </>
-    
-    
+   
     
     return(
 		<Paper elevation={3} sx={{ p:2}}>
@@ -152,8 +137,6 @@ const CreateCategory = (props) => {
 		<br/>
 		<br/>
         <Button type='submit' color="success" variant='contained' size='xl'>Create Category</Button>
-		
-        {/* {testData} */}
 		</Container>
 		</form>
 	</Paper>

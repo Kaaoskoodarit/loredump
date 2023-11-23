@@ -32,7 +32,7 @@ const World = (props) => {
     const world = appState.world
 
 
-    const catLinks = categorylist? categorylist.map((cat) => {
+    const catLinks = categorylist&&categorylist.map((cat) => {
         if(cat.title==="Uncategorised"&&cat.lore_pages.length===0){return;}
 		return(
             <TableRow key={cat.id}>
@@ -49,7 +49,7 @@ const World = (props) => {
             </TableRow>
         
         )
-		}): "" ;
+		});
 
 return(
     <Paper elevation={3} sx={{ p:2}}>

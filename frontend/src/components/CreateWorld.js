@@ -8,10 +8,6 @@ import { Button, Grid, Typography, Paper } from '@mui/material';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import ImageCard from './common/ImageCard';
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
-
-
 
 
 

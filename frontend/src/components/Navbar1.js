@@ -101,7 +101,7 @@ const Navbar1 = (props) => {
 					horizontal: 'right',
 					}}
 					open={Boolean(anchorEl)}
-					onClose={()=>handleClose("E1")}
+					onClose={handleClose}
 				>
 					<MenuItem disabled>Change Theme</MenuItem>
 					<MenuItem onClick={()=>handleThemeChange("Dark")} >
@@ -120,7 +120,7 @@ const Navbar1 = (props) => {
 						</MenuItem>
 					<Divider/>
 					<MenuItem onClick={()=>{
-						handleClose("E1");
+						handleClose();
 						dispatch(logout())}} component={RouterLink} to={"/"}>
 					Logout
 					</MenuItem>

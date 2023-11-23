@@ -52,16 +52,16 @@ const Navbar2 = (props) => {
 	};
 	
 
-	const catLinks = categorylist? categorylist.map((cat) => {
+	const catLinks = categorylist&&categorylist.map((cat) => {
 		//If Uncategorised category is empty, don't display it 
 		if(cat.title==="Uncategorised"&&cat.lore_pages.length===0){return;}
 		return(
-		<MenuItem key={cat.id} onClick={()=>handleClose("E1")} component={RouterLink} 
+		<MenuItem key={cat.id} onClick={handleClose} component={RouterLink} 
 		to={"/"+worldurl+"/category/"+cat.custom_url}>
 			{cat.title}
 		</MenuItem>
 		)
-		}): "" ;	
+		}) ;	
 	
 		//if more than 0 lore pages, link to ALL PAGES 
 	const allPages = lore&&lore.length>0 ?
@@ -84,7 +84,7 @@ const Navbar2 = (props) => {
 			  	<Button
 				sx={{ textTransform: 'none',}}
 				aria-haspopup="true"
-				onClick={(e)=>handleMenu(e,"E1")}
+				onClick={(e)=>handleMenu(e)}
 				color="contrast">
 				  <Typography variant="h6" color="inherit" display={{xs:'none', sm:'none', md:'inline'}}>Categories </Typography>
 				  <MenuIcon />
@@ -104,9 +104,9 @@ const Navbar2 = (props) => {
 					horizontal: 'right',
 					}}
 					open={Boolean(anchorEl)}
-					onClose={()=>handleClose("E1")}
+					onClose={handleClose}
 				>
-					<MenuItem disabled onClick={()=>handleClose("E1")}>Categories</MenuItem>
+					<MenuItem disabled onClick={handleClose}>Categories</MenuItem>
 			  		{catLinks}
 				</Menu>
 			  </Toolbar>

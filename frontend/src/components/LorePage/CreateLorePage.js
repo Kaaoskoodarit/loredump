@@ -9,8 +9,6 @@ import UploadWidget from '../Cloudinary/UploadWidget';
 //MATERIAL UI IMPORTS
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import TextField from '@mui/material/TextField';
 import { Button, Paper } from '@mui/material';
 import { Container } from '@mui/system';
