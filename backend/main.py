@@ -50,6 +50,15 @@ fake = Faker()
 
 @app.route("/", methods=["GET"])
 def index():
+    """
+    This function handles the index route.
+
+    Returns:
+        If the request method is GET and the session time-to-live (ttl) has not expired,
+        it returns a JSON response with a welcome message.
+        If the session ttl has expired, it clears the session and returns a JSON response
+        with an error message and a status code of 401.
+    """
     if request.method == "GET":
         if session["ttl"] < datetime.datetime.utcnow():
             # Reset session Time-To-Live
@@ -64,12 +73,19 @@ def index():
 # Get currently logged in user's ID:
 @app.route("/api/id", methods=["GET"])
 def get_id():
+    """
+    Get the user ID, username, and theme from the session.
+
+    Returns:
+        A JSON response containing the user ID, username, and theme.
+        If the user is not logged in, returns an error message with a 401 status code.
+    """
     if not session:
         session.clear()
         return jsonify({"error": "User not logged in"}), 401
     if request.method == "GET":
         user = User.get_by_id(session["user_id"])
-        return jsonify({"id": session["user_id"], "username": session["username"], "theme":user.theme}), 200
+        return jsonify({"id": session["user_id"], "username": session["username"], "theme": user.theme}), 200
 
 
 # Routes for User model
@@ -77,7 +93,10 @@ def get_id():
 @app.route("/api/user", methods=["GET", "PATCH", "DELETE"])
 def user():
     """
-    Returns the username of the logged in user, if any.
+    Handle user-related operations such as retrieving user information, updating user settings, and deleting user accounts.
+
+    Returns:
+        JSON response: A JSON response containing the result of the operation.
     """
     if request.method == "GET":
         try:
@@ -93,9 +112,9 @@ def user():
                 return jsonify({"error": "User not logged in"}), 401
             user = User.get_by_id(session["user_id"])
             # user.username = request.json['username']
-            #if "password" in request.json:
+            # if "password" in request.json:
             #    user.password = request.json["password"]
-            #else:
+            # else:
             #    user.password = user.password
             if "theme" in request.json:
                 user.theme = request.json["theme"]
@@ -122,6 +141,14 @@ def user():
 
 @app.route("/register", methods=["POST"])
 def register():
+    """
+    Registers a new user.
+
+    If the user is already logged in, it logs them out first.
+    If the request method is POST, it attempts to register a new user using the provided username and password.
+    Returns appropriate JSON response based on the outcome of the registration process.
+    """
+
     if session:
         session.clear()
         return jsonify({"error": "User already logged in, logging you out"}), 401
@@ -144,7 +171,19 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # Login user:
+    """
+    Logs in a user.
+
+    If the request method is POST, it expects a JSON payload with a "username" and "password" field.
+    It attempts to log in the user with the provided credentials.
+    If successful, it returns a JSON response with a "success" message and a status code of 200.
+    If the user is already logged in, it logs out the current user and returns a JSON response with an "error" message and a status code of 401.
+
+    If the request method is GET, it checks if a session exists.
+    If a session exists, it automatically logs in the user and returns a JSON response with a "success" message and a status code of 200.
+    If a session does not exist, it returns a JSON response with an "error" message and a status code of 401.
+    """
+
     if request.method == "POST":
         try:
             # Get username and password from request body
@@ -183,7 +222,7 @@ def login():
             return jsonify({"error": "Please log in"})
 
 
-@app.route("/protected")
+"""@app.route("/protected")
 def protected():
     # Check if user is logged in
     if "user_id" not in session:
@@ -191,7 +230,7 @@ def protected():
     # Get user ID from session
     user_id = session["user_id"]
     user = User.get_by_id(user_id)
-    return jsonify({"id": str(user.id), "username": user.username}), 200
+    return jsonify({"id": str(user.id), "username": user.username}), 200"""
 
 
 @app.before_request
@@ -215,7 +254,12 @@ def before_request():
 
 @app.route("/logout", methods=["POST"])
 def logout():
-    # Clear session:
+    """
+    Logs out the user by clearing the session.
+
+    Returns:
+        A JSON response indicating the success or failure of the logout operation.
+    """
     if "user_id" not in session:
         return jsonify({"error": "User not logged in"}), 401
     session.clear()
@@ -225,6 +269,19 @@ def logout():
 # Routes for World model
 @app.route("/api/worlds", methods=["GET", "POST"])
 def get_worlds():
+    """
+    Get a list of worlds created by the user or create a new world.
+
+    Returns:
+        If the request method is GET:
+            - If the user has created any worlds, returns a JSON response with the serialized worlds.
+            - If the user hasn't created any worlds, returns a JSON response with an error message and status code 404.
+        If the request method is POST:
+            - If the custom URL provided in the request JSON is already in use, returns a JSON response with an error message and status code 409.
+            - If the world is successfully created, returns a JSON response with a success message and the ID of the created world.
+            - If an exception occurs during the creation of the world, returns a JSON response with the error message and status code 400.
+    """
+
     if request.method == "GET":
         worlds = World.get_all_by_creator(session["user_id"])
         if worlds:
@@ -256,6 +313,23 @@ def get_worlds():
 
 @app.route("/api/worlds/<world_id>", methods=["GET", "PATCH", "DELETE"])
 def get_world(world_id):
+    """
+    Get details of a world by its ID.
+
+    Args:
+        world_id (int): The ID of the world.
+
+    Returns:
+        If successful:
+            A JSON response containing the serialized world object.
+        If unauthorized:
+            A JSON response with an error message and status code 401.
+        If world not found:
+            A JSON response with an error message and status code 404.
+        If there is an exception:
+            A JSON response with the exception message and status code 400.
+    """
+
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
@@ -303,6 +377,20 @@ def get_world(world_id):
 # Routes for Category model
 @app.route("/api/worlds/<world_id>/categories", methods=["GET", "POST"])
 def get_categories(world_id):
+    """
+    Get categories for a specific world.
+
+    Args:
+        world_id (int): The ID of the world.
+
+    Returns:
+        Flask Response: JSON response containing the categories or an error message.
+
+    Raises:
+        KeyError: If the user is not authorized.
+        Exception: If there is an error during category creation.
+
+    """
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
@@ -350,6 +438,32 @@ def get_categories(world_id):
 
 
 @app.route("/api/worlds/<world_id>/categories/<category_id>", methods=["GET", "PATCH", "DELETE"])
+def get_category(world_id, category_id):
+    """
+    Get a category by its ID.
+
+    Args:
+        world_id (int): The ID of the world.
+        category_id (int): The ID of the category.
+
+    Returns:
+        If the request method is GET:
+            If the category is found, returns the serialized category as JSON.
+            If the category is not found, returns a JSON error message with status code 404.
+        If the request method is PATCH:
+            If the category is found and successfully updated, returns a JSON success message with status code 200.
+            If the category is not found, returns a JSON error message with status code 404.
+            If there is an error during the update process, returns a JSON error message with status code 400.
+        If the request method is DELETE:
+            If the category is found and successfully deleted, returns a JSON success message with status code 200.
+            If the category is not found, returns a JSON error message with status code 404.
+            If the category is the "Uncategorised" category, returns a JSON error message with status code 400.
+
+        If the user is not authorized, returns a JSON error message with status code 401.
+    """
+    # Function code here
+
+
 def get_category(world_id, category_id):
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
@@ -420,6 +534,18 @@ def get_category(world_id, category_id):
 # Routes for LorePage model
 @app.route("/api/worlds/<world_id>/lore_pages", methods=["GET", "POST"])
 def get_lore_pages(world_id):
+    """
+    Get all lore pages for a given world.
+
+    Args:
+        world_id (int): The ID of the world.
+
+    Returns:
+        A JSON response containing the lore pages for the world, or an error message if the world doesn't have any lore pages.
+
+    Raises:
+        Unauthorized: If the user is not authorized to access the lore pages.
+    """
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
@@ -475,6 +601,24 @@ def get_lore_pages(world_id):
     methods=["GET", "DELETE", "PATCH"],
 )
 def get_lore_page(world_id, lore_page_id):
+    """
+    Get a lore page by its ID.
+
+    Args:
+        world_id (int): The ID of the world.
+        lore_page_id (int): The ID of the lore page.
+
+    Returns:
+        Response: The JSON response containing the lore page data or an error message.
+
+    Raises:
+        KeyError: If the user is not authorized.
+        KeyError: If the lore page is not found.
+        KeyError: If the lore page URL is already in use.
+        KeyError: If the category is not found.
+        KeyError: If the lore page fails to update or delete.
+        Exception: If an unexpected error occurs.
+    """
     if session["user_id"] != World.get_by_id(world_id).creator_id:
         return jsonify({"error": "Unauthorized"}), 401
     if request.method == "GET":
@@ -482,7 +626,6 @@ def get_lore_page(world_id, lore_page_id):
         if not lore_page:
             return jsonify({"error": "Lore page not found"}), 404
         else:
-            # pprint(vars(lore_page))
             return jsonify(lore_page.serialize())
     elif request.method == "PATCH":
         try:
@@ -558,6 +701,16 @@ def get_lore_page(world_id, lore_page_id):
 # add fake data:
 @app.route("/api/fake-data", methods=["POST", "DELETE"])
 def add_fake_data():
+    """
+    Adds fake data to the database for testing purposes.
+
+    This function can only be executed in debug mode and through a POST request.
+    It generates fake users, worlds, categories, and lore pages based on the provided parameters.
+    The generated data is then saved to the database.
+
+    Returns:
+        A JSON response indicating the success or failure of the operation.
+    """
     if app.debug == False and client != MongoClient("mongodb://localhost:27017/"):
         return jsonify({"error": "Can't add fake data outside of debug mode"}), 400
     if request.method == "POST":

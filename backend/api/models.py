@@ -58,14 +58,7 @@ class User:
         for lore_page in LorePage.get_all_by_creator(self.id):
             lore_pages[str(lore_page.id)] = lore_page.title
 
-        return {
-            "id": str(self.id),
-            "username": self.username,
-            "worlds": worlds,
-            "categories": categories,
-            "lore_pages": lore_pages,
-            "theme": self.theme
-        }
+        return {"id": str(self.id), "username": self.username, "worlds": worlds, "categories": categories, "lore_pages": lore_pages, "theme": self.theme}
 
     def register(self):
         """
@@ -165,12 +158,7 @@ class User:
         users_collection = db["users"]
         user_data = users_collection.find_one({"_id": ObjectId(id)})
         if user_data:
-            return User(
-                id=str(user_data["_id"]),
-                username=user_data["username"],
-                password=user_data["password"],
-                theme=user_data["theme"]
-            )
+            return User(id=str(user_data["_id"]), username=user_data["username"], password=user_data["password"], theme=user_data["theme"])
         else:
             return None
 
@@ -708,6 +696,12 @@ class Category:
             return False
 
     def add_private_note(self):
+        """
+        Adds a private note to the category.
+
+        Returns:
+            bool: True if the private note was successfully added, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one(
@@ -720,6 +714,15 @@ class Category:
             return False
 
     def add_lore_page(self, lore_page):
+        """
+        Add a lore page to the categories collection.
+
+        Args:
+            lore_page (str): The lore page to be added.
+
+        Returns:
+            bool: True if the lore page was successfully added, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_one({"_id": ObjectId(self.id)}, {"$push": {"lore_pages": str(lore_page)}})
@@ -796,17 +799,15 @@ class Category:
     # Remove one lore page from all categories. Used when deleting a lore page.
     @staticmethod
     def remove_lore_page_from_all(lore_page):
-        categories_collection = db["categories"]
-        try:
-            result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
-            return result.modified_count == 1
-        except Exception as e:
-            print(e)
-            return False
+        """
+        Removes a lore page from all categories.
 
-    # Remove one lore page from all categories. Used when deleting a lore page.
-    @staticmethod
-    def remove_lore_page_from_all(lore_page):
+        Args:
+            lore_page (str): The lore page to be removed.
+
+        Returns:
+            bool: True if the lore page was successfully removed from all categories, False otherwise.
+        """
         categories_collection = db["categories"]
         try:
             result = categories_collection.update_many({}, {"$pull": {"lore_pages": str(lore_page)}})
@@ -816,6 +817,15 @@ class Category:
             return False
 
     def delete(self):
+        """
+        Delete the category from the database.
+
+        This method removes the category from the associated world and lore pages.
+        If a lore page has no categories after removing the current category, it is added to the "Uncategorised" category.
+
+        Returns:
+            bool: True if the category is successfully deleted, False otherwise.
+        """
         categories_collection = db["categories"]
         # TODO: Remove category from world and lore pages
         # Remove deleted category from world:
@@ -840,17 +850,41 @@ class Category:
 
     @staticmethod
     def delete_all_by_creator(creator):
+        """
+        Delete all categories created by a specific creator.
+
+        Args:
+            creator (str): The ID of the creator.
+
+        Returns:
+            int: The number of categories deleted.
+        """
         categories_collection = db["categories"]
         result = categories_collection.delete_many({"creator_id": creator})
         return result.deleted_count
 
     @staticmethod
     def delete_all_by_world(world_id):
+        """
+        Delete all categories by world ID.
+
+        Args:
+            world_id (str): The ID of the world.
+
+        Returns:
+            int: The number of categories deleted.
+        """
         categories_collection = db["categories"]
         result = categories_collection.delete_many({"world_id": world_id})
         return result.deleted_count
 
     def update(self):
+        """
+        Updates the category with the provided data.
+
+        Returns:
+            bool: True if the category was successfully updated, False otherwise.
+        """
         categories_collection = db["categories"]
         result = categories_collection.update_one(
             {"_id": ObjectId(self.id)},
@@ -873,6 +907,15 @@ class Category:
 
     @staticmethod
     def get_by_id(id):
+        """
+        Retrieve a category by its ID.
+
+        Args:
+            id (str): The ID of the category to retrieve.
+
+        Returns:
+            Category or None: The retrieved category if found, None otherwise.
+        """
         categories_collection = db["categories"]
         category = categories_collection.find_one({"_id": ObjectId(id)})
         if category:
@@ -892,6 +935,15 @@ class Category:
 
     @staticmethod
     def get_all_by_creator(creator_id):
+        """
+        Retrieve all categories created by a specific creator.
+
+        Args:
+            creator_id (str): The ID of the creator.
+
+        Returns:
+            list: A list of Category objects representing the categories created by the specified creator.
+        """
         categories_collection = db["categories"]
         categories = categories_collection.find({"creator_id": creator_id})
         return [
@@ -911,6 +963,16 @@ class Category:
 
     @staticmethod
     def get_all_by_world(world_id):
+        """
+        Retrieve all categories by world ID.
+
+        Args:
+            world_id (str): The ID of the world.
+
+        Returns:
+            list: A list of Category objects.
+
+        """
         categories_collection = db["categories"]
         categories = categories_collection.find({"world_id": world_id})
         return [
@@ -1078,6 +1140,13 @@ class LorePage:
         }
 
     def save(self):
+        """
+        Save the LorePage object to the database.
+
+        Returns:
+            str: The ID of the saved LorePage.
+        """
+
         lorepages_collection = db["lorepages"]
         lorepage_data = {
             "creator_id": self.creator_id,
@@ -1183,6 +1252,12 @@ class LorePage:
                 return False
 
     def add_private_note(self):
+        """
+        Adds a private note to the lorepage.
+
+        Returns:
+            bool: True if the private note was successfully added, False otherwise.
+        """
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_one(
@@ -1196,6 +1271,16 @@ class LorePage:
 
     # Add connection to lorepage, it has two properties: the ID of the lore page it's connected to and the type of connection
     def add_connection(self, type, connection):
+        """
+        Add a connection to the lorepage.
+
+        Args:
+            type (str): The type of connection.
+            connection (str): The ID of the target connection.
+
+        Returns:
+            bool: True if the connection was successfully added, False otherwise.
+        """
         lorepages_collection = db["lorepages"]
         try:
             result = lorepages_collection.update_one(
