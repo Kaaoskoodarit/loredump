@@ -4,7 +4,7 @@ The place for a story artist to dump their lore.
 LoreDump is a collaborative project that was made in a single month between three students learning how to build single-page applications. 
 
 Test the live version of this site at https://loredumper.onrender.com/ 
-(The initial loading time of the page will take several seconds, as the server from our free service provider will need time to boot up after prolonged inactivity.)
+(The initial loading time of the page will take a hot minute, as the server from our free service provider will need time to boot up after prolonged inactivity.)
 
 # Description
 LoreDump is a Wiki Farm, an application that hosts multiple Wikis (or Worlds as we call it). Users can create their own World and organize their world's Lore into Categories. 
